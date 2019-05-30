@@ -1,17 +1,43 @@
 ﻿# Jeu d'Echec pour 3 joueurs
-class ArmesAFeu:
-    def __init__(self, nom, munitions, possede_viseur):
+
+class Piece:
+    """ Définit la classe piece, qui définira le comportement général de chaque
+    pieces (pions, tours, dame, ...)
+    Nom € { pion, dame, tour, ... } """
+    def __init__(self, nom):
         self.nom = nom
-        self.munitions = munitions
-        self.possede_viseur = possede_viseur
+        self.emplacementInitial = True
 
-    def tire(self):
-        if self.munitions > 0:
-            print("Pan !")
+class Pion(Piece):
+    """ Definit le pion, deplacements autorisés etc... """
+    def __init__(self):
+        super().__init__("Pion")
+
+    def deplacementsPossibles(self, emplacementPresent):
+        """ Envois le tableau des déplacement possible du Pion.
+        Separe le cas où il y a une piece ennemie et où il n'y a rien """
+
+        tabAvecEnnemies = [[emplacementPresent[0],emplacementPresent[1]+1,
+                        emplacementPresent[2]+1],
+                        [emplacementPresent[0],emplacementPresent[1]+1,
+                        emplacementPresent[2]-1],
+                        [emplacementPresent[0],emplacementPresent[1]-1,
+                        emplacementPresent[2]+1]]
+
+        if self.emplacementInitial:
+            tabSansEnnemies = [[emplacementPresent[0],emplacementPresent[1]+1,
+                        emplacementPresent[2]],
+                        [emplacementPresent[0],emplacementPresent[1],
+                        emplacementPresent[2]+1]
+                        [emplacementPresent[0],emplacementPresent[1]+2,
+                        emplacementPresent[2]]
+                        [emplacementPresent[0],emplacementPresent[1],
+                        emplacementPresent[2]+2]]
+
         else:
-            print("Ma vie est un échec.")
+            tabSansEnnemies = [[emplacementPresent[0],emplacementPresent[1]+1,
+                        emplacementPresent[2]],
+                        [emplacementPresent[0],emplacementPresent[1],
+                        emplacementPresent[2]+1]]
 
-
-class Pistolet(ArmesAFeu):
-    def __init__(self, munitions):
-        super().__init__("Piou piou", munitions, False)
+classe
