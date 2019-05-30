@@ -42,3 +42,12 @@ class ListesDeJoueur:
             if iJoueurAEnlever <= self.iJoueurActuel:
                 self.iJoueurActuel -= 1
             del self.joueurs[iJoueurAEnlever]
+
+def initialisation_plateau():
+    t=[[[Roi],  [Tour2],    [Fou2],     [Pion7],[None],[None]],
+       [[Fou1], [Reine],    [Cavalier2],[Pion6],[None],[None]]
+       [[Tour1],[Cavalier1],[Chèvre],   [Pion5],[None],[None]]
+       [[Pion1],[Pion2],    [Pion3],    [Pion4],[None],[None]]
+       [[None], [None],     [None],     [None], [None],[None]]
+       [[None], [None],     [None],     [None], [None],[None]]]
+    return [t for i in range(3)]
