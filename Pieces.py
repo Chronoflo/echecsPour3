@@ -1,4 +1,14 @@
 ﻿# Jeu d'Echec pour 3 joueurs
+from constantes import *
+from fonctions import signe
+
+class GD(tuple):
+    def __init__(self, g, d):
+        super().__init__((g, d))
+
+class DG(tuple):
+    def __init__(self, g, d):
+        super().__init__((g, d))
 
 class Piece:
     """ Définit la classe piece, qui définira le comportement général de chaque
@@ -22,15 +32,15 @@ class Pion(Piece):
         Separe le cas où il y a une piece ennemie et où il n'y a rien.
         Avec à la fin le max des déplacements possibles si déplacement infini"""
 
-        tabAvecEnnemis = 0, [ (1,1), (-1,1), (1,-1) ]
+        tabAvecEnnemis = 0, [ GD(1,1), GD(-1,1), GD(1,-1) ]
         """ La régle de la prise en passant n'est pas présente dans cette
         version """
 
         if self.emplacementInitial:
-            tabSansEnnemis = 1 , [ (1,0), (0,1) ], 2
+            tabSansEnnemis = 1 , [ GD(1,0), GD(0,1) ], 2
 
         else:
-            tabSansEnnemis = 0 , [ (1,0), (0,1) ]
+            tabSansEnnemis = 0 , [ GD(1,0), GD(0,1) ]
 
         return (tabSansEnnemis, tabAvecEnnemis)
 
@@ -43,8 +53,8 @@ class Roi(Piece):
         """ Envois le tableau des déplacement possible du Roi
         Avec la possiblilité de rock"""
 
-        tabSansEnnemis = (0 , [(0,1),(1,0),(-1,0),(0,-1), (1,1),(1,-1),
-                            (-1,1),(-1,-1)] ), (2 , [(2,0), (1,0)] )
+        tabSansEnnemis = (FINI, [GD(0,1),GD(1,0),GD(-1,0),GD(0,-1), GD(1,1),GD(1,-1),
+                            GD(-1,1),GD(-1,-1)] ), GD(ROCK, [GD(2,0), GD(1,0)])
 
         tabAvecEnnemis = 0 , [(0,1),(1,0),(-1,0),(0,-1),
                              (1,1),(1,-1), (-1,1),(-1,-1)]
@@ -113,32 +123,73 @@ class Reine(Piece):
 
         return (tab, tab)
 
-def fonction_auxiliaire_de_la_mort(tabssE,tabacE,pos):
+def fonction_auxiliaire_de_la_mort(tabssE,tabacE,pos, n):
+    """ Attention : il n'est pas prévu qu'un déplacement fini permette de changer deux fois
+     de plateau dans un même sens. """
+    def nouveau_terrain(terrainActuel, modification):
+        return (terrainActuel + modification) % 3
 
-    tabDepPoss= []
-    int = []
+    def nv_case(u):
+        return 2*n - (u+1)
 
-    for i,j in tabssE:
-        for k in range(len(j)):
-            if pos[1]+j[0]>5 and pos[2]+j[1]<=5:
+    def ajoute_case_corrigée(id, i, j, t):
+        """
+        Ajoute les coordonnées corrigées d'une case à un tableau.
+        :param id: identifiant du déplacement
+        :param i et j: coordonnées non corrigées
+        :param t: tableau auquel ajouter la case corrigée
+        """
+        if i < n and j < n:
+            t.append((id, (p, i, j)))
+        elif i < n:
+            t.append((id, (nouveau_terrain(p, 1), nv_case(j), i)))
+        elif g + y < n:
+            t.append((id, (nouveau_terrain(p, -1), j, nv_case(i))))
+        else:
+            t.append((id, (p, nv_case(j), nv_case(i))))
 
-                int.append([pos[0]-1, pos[2]+j[1], 11-(pos[1]+j[0])])
+    p, d, g = pos
+    depsPossibles = []
+    iemeDepInfini = 0
 
-            elif pos[1]+j[0]<=5 and pos[2]+j[1]>5:
+    for typeDep, deplacements in tabssE:
+        if typeDep == FINI:
+            for vecteur in deplacements:
+                x, y = vecteur
+                i, j = d + x, g + y
+                if i >= 0 and j >= 0:
+                    if d == g and y == x:
+                        # Cas où le pion est sur la diagonale de la mort
+                        if i < n:
+                            depsPossibles.append((FINI, (p, i, j)))
+                    elif i < n and j < n:
+                        depsPossibles.append((FINI, (p, i, j)))
+                    elif i < n:
+                        depsPossibles.append((FINI, (nouveau_terrain(p, 1), nv_case(j), i)))
+                    elif g + y < n:
+                        depsPossibles.append((FINI, (nouveau_terrain(p, -1), j, nv_case(i))))
+                    else:
+                        if vecteur is GD:
+                            depsPossibles.append((FINI, (nouveau_terrain(p, signe(x * y)),
+                                                         nv_case(i), nv_case(j))))
+                        else:
+                            pass
+        elif typeDep == INFINI:
+            iemeDepInfini += 1
+            nCasesMax = deplacements[0]
+            for x, y in deplacements[1:]:
+                depsInfini = []
+                i, j = d, g
+                for k in range(nCasesMax):
+                    i += x
+                    j += y
+                    if i < n and j < n:
+                        depsInfini.append(p, i, j)
+                    elif i < n:
+                        depsInfini.append(p, )
 
-                int.apppend([pos[0]+1, 11-(pos[2]+j[1]), pos[1]+j[0]])
-
-            elif pos[1]+j[0]<5 and pos[2]+j[1]<5:
-
-                int.append([pos[0], pos[1]+j[0], pos[2]+j[1]])
-
-            else:
-                if pos[1]+j[0] == pos[2]+j[1] and pos[1]+j[0]>5:
-                    none
-
-                elif pos[1]+j[0] > pos[2]+j[1]:
-                    print("je sais pas")
-
-                # int.append("bordel")
-
-            # tabDepPoss.append(i, int) tab vide
+        elif typeDep == ROCK:
+            for x, y in deplacements:
+                depsPossibles.append((ROCK, (p, d+x, g+y)))
+        else:
+            raise ValueError("Type inconnu.")
