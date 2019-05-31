@@ -113,9 +113,32 @@ class Reine(Piece):
 
         return (tab, tab)
 
-"""def fonction_auxiliaire_de_la_mort(tabssE,tabacE,pos):
-    ns = len(tabssE[1])
-    na = len(tabacE[1])
+def fonction_auxiliaire_de_la_mort(tabssE,tabacE,pos):
 
+    tabDepPoss= []
+    int = []
 
-    for i in range(ns)"""
+    for i,j in tabssE:
+        for k in range(len(j)):
+            if pos[1]+j[0]>5 and pos[2]+j[1]<=5:
+
+                int.append([pos[0]-1, pos[2]+j[1], 11-(pos[1]+j[0])])
+
+            elif pos[1]+j[0]<=5 and pos[2]+j[1]>5:
+
+                int.apppend([pos[0]+1, 11-(pos[2]+j[1]), pos[1]+j[0]])
+
+            elif pos[1]+j[0]<5 and pos[2]+j[1]<5:
+
+                int.append([pos[0], pos[1]+j[0], pos[2]+j[1]])
+
+            else:
+                if pos[1]+j[0] == pos[2]+j[1] and pos[1]+j[0]>5:
+                    none
+
+                elif pos[1]+j[0] > pos[2]+j[1]:
+                    print("je sais pas")
+
+                # int.append("bordel")
+
+            # tabDepPoss.append(i, int) tab vide
