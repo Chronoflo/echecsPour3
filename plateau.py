@@ -1,6 +1,22 @@
+from Pieces import aux, Piece
+
 class Plateau(list):
     def __init__(self, listeJoueurs):
         super().__init__(initialisation_plateau(listeJoueurs))
+
+    def sur_sélection_pièce(self, coordonnées):
+        p, d, g = coordonnées
+        depAVerifier, depAVerifierEnnemis = aux(*self[p][d][g].deplacementsPossibles(), coordonnées)
+        depVerifies = []
+        for dep in depAVerifier:
+            depVerifies.append(dep)
+
+    def sur_déplacement_validé(self, coordonnéesPion, coordonnéesCible):
+        p1,d1,g1, p2,d2,g2 = *coordonnéesPion, *coordonnéesCible
+        if self[p2][d2][g2] is not None:
+            pionEnnemi: Piece = self[p2][d2][g2]
+            pionEnnemi.joueur.piecesRestantes.remove(pionEnnemi)
+        self[p1][d1][g1], self[p2][d2][g2] = None, self[p1][d1][g1]
 
 
 def initialisation_plateau(listeJoueurs):
@@ -15,12 +31,3 @@ def initialisation_plateau(listeJoueurs):
             [None,         None,             None,             None,         None, None]
         ]
         for joueur in listeJoueurs]
-
-
-from joueur import *
-
-
-joueurs = [Joueur("Arhur", 2), Joueur("Sarah", 3), Joueur("Florian", 4)]
-
-plateau = Plateau(joueurs)
-print(plateau[0][0][0].nomJoueur)

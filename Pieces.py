@@ -4,17 +4,17 @@ class Piece:
     """ Définit la classe piece, qui définira le comportement général de chaque
     pieces (pions, tours, dame, ...)
     Nom € { pion, dame, tour, ... } """
-    def __init__(self, nom, nomJoueur):
+    def __init__(self, nom, joueur):
         self.nom = nom
-        self.nomJoueur = nomJoueur
+        self.joueur = joueur
         self.emplacementInitial = True
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
-    def __init__(self, nomJoueur):
-        super().__init__("Pion", nomJoueur)
+    def __init__(self, joueur):
+        super().__init__("Pion", joueur)
 
-    def deplacementsPossibles(self, emplacementPresent):
+    def deplacements_possibles(self):
         """ Envois un Booléen (0,1,2 pour respectivement False,True,Rock)
         devant qui dit si le déplacement est infini ou
         fini, le tableau des déplacements fini (vecteur des déplacements
@@ -36,10 +36,10 @@ class Pion(Piece):
 
 class Roi(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
-    def __init__(self, nomJoueur):
-        super().__init__("Roi", nomJoueur)
+    def __init__(self, joueur):
+        super().__init__("Roi", joueur)
 
-    def deplacementsPossibles(self, emplacementPresent):
+    def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Roi
         Avec la possiblilité de rock"""
 
@@ -53,10 +53,10 @@ class Roi(Piece):
 
 class Cavalier(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
-    def __init__(self, nomJoueur):
-        super().__init__("Cavalier", nomJoueur)
+    def __init__(self, joueur):
+        super().__init__("Cavalier", joueur)
 
-    def deplacementsPossibles(self, emplacementPresent):
+    def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Cavalier """
 
         tab = 0, [(2,1), (1,2), (-2,1), (-1,2),
@@ -66,10 +66,10 @@ class Cavalier(Piece):
 
 class Chevre(Piece):
     """ Definit la Chevre, deplacements autorisés etc... (nouvelle piece) """
-    def __init__(self, nomJoueur):
-        super().__init__("Chevre", nomJoueur)
+    def __init__(self, joueur):
+        super().__init__("Chevre", joueur)
 
-    def deplacementsPossibles(self, emplacementPresent):
+    def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Chevre """
 
         tab = 0 , [(2,0), (0,2), (-2,0), (0,-2),
@@ -79,10 +79,10 @@ class Chevre(Piece):
 
 class Tour(Piece):
     """ Definit la Tour, deplacements autorisés etc... """
-    def __init__(self, nomJoueur):
-        super().__init__("Chevre", nomJoueur)
+    def __init__(self, joueur):
+        super().__init__("Chevre", joueur)
 
-    def deplacementsPossibles(self, emplacementPresent):
+    def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
 
         tab = 1 , [(1,0), (0,1), (-1,0), (0,-1)]
@@ -91,10 +91,10 @@ class Tour(Piece):
 
 class Fou(Piece):
     """ Definit le Fou, deplacements autorisés etc... """
-    def __init__(self, nomJoueur):
-        super().__init__("Fou", nomJoueur)
+    def __init__(self, joueur):
+        super().__init__("Fou", joueur)
 
-    def deplacementsPossibles(self, emplacementPresent):
+    def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Fou"""
 
         tab = 1 , [(1,1), (1,-1), (-1,1), (-1,-1)]
@@ -103,10 +103,10 @@ class Fou(Piece):
 
 class Reine(Piece):
     """ Definit la Reine, deplacements autorisés etc... """
-    def __init__(self, nomJoueur):
-        super().__init__("Reine", nomJoueur)
+    def __init__(self, joueur):
+        super().__init__("Reine", joueur)
 
-    def deplacementsPossibles(self, emplacementPresent):
+    def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Reine"""
 
         tab = 1 , [(1,0), (0,1), (-1,0), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)]
