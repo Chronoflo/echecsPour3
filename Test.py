@@ -21,16 +21,16 @@ from pygame.locals import *
 pygame.init()
 
 fenetre = pygame.display.set_mode((800,600))
-fond = pygame.image.load("Menu 1.jpg").convert()
-pygame.display.set_caption("Jeu d'échecs pour trois joueurs")
-joueurBleu = pygame.image.load("Plateau joueur Bleu.jpg").convert()
-joueurVert = pygame.image.load("Plateau joueur Vert.jpg").convert()
-joueurRouge = pygame.image.load("Plateau joueur Rouge.jpg").convert()
+fond = pygame.image.load("Image/Menu 1.jpg").convert()
+pygame.display.set_caption("Coucou Sarah :p")
+joueurBleu = pygame.image.load("Image/Plateau joueur Bleu.jpg").convert()
+joueurVert = pygame.image.load("Image/Plateau joueur Vert.jpg").convert()
+joueurRouge = pygame.image.load("Image/Plateau joueur Rouge.jpg").convert()
 listeJoueurs = [joueurBleu, joueurRouge, joueurVert]
 fenetre.blit(fond, (0,0))
 
-bouton1 = pygame.image.load("Commencer 1.png").convert_alpha()
-bouton2 = pygame.image.load("Commencer 2.png").convert_alpha()
+bouton1 = pygame.image.load("Image/Commencer 1.png").convert_alpha()
+bouton2 = pygame.image.load("Image/Commencer 2.png").convert_alpha()
 position_bouton = bouton1.get_rect()
 position_bouton = position_bouton.move(200, 300)
 
