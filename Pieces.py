@@ -130,27 +130,10 @@ def fonction_auxiliaire_de_la_mort(tabssE,tabacE,pos, n):
         return (terrainActuel + modification) % 3
 
     def nv_case(u):
-        return 2*n - (u+1)
-
-    def ajoute_case_corrigée(id, i, j, t):
-        """
-        Ajoute les coordonnées corrigées d'une case à un tableau.
-        :param id: identifiant du déplacement
-        :param i et j: coordonnées non corrigées
-        :param t: tableau auquel ajouter la case corrigée
-        """
-        if i < n and j < n:
-            t.append((id, (p, i, j)))
-        elif i < n:
-            t.append((id, (nouveau_terrain(p, 1), nv_case(j), i)))
-        elif g + y < n:
-            t.append((id, (nouveau_terrain(p, -1), j, nv_case(i))))
-        else:
-            t.append((id, (p, nv_case(j), nv_case(i))))
+        return 2*n - u - 1
 
     p, d, g = pos
     depsPossibles = []
-    iemeDepInfini = 0
 
     for typeDep, deplacements in tabssE:
         if typeDep == FINI:
@@ -175,21 +158,55 @@ def fonction_auxiliaire_de_la_mort(tabssE,tabacE,pos, n):
                         else:
                             pass
         elif typeDep == INFINI:
-            iemeDepInfini += 1
             nCasesMax = deplacements[0]
             for x, y in deplacements[1:]:
                 depsInfini = []
-                i, j = d, g
-                for k in range(nCasesMax):
+                i, j = d + x, g + y
+                k = 1
+                while 0 <= i < n and 0 <= j < n and k < nCasesMax:
+                    depsInfini.append((p, i, j))
                     i += x
                     j += y
-                    if i < n and j < n:
-                        depsInfini.append(p, i, j)
-                    elif i < n:
-                        depsInfini.append(p, )
 
+                    if i < n <= j:
+                        p, i, j = nouveau_terrain(p, 1), nv_case(j), i
+                        x, y = -y, x
+                    elif j < n <= i:
+                        p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
+                        x, y = y, -x
+                    k += 1
         elif typeDep == ROCK:
             for x, y in deplacements:
                 depsPossibles.append((ROCK, (p, d+x, g+y)))
         else:
             raise ValueError("Type inconnu.")
+
+
+def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
+    """ Fonction de test. """
+    def nouveau_terrain(terrainActuel, modification):
+        return (terrainActuel + modification) % 3
+
+    def nv_case(u):
+        return 2*n - (u+1)
+
+    depsInfini = []
+    i, j = d + x, g + y
+    k = 1
+    while 0 <= i < n and 0 <= j < n and k < nCasesMax:
+        depsInfini.append((p, i, j))
+        i += x
+        j += y
+
+        if i < n <= j:
+            p, i, j = nouveau_terrain(p, 1), nv_case(j), i
+            x, y = -y, x
+        elif j < n <= i:
+            p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
+            x, y = y, -x
+
+        k += 1
+    return depsInfini
+
+
+print(test_infini(2, 0, 0, 0, 1))

@@ -1,3 +1,4 @@
+from fonctions import signe
 def f(i, j):
     """
     Ajoute les coordonnées corrigées d'une case à un tableau.
@@ -17,7 +18,7 @@ def f(i, j):
     elif g + y < n:
         return nouveau_terrain(p, -1), j, nv_case(i)
     else:
-        return p, nv_case(i), nv_case(j)
+        return nouveau_terrain(p, signe(x*y)), nv_case(i), nv_case(j)
 
 def nouveau_terrain(terrainActuel, modification):
     return (terrainActuel + modification) % 3
@@ -28,5 +29,5 @@ def nv_case(u):
 
 n = 6
 p, d, g = 2, 5, 5
-x, y = 1, 2
+x, y = 2, 1
 print(f(d + x, g+y))
