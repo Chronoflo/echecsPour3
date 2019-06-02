@@ -1,4 +1,4 @@
-from Pieces import aux, Piece
+from Pieces import fonction_auxiliaire_de_la_mort, Piece
 
 class Plateau(list):
     def __init__(self, listeJoueurs):
@@ -23,7 +23,7 @@ def initialisation_plateau(listeJoueurs):
     """ Retourne un plateau pour len(listeJoueurs) joueurs. """
     return [
         [
-            [joueur.roi,   joueur.tour2,     joueur. fou2,     joueur.pion7, None, None],
+            [joueur.roi,   joueur.tour2,     joueur.fou2,     joueur.pion7, None, None],
             [joueur.fou1,  joueur.reine,     joueur.cavalier2, joueur.pion6, None, None],
             [joueur.tour1, joueur.cavalier1, joueur.chevre,    joueur.pion5, None, None],
             [joueur.pion1, joueur.pion2,     joueur.pion3,     joueur.pion4, None, None],
