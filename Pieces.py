@@ -231,4 +231,4 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 
 if __name__ == '__main__':
     print(test_infini(2, 0, 0, 0, 1))
-    print(Pion(2) is Piece)
+    print(isinstance(Pion(2, 2), Piece))
