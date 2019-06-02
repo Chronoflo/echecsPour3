@@ -143,7 +143,7 @@ class Reine(Piece):
 
         return (tab, tab)
 
-def fonction_auxiliaire_de_la_mort(tabssE,tabacE,pos, n):
+def traduction_en_coordonnées(tabssE,tabacE,pos, n):
     """ Attention : il n'est pas prévu qu'un déplacement fini permette de changer deux fois
      de plateau dans un même sens. """
     def nouveau_terrain(terrainActuel, modification):

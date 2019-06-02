@@ -1,4 +1,4 @@
-from Pieces import fonction_auxiliaire_de_la_mort, Piece
+from Pieces import traduction_en_coordonnées, Piece
 
 class Plateau(list):
     def __init__(self, listeJoueurs):
@@ -6,7 +6,8 @@ class Plateau(list):
 
     def sur_sélection_pièce(self, coordonnées):
         p, d, g = coordonnées
-        depAVerifier, depAVerifierEnnemis = aux(*self[p][d][g].deplacementsPossibles(), coordonnées)
+        depAVerifier, depAVerifierEnnemis = traduction_en_coordonnées(
+            *self[p][d][g].deplacementsPossibles(), coordonnées)
         depVerifies = []
         for dep in depAVerifier:
             depVerifies.append(dep)
@@ -30,4 +31,4 @@ def initialisation_plateau(listeJoueurs):
             [None,         None,             None,             None,         None, None],
             [None,         None,             None,             None,         None, None]
         ]
-        for joueur in listeJoueurs]
+        for joueur in listeJoueurs.joueurs]
