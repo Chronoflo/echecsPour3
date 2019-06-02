@@ -25,22 +25,22 @@ class Pion(Piece):
         super().__init__("Pion", joueur)
 
     def deplacements_possibles(self):
-        """ Envois un Booléen (0,1,2 pour respectivement False,True,Rock)
+        """ Envois une constante : False,True,Rock
         devant qui dit si le déplacement est infini ou
         fini, le tableau des déplacements fini (vecteur des déplacements
         infinis) possible du Pion.
         Separe le cas où il y a une piece ennemie et où il n'y a rien.
         Avec à la fin le max des déplacements possibles si déplacement infini"""
 
-        tabAvecEnnemis = 0, [ GD(1,1), GD(-1,1), GD(1,-1) ]
+        tabAvecEnnemis = FINI , [ GD(1,1), GD(-1,1), GD(1,-1) ]
         """ La régle de la prise en passant n'est pas présente dans cette
         version """
 
         if self.emplacementInitial:
-            tabSansEnnemis = 1 , [ GD(1,0), GD(0,1) ], 2
+            tabSansEnnemis = INFINI , [ GD(1,0), GD(0,1) ], 2
 
         else:
-            tabSansEnnemis = 0 , [ GD(1,0), GD(0,1) ]
+            tabSansEnnemis = FINI , [ GD(1,0), GD(0,1) ]
 
         return (tabSansEnnemis, tabAvecEnnemis)
 
@@ -54,10 +54,10 @@ class Roi(Piece):
         Avec la possiblilité de rock"""
 
         tabSansEnnemis = (FINI, [GD(0,1),GD(1,0),GD(-1,0),GD(0,-1), GD(1,1),GD(1,-1),
-                            GD(-1,1),GD(-1,-1)] ), GD(ROCK, [GD(2,0), GD(1,0)])
+                            GD(-1,1),GD(-1,-1)] ), (ROCK, [GD(2,0), GD(1,0)])
 
-        tabAvecEnnemis = 0 , [(0,1),(1,0),(-1,0),(0,-1),
-                             (1,1),(1,-1), (-1,1),(-1,-1)]
+        tabAvecEnnemis = FINI , [GD(0,1), GD(1,0), GD(-1,0), GD(0,-1),
+                                GD(1,1), GD(1,-1), GD(-1,1), GD(-1,-1)]
 
         return (tabSansEnnemis, tabAvecEnnemis)
 
@@ -69,8 +69,8 @@ class Cavalier(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Cavalier """
 
-        tab = 0, [(2,1), (1,2), (-2,1), (-1,2),
-                     (2,-1), (1,-2), (-2,-1), (-1,-2)]
+        tab = FINI, [GD(2,1), GD(1,2), GD(-2,1), GD(-1,2),
+                     GD(2,-1), GD(1,-2), GD(-2,-1), GD(-1,-2)]
 
         return (tab, tab)
 
@@ -82,8 +82,8 @@ class Chevre(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Chevre """
 
-        tab = 0 , [(2,0), (0,2), (-2,0), (0,-2),
-                  (2,2), (-2,-2), (-2,2), (2,-2)]
+        tab = FINI , [GD(2,0), GD(0,2), GD(-2,0), GD(0,-2),
+                     GD(2,2), GD(-2,-2), GD(-2,2), GD(2,-2)]
 
         return (tab, tab)
 
@@ -95,7 +95,7 @@ class Tour(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
 
-        tab = 1 , [(1,0), (0,1), (-1,0), (0,-1)]
+        tab = INFINI , [GD(1,0), GD(0,1), GD(-1,0), GD(0,-1)]
 
         return (tab, tab)
 
@@ -107,7 +107,7 @@ class Fou(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Fou"""
 
-        tab = 1 , [(1,1), (1,-1), (-1,1), (-1,-1)]
+        tab = INFINI , [GD(1,1), GD(1,-1), GD(-1,1), GD(-1,-1)]
 
         return (tab, tab)
 
@@ -119,7 +119,8 @@ class Reine(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Reine"""
 
-        tab = 1 , [(1,0), (0,1), (-1,0), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)]
+        tab = INFINI , [GD(1,0), GD(0,1), GD(-1,0), GD(0,-1), GD(1,1), GD(1,-1),
+                        GD(-1,1), GD(-1,-1)]
 
         return (tab, tab)
 
