@@ -17,8 +17,8 @@ class Serveur(threading.Thread):
         self.socket.listen(10)
 
     def start(self):
-        super().start()
         self.serveurAllumé = True
+        super().start()
 
     def run(self):
         while self.serveurAllumé:
@@ -55,4 +55,5 @@ class Client:
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.serveur = None
 
-    def connect(self, address):
+    def connect(self, address=s.gethostname(), port=12800):
+        self.socket.connect((address, port))
