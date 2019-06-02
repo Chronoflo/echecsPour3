@@ -1,26 +1,22 @@
-﻿from constantes import *
-from plateau import Plateau
+﻿from plateau import Plateau
+from Pieces import Piece
 from joueur import Joueur, ListesDeJoueur
 import pygame
 from pygame.locals import *
-from Interface import dessine_composants
-
-BLACK = (  0,   0,   0)
-WHITE = (255, 255, 255)
-BLUE =  (  0,   0, 255)
-GREEN = (  0, 255,   0)
-RED =   (255,   0,   0)
+from Interface import dessine_composants, ROUGE, VERT, BLEU
 
 
 if __name__ == '__main__':
-    listeJoueurs = ListesDeJoueur(Joueur("Arthur", 0, BLUE), Joueur("Sarah", 1, GREEN),
-                                  Joueur("Florian", 2, RED))
+    listeJoueurs = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
+                                  Joueur("Florian", 2, ROUGE))
     plateau = Plateau(listeJoueurs)
 
     pygame.init()
 
     fenetre = pygame.display.set_mode((800, 600))
     fond = pygame.image.load("Image/Menu 1.jpg").convert()
+    Piece.charge_images()
+
     fenetre.blit(fond, (0, 0))
     dessine_composants(fenetre, plateau)
     pygame.display.flip()

@@ -5,28 +5,41 @@ import pygame
 from pygame.locals import *
 from Pieces import Piece
 
-BLACK = (  0,   0,   0)
-WHITE = (255, 255, 255)
-BLUE =  (  0,   0, 255)
-GREEN = (  0, 255,   0)
-RED =   (255,   0,   0)
+
+class SuperColor(pygame.Color):
+    """ Une couleur pygame dotée d'un nom. """
+    def __init__(self, nom, couleur):
+        super().__init__(*couleur)
+        self.nom = nom
+
+
+ROUGE = SuperColor("rouge", (255,   0,   0))
+VERT = SuperColor("vert", (0, 255,   0))
+BLEU = SuperColor("bleu", (0,   0, 255))
+BLANC = SuperColor("blanc", (255, 255, 255))
+NOIR = SuperColor("noir", (0, 0, 0))
+
 
 def dessine_composants(surface, plateau):
+    """ Affiche tous les composants du plateau. """
     def cercle(col, pos, radius=2):
         pygame.draw.circle(surface, col, pos, radius)
-    center = complex(400, 300)
-    cercle(GREEN, (400,300), 8)
-    c = 30
+
+    center = complex(400, 400)  # Centre du plateau
+    c = 30  # Taille de la diagonale la plus courte d'une case
+    cercle(VERT, (int(center.real), int(center.imag)), 8)
     for p in range(3):
+        origine = (center + c * 6 * exp((pi/2 + 2*p*pi/3) * 1j))  # Point (0,0) pour le terrain p
         for d in range(6):
             for g in range(6):
-                origine = (center + c * 6 * exp((pi / 2 + 2 * i * pi / 3) * 1j))
-
                 if isinstance(plateau[p][d][g], Piece):
-                    piece = plateau[p][d][g]
-                    z = origine - c*((d - g) * (sqrt(3)/2) + (1 + d + g) * 1j/2)
-                    pygame.draw.circle(surface, piece.joueur.couleur,
-                                       (int(z.real), int(z.imag)), 2)
+                    # Calcule la position d'une pièce
+                    z = origine - c*((d - g) * (sqrt(3)/2) + (1 + d + g) * 1j/2) * exp(p*2j*pi/3)
+                    # Affiche la pièce
+                    image = plateau[p][d][g].image
+                    x, y, w, h = image.get_rect()
+                    surface.blit(plateau[p][d][g].image, (z.real - w/2, z.imag - h/2))
+
 
 def affichage():
     pygame.init()

@@ -1,25 +1,43 @@
 ﻿# Jeu d'Echec pour 3 joueurs
 from constantes import *
 from fonctions import signe
+import pygame.image
+
 
 class GD(tuple):
     def __init__(self, g, d):
         super().__init__((g, d))
 
+
 class DG(tuple):
     def __init__(self, g, d):
         super().__init__((g, d))
+
 
 class Piece:
     """ Définit la classe piece, qui définira le comportement général de chaque
     pieces (pions, tours, dame, ...)
     Nom € { pion, dame, tour, ... } """
+    piècesCréées = []
+
     def __init__(self, nom, joueur, terrainOrigine):
         self.nom = nom
         self.joueur = joueur
+        # self.cheminImage = "Image/Pieces/" + joueur.couleur.nom + "_" + nom + ".jpg"
+        self.cheminImage = "Image/Pieces/" + joueur.couleur.nom + "_Cavalier.png"
+        self.image = None
+
         self.emplacementInitial = True
         self.terrainOrigine = terrainOrigine
         self.terrainActuel = terrainOrigine
+
+        Piece.piècesCréées.append(self)
+
+    @classmethod
+    def charge_images(cls):
+        for piece in cls.piècesCréées:
+            piece.image = pygame.image.load(piece.cheminImage).convert_alpha()
+
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
@@ -143,7 +161,8 @@ class Reine(Piece):
 
         return (tab, tab)
 
-def traduction_en_coordonnées(tabssE,tabacE,pos, n):
+
+def traduction_en_coordonnées(déplacementsSansEnnemi, déplacementsAvecEnnemi, pos, n):
     """ Attention : il n'est pas prévu qu'un déplacement fini permette de changer deux fois
      de plateau dans un même sens. """
     def nouveau_terrain(terrainActuel, modification):
@@ -152,54 +171,57 @@ def traduction_en_coordonnées(tabssE,tabacE,pos, n):
     def nv_case(u):
         return 2*n - u - 1
 
-    p, d, g = pos
-    depsPossibles = []
+    def traite(déplacements):
+        p, d, g = pos
+        depsPossibles = []
 
-    for typeDep, deplacements in tabssE:
-        if typeDep == FINI:
-            for vecteur in deplacements:
-                x, y = vecteur
-                i, j = d + x, g + y
-                if i >= 0 and j >= 0:
-                    if d == g and y == x:
-                        # Cas où le pion est sur la diagonale de la mort
-                        if i < n:
+        for typeDep, deplacements in déplacements:
+            if typeDep == FINI:
+                for vecteur in deplacements:
+                    x, y = vecteur
+                    i, j = d + x, g + y
+                    if i >= 0 and j >= 0:
+                        if d == g and y == x:
+                            # Cas où le pion est sur la diagonale de la mort
+                            if i < n:
+                                depsPossibles.append((FINI, (p, i, j)))
+                        elif i < n and j < n:
                             depsPossibles.append((FINI, (p, i, j)))
-                    elif i < n and j < n:
-                        depsPossibles.append((FINI, (p, i, j)))
-                    elif i < n:
-                        depsPossibles.append((FINI, (nouveau_terrain(p, 1), nv_case(j), i)))
-                    elif g + y < n:
-                        depsPossibles.append((FINI, (nouveau_terrain(p, -1), j, nv_case(i))))
-                    else:
-                        if vecteur is GD:
-                            depsPossibles.append((FINI, (nouveau_terrain(p, signe(x * y)),
-                                                         nv_case(i), nv_case(j))))
+                        elif i < n:
+                            depsPossibles.append((FINI, (nouveau_terrain(p, 1), nv_case(j), i)))
+                        elif g + y < n:
+                            depsPossibles.append((FINI, (nouveau_terrain(p, -1), j, nv_case(i))))
                         else:
-                            pass
-        elif typeDep == INFINI:
-            nCasesMax = deplacements[0]
-            for x, y in deplacements[1:]:
-                depsInfini = []
-                i, j = d + x, g + y
-                k = 1
-                while 0 <= i < n and 0 <= j < n and k < nCasesMax:
-                    depsInfini.append((p, i, j))
-                    i += x
-                    j += y
+                            if vecteur is GD:
+                                depsPossibles.append((FINI, (nouveau_terrain(p, signe(x * y)),
+                                                             nv_case(i), nv_case(j))))
+                            else:
+                                pass  # TODO
+            elif typeDep == INFINI:
+                nCasesMax = deplacements[0]
+                for x, y in deplacements[1:]:
+                    depsInfini = []
+                    i, j = d + x, g + y
+                    k = 1
+                    while 0 <= i < n and 0 <= j < n and k < nCasesMax:
+                        depsInfini.append((p, i, j))
+                        i += x
+                        j += y
 
-                    if i < n <= j:
-                        p, i, j = nouveau_terrain(p, 1), nv_case(j), i
-                        x, y = -y, x
-                    elif j < n <= i:
-                        p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
-                        x, y = y, -x
-                    k += 1
-        elif typeDep == ROCK:
-            for x, y in deplacements:
-                depsPossibles.append((ROCK, (p, d+x, g+y)))
-        else:
-            raise ValueError("Type inconnu.")
+                        if i < n <= j:
+                            p, i, j = nouveau_terrain(p, 1), nv_case(j), i
+                            x, y = -y, x
+                        elif j < n <= i:
+                            p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
+                            x, y = y, -x
+                        k += 1
+            elif typeDep == ROCK:
+                for x, y in deplacements:
+                    depsPossibles.append((ROCK, (p, d + x, g + y)))
+            else:
+                raise ValueError("Type inconnu.")
+
+    return traite(déplacementsSansEnnemi), traite(déplacementsAvecEnnemi)
 
 
 def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
@@ -231,4 +253,3 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 
 if __name__ == '__main__':
     print(test_infini(2, 0, 0, 0, 1))
-    print(isinstance(Pion(2, 2), Piece))

@@ -1,5 +1,6 @@
 from Pieces import *
 
+
 class Joueur:
     """ Classe répresentant un joueur. Un joueur possède un nom, une couleur et ses pions. """
     def __init__(self, nomJoueur, terrainDOrigine, couleur):
