@@ -14,17 +14,19 @@ class Piece:
     """ Définit la classe piece, qui définira le comportement général de chaque
     pieces (pions, tours, dame, ...)
     Nom € { pion, dame, tour, ... } """
-    def __init__(self, nom, joueur):
+    def __init__(self, nom, joueur, TerrainOrigine, TerrainActuel):
         self.nom = nom
         self.joueur = joueur
         self.emplacementInitial = True
+        self.TerrainOrigine = TerrainOrignie
+        self.TerrainActuel = TerrainActuel
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
     def __init__(self, joueur):
         super().__init__("Pion", joueur)
 
-    def deplacements_possibles(self):
+    def deplacements_possibles(self, TerrainOrigine, TerrainActuel):
         """ Envois une constante : False,True,Rock
         devant qui dit si le déplacement est infini ou
         fini, le tableau des déplacements fini (vecteur des déplacements
@@ -32,15 +34,32 @@ class Pion(Piece):
         Separe le cas où il y a une piece ennemie et où il n'y a rien.
         Avec à la fin le max des déplacements possibles si déplacement infini"""
 
-        tabAvecEnnemis = FINI , [ GD(1,1), GD(-1,1), GD(1,-1) ]
+        DifferenceTerrain = (abs(TerrainOrigine-TerrainActuel)) % 3
+
+        if DifferenceTerrain == 0:
+            if self.emplacementInitial:
+                tabSansEnnemis = INFINI , [ GD(1,0), GD(0,1) ], 2
+
+            else:
+                tabSansEnnemis = FINI , [ GD(1,0), GD(0,1) ]
+
+            tabAvecEnnemis = FINI , [ GD(1,1), GD(-1,1), GD(1,-1) ]
+
+
+        elif DifferenceTerrain == 1:
+            tabSansEnnemis = FINI , [ GD(0,-1) ]
+
+            tabAvecEnnemis = FINI , [ GD(-1,-1), GD(1,-1) ]
+
+
+        else :
+            tabSansEnnemis =  FINI , [ GD(-1,0) ]
+
+            tabAvecEnnemis = FINI , [ GD(-1,-1), GD(-1,1) ]
+
+
         """ La régle de la prise en passant n'est pas présente dans cette
         version """
-
-        if self.emplacementInitial:
-            tabSansEnnemis = INFINI , [ GD(1,0), GD(0,1) ], 2
-
-        else:
-            tabSansEnnemis = FINI , [ GD(1,0), GD(0,1) ]
 
         return (tabSansEnnemis, tabAvecEnnemis)
 
