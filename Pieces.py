@@ -14,12 +14,12 @@ class Piece:
     """ Définit la classe piece, qui définira le comportement général de chaque
     pieces (pions, tours, dame, ...)
     Nom € { pion, dame, tour, ... } """
-    def __init__(self, nom, joueur, TerrainOrigine, TerrainActuel):
+    def __init__(self, nom, joueur, TerrainOrigine):
         self.nom = nom
         self.joueur = joueur
         self.emplacementInitial = True
         self.TerrainOrigine = TerrainOrignie
-        self.TerrainActuel = TerrainActuel
+        self.TerrainActuel = TerrainOrignie
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
