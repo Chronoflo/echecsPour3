@@ -14,19 +14,19 @@ class Piece:
     """ Définit la classe piece, qui définira le comportement général de chaque
     pieces (pions, tours, dame, ...)
     Nom € { pion, dame, tour, ... } """
-    def __init__(self, nom, joueur, TerrainOrigine):
+    def __init__(self, nom, joueur, terrainOrigine):
         self.nom = nom
         self.joueur = joueur
         self.emplacementInitial = True
-        self.TerrainOrigine = TerrainOrignie
-        self.TerrainActuel = TerrainOrignie
+        self.terrainOrigine = terrainOrigine
+        self.terrainActuel = terrainOrigine
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
-    def __init__(self, joueur):
-        super().__init__("Pion", joueur)
+    def __init__(self, joueur, terrainOrigine):
+        super().__init__("Pion", joueur, terrainOrigine)
 
-    def deplacements_possibles(self, TerrainOrigine, TerrainActuel):
+    def deplacements_possibles(self):
         """ Envois une constante : False,True,Rock
         devant qui dit si le déplacement est infini ou
         fini, le tableau des déplacements fini (vecteur des déplacements
@@ -34,7 +34,7 @@ class Pion(Piece):
         Separe le cas où il y a une piece ennemie et où il n'y a rien.
         Avec à la fin le max des déplacements possibles si déplacement infini"""
 
-        DifferenceTerrain = (abs(TerrainOrigine-TerrainActuel)) % 3
+        DifferenceTerrain = (abs(self.terrainOrigine - self.terrainActuel)) % 3
 
         if DifferenceTerrain == 0:
             if self.emplacementInitial:
@@ -65,8 +65,8 @@ class Pion(Piece):
 
 class Roi(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
-    def __init__(self, joueur):
-        super().__init__("Roi", joueur)
+    def __init__(self, joueur, terrainOrigine):
+        super().__init__("Roi", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Roi
@@ -82,8 +82,8 @@ class Roi(Piece):
 
 class Cavalier(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
-    def __init__(self, joueur):
-        super().__init__("Cavalier", joueur)
+    def __init__(self, joueur, terrainOrigine):
+        super().__init__("Cavalier", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Cavalier """
@@ -95,8 +95,8 @@ class Cavalier(Piece):
 
 class Chevre(Piece):
     """ Definit la Chevre, deplacements autorisés etc... (nouvelle piece) """
-    def __init__(self, joueur):
-        super().__init__("Chevre", joueur)
+    def __init__(self, joueur, terrainOrigine):
+        super().__init__("Chevre", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Chevre """
@@ -108,8 +108,8 @@ class Chevre(Piece):
 
 class Tour(Piece):
     """ Definit la Tour, deplacements autorisés etc... """
-    def __init__(self, joueur):
-        super().__init__("Chevre", joueur)
+    def __init__(self, joueur, terrainOrigine):
+        super().__init__("Chevre", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
@@ -120,8 +120,8 @@ class Tour(Piece):
 
 class Fou(Piece):
     """ Definit le Fou, deplacements autorisés etc... """
-    def __init__(self, joueur):
-        super().__init__("Fou", joueur)
+    def __init__(self, joueur, terrainOrigine):
+        super().__init__("Fou", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Fou"""
@@ -132,8 +132,8 @@ class Fou(Piece):
 
 class Reine(Piece):
     """ Definit la Reine, deplacements autorisés etc... """
-    def __init__(self, joueur):
-        super().__init__("Reine", joueur)
+    def __init__(self, joueur, terrainOrigine):
+        super().__init__("Reine", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Reine"""
@@ -229,4 +229,6 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
     return depsInfini
 
 
-print(test_infini(2, 0, 0, 0, 1))
+if __name__ == '__main__':
+    print(test_infini(2, 0, 0, 0, 1))
+    print(Pion(2) is Piece)

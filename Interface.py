@@ -1,22 +1,13 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
-#
-# Author:      Sarah
-#
-# Created:     31/05/2019
-# Copyright:   (c) Sarah 2019
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
-
-def main():
-    pass
-
-if __name__ == '__main__':
-    main()
-
 import pygame
 from pygame.locals import *
+
+
+def dessine_composants(plateau):
+    for p in range(3):
+        for d in range(6):
+            for g in range(6):
+                if plateau[p][d][g] is
+
 
 pygame.init()
 
