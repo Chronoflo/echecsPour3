@@ -205,9 +205,11 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
             if typeDep == FINI:
                 depsFini = []
                 for vecteur in vecteurs:
+                    # Application du vecteur
                     x, y = vecteur
                     i, j = d + x, g + y
 
+                    # Corrrection des coordonnées
                     if 0 <= i < 2 * n and 0 <= j < 2 * n:  # pas de sortie du plateau
                         if d == g and y == x:  # pièce sur la diagonale de la mort
                             if i < n:
