@@ -208,7 +208,7 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
                     x, y = vecteur
                     i, j = d + x, g + y
 
-                    if 0 <= i < 2 * n and 0 <= i < 2 * n:  # pas de sortie du plateau
+                    if 0 <= i < 2 * n and 0 <= j < 2 * n:  # pas de sortie du plateau
                         if d == g and y == x:  # pièce sur la diagonale de la mort
                             if i < n:
                                 depsFini.append((p, i, j))
