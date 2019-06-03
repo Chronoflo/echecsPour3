@@ -1,4 +1,4 @@
-from Pieces import traduction_en_coordonnées, Piece
+from Pieces import traduction_en_couples_déplacements, Piece
 
 class Plateau(list):
     def __init__(self, listeJoueurs):
@@ -6,7 +6,7 @@ class Plateau(list):
 
     def sur_sélection_pièce(self, coordonnées):
         p, d, g = coordonnées
-        depAVerifier, depAVerifierEnnemis = traduction_en_coordonnées(
+        depAVerifier, depAVerifierEnnemis = traduction_en_couples_déplacements(
             *self[p][d][g].deplacementsPossibles(), coordonnées)
         depVerifies = []
         for dep in depAVerifier:
