@@ -23,9 +23,6 @@ class Piece:
     def __init__(self, nom, joueur, terrainOrigine):
         self.nom = nom
         self.joueur = joueur
-        # self.cheminImage = "Image/Pieces/" + joueur.couleur.nom + "_" + nom + ".jpg"
-        self.cheminImage = "Image/Pieces/" + joueur.couleur.nom + "_Cavalier.png"
-        self.image = None
 
         self.emplacementInitial = True
         self.terrainOrigine = terrainOrigine
@@ -36,7 +33,7 @@ class Piece:
     @classmethod
     def charge_images(cls):
         for piece in cls.piècesCréées:
-            piece.image = pygame.image.load(piece.cheminImage).convert_alpha()
+            pass
 
 
 class Pion(Piece):
