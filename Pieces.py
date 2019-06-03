@@ -23,6 +23,8 @@ class Piece:
     def __init__(self, nom, joueur, terrainOrigine):
         self.nom = nom
         self.joueur = joueur
+        self.cheminImage = "Image/Pieces/" + joueur.couleur.nom + "_" + "Cavalier.png"
+        self.image = None
 
         self.emplacementInitial = True
         self.terrainOrigine = terrainOrigine
@@ -32,7 +34,8 @@ class Piece:
 
     @classmethod
     def charge_images(cls):
-        pass
+        for piece in cls.piècesCréées:
+            piece.image = pygame.image.load(piece.cheminImage).convert_alpha()
 
 
 class Pion(Piece):
@@ -61,14 +64,14 @@ class Pion(Piece):
             tabAvecEnnemis = [(FINI, [(1, 1), (-1, 1), (1, -1)])]
 
         elif differenceTerrain == 1:
-            tabSansEnnemis = [(FINI, [(0, -1)])]
-
-            tabAvecEnnemis = [(FINI, [(-1, -1), (1, -1)])]
-
-        else:
             tabSansEnnemis = [(FINI, [(-1, 0)])]
 
             tabAvecEnnemis = [(FINI, [(-1, -1), (-1, 1)])]
+
+        else:
+            tabSansEnnemis = [(FINI, [(0, -1)])]
+
+            tabAvecEnnemis = [(FINI, [(-1, -1), (1, -1)])]
 
         """ La régle de la prise en passant n'est pas présente dans cette
         version """
@@ -268,9 +271,10 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
                         depsPossibles.append((INFINI, depsInfini))
 
             elif typeDep == ROCK:
+                # Ici le code est simple car un Rock ne permet pas de changer de terrain
                 depsRock = []
                 for x, y in vecteurs:
-                    depsRock.append((p, d + x, g + y))  # Ici le code est simple car un Rock ne permet pas de changer de terrain
+                    depsRock.append((p, d + x, g + y))
 
                 if depsRock:
                     depsPossibles.append((ROCK, depsRock))
@@ -312,4 +316,4 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 
 if __name__ == '__main__':
     # print(test_infini(2, 0, 0, 0, 1))
-    print(traduction_en_couples_déplacements(*Tour.deplacements_possibles(2), (0, 0, 0), 6))
+    print(traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 0), 6))
