@@ -3,7 +3,6 @@ from Pieces import Piece
 from joueur import Joueur, ListesDeJoueur
 import pygame
 from pygame.locals import *
-from numpy import exp, pi, sqrt
 from Interface import ROUGE, VERT, BLEU, dessine_composants
 
 
@@ -19,7 +18,7 @@ if __name__ == '__main__':
     Piece.charge_images()
 
     fenetre.blit(fond, (0, 0))
-    dessine_composants(fenetre, plateau)
+    dessine_composants()
     pygame.display.flip()
     continuer = 1
 

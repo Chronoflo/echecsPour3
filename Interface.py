@@ -9,6 +9,10 @@ class SuperColor(pygame.Color):
         self.nom = nom
 
 
+def dessine_composants():
+    pass
+
+
 ROUGE = SuperColor("rouge", (255,   0,   0))
 VERT = SuperColor("vert", (0, 255,   0))
 BLEU = SuperColor("bleu", (0,   0, 255))
