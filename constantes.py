@@ -6,3 +6,5 @@ J3 = 2
 FINI = 0
 INFINI = 1
 ROCK = 2
+
+SANSLIMITE = -1

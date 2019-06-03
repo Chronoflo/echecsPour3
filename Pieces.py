@@ -5,19 +5,23 @@ import pygame.image
 
 
 class GD(tuple):
-    def __init__(self, g, d):
-        super().__init__((g, d))
+    def __new__(self, x, y):
+        return tuple.__new__(GD, (x, y))
 
 
 class DG(tuple):
-    def __init__(self, g, d):
-        super().__init__((g, d))
+    def __init__(self, *args):
+        super().__init__()
 
 
 class Piece:
     """ Définit la classe piece, qui définira le comportement général de chaque
     pieces (pions, tours, dame, ...)
-    Nom € { pion, dame, tour, ... } """
+    Nom € { pion, dame, tour, ... }
+    Définition des déplacements :
+        - trois types de déplacements : FINI, INFINI, ROCK
+        - la première coordonnées des déplacements infinis contient le nombre de cases maximal
+    """
     piècesCréées = []
 
     def __init__(self, nom, joueur, terrainOrigine):
@@ -53,24 +57,24 @@ class Pion(Piece):
 
         if DifferenceTerrain == 0:
             if self.emplacementInitial:
-                tabSansEnnemis = INFINI , [ GD(1,0), GD(0,1) ], 2
+                tabSansEnnemis = [(INFINI , [2, GD(1,0), GD(0,1) ])]
 
             else:
-                tabSansEnnemis = FINI , [ GD(1,0), GD(0,1) ]
+                tabSansEnnemis = [(FINI , [ GD(1,0), GD(0,1) ])]
 
-            tabAvecEnnemis = FINI , [ GD(1,1), GD(-1,1), GD(1,-1) ]
+            tabAvecEnnemis = [(FINI , [ GD(1,1), GD(-1,1), GD(1,-1) ])]
 
 
         elif DifferenceTerrain == 1:
-            tabSansEnnemis = FINI , [ GD(0,-1) ]
+            tabSansEnnemis = [(FINI , [ GD(0,-1) ])]
 
-            tabAvecEnnemis = FINI , [ GD(-1,-1), GD(1,-1) ]
+            tabAvecEnnemis = [(FINI , [ GD(-1,-1), GD(1,-1) ])]
 
 
         else :
-            tabSansEnnemis =  FINI , [ GD(-1,0) ]
+            tabSansEnnemis =  [(FINI , [ GD(-1,0) ])]
 
-            tabAvecEnnemis = FINI , [ GD(-1,-1), GD(-1,1) ]
+            tabAvecEnnemis = [(FINI , [ GD(-1,-1), GD(-1,1) ])]
 
 
         """ La régle de la prise en passant n'est pas présente dans cette
@@ -87,11 +91,11 @@ class Roi(Piece):
         """ Envois le tableau des déplacement possible du Roi
         Avec la possiblilité de rock"""
 
-        tabSansEnnemis = (FINI, [GD(0,1),GD(1,0),GD(-1,0),GD(0,-1), GD(1,1),GD(1,-1),
-                            GD(-1,1),GD(-1,-1)] ), (ROCK, [GD(2,0), GD(1,0)])
+        tabSansEnnemis = [(FINI, [GD(0,1),GD(1,0),GD(-1,0),GD(0,-1), GD(1,1),GD(1,-1),
+                            GD(-1,1),GD(-1,-1)] ), (ROCK, [GD(2,0), GD(1,0)])]
 
-        tabAvecEnnemis = FINI , [GD(0,1), GD(1,0), GD(-1,0), GD(0,-1),
-                                GD(1,1), GD(1,-1), GD(-1,1), GD(-1,-1)]
+        tabAvecEnnemis = [(FINI , [GD(0,1), GD(1,0), GD(-1,0), GD(0,-1),
+                                GD(1,1), GD(1,-1), GD(-1,1), GD(-1,-1)])]
 
         return (tabSansEnnemis, tabAvecEnnemis)
 
@@ -103,8 +107,8 @@ class Cavalier(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Cavalier """
 
-        tab = FINI, [GD(2,1), GD(1,2), GD(-2,1), GD(-1,2),
-                     GD(2,-1), GD(1,-2), GD(-2,-1), GD(-1,-2)]
+        tab = [(FINI, [GD(2,1), GD(1,2), GD(-2,1), GD(-1,2),
+                     GD(2,-1), GD(1,-2), GD(-2,-1), GD(-1,-2)])]
 
         return (tab, tab)
 
@@ -116,8 +120,8 @@ class Chevre(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Chevre """
 
-        tab = FINI , [GD(2,0), GD(0,2), GD(-2,0), GD(0,-2),
-                     GD(2,2), GD(-2,-2), GD(-2,2), GD(2,-2)]
+        tab = [(FINI , [GD(2,0), GD(0,2), GD(-2,0), GD(0,-2),
+                     GD(2,2), GD(-2,-2), GD(-2,2), GD(2,-2)])]
 
         return (tab, tab)
 
@@ -129,9 +133,9 @@ class Tour(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
 
-        tab = INFINI , [GD(1,0), GD(0,1), GD(-1,0), GD(0,-1)]
+        tab = [(INFINI , [SANSLIMITE, GD(1, 0), GD(0, 1), GD(-1, 0), GD(0, -1)])]
 
-        return (tab, tab)
+        return tab, tab
 
 class Fou(Piece):
     """ Definit le Fou, deplacements autorisés etc... """
@@ -141,7 +145,7 @@ class Fou(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Fou"""
 
-        tab = INFINI , [GD(1,1), GD(1,-1), GD(-1,1), GD(-1,-1)]
+        tab = [(INFINI , [SANSLIMITE, GD(1, 1), GD(1, -1), GD(-1, 1), GD(-1, -1)])]
 
         return (tab, tab)
 
@@ -153,8 +157,8 @@ class Reine(Piece):
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Reine"""
 
-        tab = INFINI , [GD(1,0), GD(0,1), GD(-1,0), GD(0,-1), GD(1,1), GD(1,-1),
-                        GD(-1,1), GD(-1,-1)]
+        tab = [(INFINI , [SANSLIMITE, GD(1, 0), GD(0, 1), GD(-1, 0), GD(0, -1), GD(1, 1), GD(1, -1),
+                          GD(-1,1), GD(-1,-1)])]
 
         return (tab, tab)
 
@@ -179,23 +183,31 @@ def traduction_en_coordonnées(déplacementsSansEnnemi, déplacementsAvecEnnemi,
                     i, j = d + x, g + y
                     if i >= 0 and j >= 0:
                         if d == g and y == x:
-                            # Cas où le pion est sur la diagonale de la mort
+                            # Cas où la pièce est sur la diagonale de la mort
                             if i < n:
                                 depsPossibles.append((FINI, (p, i, j)))
                         elif i < n and j < n:
+                            # Cas où le déplacement ne dépasse pas
                             depsPossibles.append((FINI, (p, i, j)))
                         elif i < n:
+                            # Cas où le déplacement dépasse du côté gauche du terrain
                             depsPossibles.append((FINI, (nouveau_terrain(p, 1), nv_case(j), i)))
                         elif g + y < n:
+                            # Cas où le déplacement dépasse du côté droit
                             depsPossibles.append((FINI, (nouveau_terrain(p, -1), j, nv_case(i))))
                         else:
+                            # Cas où le déplacement dépasse des deux côtés
                             if vecteur is GD:
                                 depsPossibles.append((FINI, (nouveau_terrain(p, signe(x * y)),
                                                              nv_case(i), nv_case(j))))
                             else:
                                 pass  # TODO
             elif typeDep == INFINI:
-                nCasesMax = deplacements[0]
+                if deplacements[0] == SANSLIMITE:
+                    nCasesMax = 2 * n - 1
+                else:
+                    nCasesMax = deplacements[0]
+
                 for x, y in deplacements[1:]:
                     depsInfini = []
                     i, j = d + x, g + y
@@ -212,11 +224,15 @@ def traduction_en_coordonnées(déplacementsSansEnnemi, déplacementsAvecEnnemi,
                             p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
                             x, y = y, -x
                         k += 1
+                    if depsInfini:
+                        depsPossibles.append((INFINI, depsInfini))
             elif typeDep == ROCK:
                 for x, y in deplacements:
                     depsPossibles.append((ROCK, (p, d + x, g + y)))
             else:
                 raise ValueError("Type inconnu.")
+
+        return depsPossibles
 
     return traite(déplacementsSansEnnemi), traite(déplacementsAvecEnnemi)
 
@@ -249,4 +265,5 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 
 
 if __name__ == '__main__':
-    print(test_infini(2, 0, 0, 0, 1))
+    # print(test_infini(2, 0, 0, 0, 1))
+    print(traduction_en_coordonnées(*Tour.deplacements_possibles(2), (0, 0,0), 6))
