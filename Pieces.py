@@ -190,7 +190,11 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
         return 2 * n - u - 1
 
     def traite(couplesVecteurs):
-        """ Coeur de la procédure."""
+        """
+        Coeur de la procédure. Définition : la diagonale de la mort du terrain t correspond à
+        la diagonale {(t, i, i), i € R}. Elle a pour propriété particulière de ne pas permettre
+        un déplacement de vecteur (1, 1) en case (t, 5, 5).
+        """
         p, d, g = pos
         depsPossibles = []  # contiendra le résultat final de traite
 
