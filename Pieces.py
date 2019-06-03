@@ -204,8 +204,9 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
                 for vecteur in vecteurs:
                     x, y = vecteur
                     i, j = d + x, g + y
-                    if i >= 0 and j >= 0:
-                        if d == g and y == x:  # cas où la pièce est sur la diagonale de la mort
+
+                    if 0 <= i < 2 * n and 0 <= i < 2 * n:  # pas de sortie du plateau
+                        if d == g and y == x:  # pièce sur la diagonale de la mort
                             if i < n:
                                 depsFini.append((p, i, j))
 
@@ -221,7 +222,7 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
                         else:  # double dépacement
                             # en cas de double dépacement on peut avoir besoin du cas SP pour gérer les situations
                             # au centre
-                            if not isinstance(vecteur, SP):  # cas vecteur normal
+                            if not isinstance(vecteur, SP):  # vecteur de type quelconque
                                 depsFini.append((nouveau_terrain(p, signe(x * y)), nv_case(i), nv_case(j)))
                             else:
                                 if (d, g) == (5, 5):  # les vecteurs SP ne s'appliquent qu'au centre du plateau
