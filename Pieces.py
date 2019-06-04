@@ -325,33 +325,32 @@ def dep_effectifs_deplacements(déplacementsSansEnnemi, déplacementsAvecEnnemi,
         p, d, g = pos
         depsPossibles = []  # contiendra le résultat final de traite
 
-        for typeDep, vecteurs in couplesVecteurs:
+        for typeDep, cases in couplesVecteurs:
             if typeDep == FINI:
                 depsFini = []
-                for vecteur in vecteurs:
-                    x, y = vecteur
-                    i, j = d + x, g + y
+                for case in cases:
 
-                    if isinstance(plateau[p][i][j],Piece):
-                        None
-                    else :
-                        depsFini.append((p,i,j))
+                    if not(isinstance(case,Piece)):
+                        #test si la case est libre
+                        depsFini.append(case)
 
                 if depsFini:
                     depsPossibles.append((FINI, depsFini))
 
             elif typeDep == INFINI:
                 depsInfini = []
-                i = 1
+                i = 0
                 bloqué = False
 
-                while not(bloqué) and i<len(vecteurs):
-                    x, y = vecteurs[1][i]
-                    i, j = d + x, g + y
-                    if isinstance(plateau[p][i][j],Piece):
+                while not(bloqué) and i<len(cases):
+                    case = cases[i]
+                    p,x,y = case
+                    if isinstance(plateau[p][x][y],Piece):
+                        #test si la case est libre
                         bloqué = True
                     else :
-                        depsInfini.append((p,i,j))
+                        depsInfini.append(case)
+                    i+=1
 
                 if depsInfini:
                     depsPossibles.append((INFINI, depsInfini))
@@ -359,11 +358,13 @@ def dep_effectifs_deplacements(déplacementsSansEnnemi, déplacementsAvecEnnemi,
             elif typeDep == ROCK:
                 depsRock = []
                 if piece.emplacementInitial :
-                    if tour1.emplacementInitial and not(isinstance(plateau[p][d+1][g],Piece)) : # a changer pour choisir la tour 1 du bon joueur
-                        depsRock.append((p,2,0))
+                    if tour1.emplacementInitial and not(isinstance(plateau[p][d+1][g],Piece) and nom == plateau[p][d+2][g].Joueur.nomJoueur) :
+                        #test si la case est libre et si les bonnes pieces sont au bons endroit sans avoir bougé
+                        depsRock.append(cases[0])
 
-                    if tour2.emplacementInitial : # a changer pour choisir la tour 2 du bon joueur
-                        depsRock.append((p,0,1))
+                    if tour2.emplacementInitial and nom == plateau[p][d][g+1].Joueur.nomJoueur:
+                        #test si la case est libre et si les bonnes pieces sont au bons endroit sans avoir bougé
+                        depsRock.append(cases[1])
                 if depsRock:
                     depsPossibles.append((ROCK, depsRock))
             else :
@@ -376,37 +377,37 @@ def dep_effectifs_deplacements(déplacementsSansEnnemi, déplacementsAvecEnnemi,
         p, d, g = pos
         depsPossibles = []  # contiendra le résultat final de traite
 
-        for typeDep, vecteurs in couplesVecteurs:
+        for typeDep, cases in couplesVecteurs:
             if typeDep == FINI:
                 depsFini = []
-                for vecteur in vecteurs:
-                    x, y = vecteur
-                    i, j = d + x, g + y
+                for case in cases:
+                    p,x,y = case
 
-                    if isinstance(plateau[p][i][j],Piece) and (nom != plateau[p][i][j].Joueur.nomJoueur):
-                        depsFini.append((p,i,j))
+                    if isinstance(plateau[p][x][y],Piece) and (nom != plateau[p][x][y].Joueur.nomJoueur):
+                        depsFini.append(case)
 
                 if depsFini:
                     depsPossibles.append((FINI, depsFini))
 
             elif typeDep == INFINI:
                 depsInfini = []
-                k=1
+                i=0
                 bloqué = False
-                while not(bloqué) and k<len(vecteurs):
-                    x, y = vecteurs[1][k]
-                    i, j = d + x, g + y
+                while not(bloqué) and i<len(cases):
+                    case = cases[i]
+                    p,x,y = case
 
-                    if isinstance(plateau[p][i][j],Piece):
+                    if isinstance(plateau[p][x][y],Piece):
                         bloqué = True
-                        if nom != plateau[p][i][j].Joueur.nomJoueur:
-                            depsInfini.append((p,i,j))
+                        if nom != plateau[p][x][y].Joueur.nomJoueur:
+                            depsInfini.append(case)
 
                 if depsInfini:
                     depsPossibles.append((INFINI, depsInfini))
 
             else :
                 raise ValueError("Type de déplacement inconnu.")
+                #Un déplacement de typer ROCK ne peut pas pendre de piece
 
         return depsPossibles
 
