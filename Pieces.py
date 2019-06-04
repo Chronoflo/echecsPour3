@@ -233,7 +233,7 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
                                 if (d, g) == (5, 5):  # les vecteurs SP ne s'appliquent qu'au centre du plateau
                                     depsFini.append((nouveau_terrain(p, -signe(x * y)), nv_case(j), nv_case(i)))
 
-                if depsFini:  # ajout à depsPossibles seulement si depsFini est non vide
+                if depsFini :  # ajout à depsPossibles seulement si depsFini est non vide
                     depsPossibles.append((FINI, depsFini))
 
             elif typeDep == INFINI:
@@ -315,6 +315,102 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
         k += 1
     return depsInfini
 
+
+def dep_effectifs_deplacements(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plateau):
+    nom = piece.Joueur.nomJoueur
+    """effectue les tests pour verifier si il y a ou non des ennemis, pour le
+    bon déplacement"""
+    def traite_sans_ennemis(couplesVecteurs):
+        # traite cas sans ennemies
+        p, d, g = pos
+        depsPossibles = []  # contiendra le résultat final de traite
+
+        for typeDep, vecteurs in couplesVecteurs:
+            if typeDep == FINI:
+                depsFini = []
+                for vecteur in vecteurs:
+                    x, y = vecteur
+                    i, j = d + x, g + y
+
+                    if isinstance(plateau[p][i][j],Piece):
+                        None
+                    else :
+                        depsFini.append((p,i,j))
+
+                if depsFini:
+                    depsPossibles.append((FINI, depsFini))
+
+            elif typeDep == INFINI:
+                depsInfini = []
+                i = 1
+                bloqué = False
+
+                while not(bloqué) and i<len(vecteurs):
+                    x, y = vecteurs[1][i]
+                    i, j = d + x, g + y
+                    if isinstance(plateau[p][i][j],Piece):
+                        bloqué = True
+                    else :
+                        depsInfini.append((p,i,j))
+
+                if depsInfini:
+                    depsPossibles.append((INFINI, depsInfini))
+
+            elif typeDep == ROCK:
+                depsRock = []
+                if piece.emplacementInitial :
+                    if tour1.emplacementInitial and not(isinstance(plateau[p][d+1][g],Piece)) : # a changer pour choisir la tour 1 du bon joueur
+                        depsRock.append((p,2,0))
+
+                    if tour2.emplacementInitial : # a changer pour choisir la tour 2 du bon joueur
+                        depsRock.append((p,0,1))
+                if depsRock:
+                    depsPossibles.append((ROCK, depsRock))
+            else :
+                raise ValueError("Type de déplacement inconnu.")
+
+        return depsPossibles
+
+    def traite_avec_ennemis(couplesVecteurs):
+        # traite cas avec ennemies
+        p, d, g = pos
+        depsPossibles = []  # contiendra le résultat final de traite
+
+        for typeDep, vecteurs in couplesVecteurs:
+            if typeDep == FINI:
+                depsFini = []
+                for vecteur in vecteurs:
+                    x, y = vecteur
+                    i, j = d + x, g + y
+
+                    if isinstance(plateau[p][i][j],Piece) and (nom != plateau[p][i][j].Joueur.nomJoueur):
+                        depsFini.append((p,i,j))
+
+                if depsFini:
+                    depsPossibles.append((FINI, depsFini))
+
+            elif typeDep == INFINI:
+                depsInfini = []
+                k=1
+                bloqué = False
+                while not(bloqué) and k<len(vecteurs):
+                    x, y = vecteurs[1][k]
+                    i, j = d + x, g + y
+
+                    if isinstance(plateau[p][i][j],Piece):
+                        bloqué = True
+                        if nom != plateau[p][i][j].Joueur.nomJoueur:
+                            depsInfini.append((p,i,j))
+
+                if depsInfini:
+                    depsPossibles.append((INFINI, depsInfini))
+
+            else :
+                raise ValueError("Type de déplacement inconnu.")
+
+        return depsPossibles
+
+    return traite_sans_ennemis(déplacementsSansEnnemi), traite_avec_ennemis(déplacementsAvecEnnemi)
 
 if __name__ == '__main__':
     # print(test_infini(2, 0, 0, 0, 1))
