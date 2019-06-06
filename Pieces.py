@@ -2,7 +2,9 @@
 from constantes import *
 from fonctions import signe
 import pygame.image
-
+import plateau as plat
+from joueur import Joueur, ListesDeJoueur
+from Interface import ROUGE, VERT, BLEU
 
 class SP(tuple):
     """ Classe servant à régler les cas particuliers se déroulant au centre du plateau. """
@@ -52,7 +54,7 @@ class Pion(Piece):
         Separe le cas où il y a une piece ennemie et où il n'y a rien.
         Avec à la fin le max des déplacements possibles si déplacement infini"""
 
-        differenceTerrain = (abs(self.terrainOrigine - self.terrainActuel)) % 3
+        differenceTerrain = (abs( self.terrainOrigine - self.terrainActuel)) % 3
 
         if differenceTerrain == 0:
             if self.emplacementInitial:
@@ -135,7 +137,7 @@ class Tour(Piece):
     """ Definit la Tour, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Chevre", joueur, terrainOrigine)
+        super().__init__("Tour", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
@@ -288,35 +290,7 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
     return traite(déplacementsSansEnnemi), traite(déplacementsAvecEnnemi)
 
 
-def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
-    """ Fonction de test. """
-
-    def nouveau_terrain(terrainActuel, modification):
-        return (terrainActuel + modification) % 3
-
-    def nv_case(u):
-        return 2 * n - (u + 1)
-
-    depsInfini = []
-    i, j = d + x, g + y
-    k = 1
-    while 0 <= i < n and 0 <= j < n and k < nCasesMax:
-        depsInfini.append((p, i, j))
-        i += x
-        j += y
-
-        if i < n <= j:
-            p, i, j = nouveau_terrain(p, 1), nv_case(j), i
-            x, y = -y, x
-        elif j < n <= i:
-            p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
-            x, y = y, -x
-
-        k += 1
-    return depsInfini
-
-
-def dep_effectifs_deplacements(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plateau):
+def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plateau):
     nom = piece.Joueur.nomJoueur
     """effectue les tests pour verifier si il y a ou non des ennemis, pour le
     bon déplacement"""
@@ -413,6 +387,36 @@ def dep_effectifs_deplacements(déplacementsSansEnnemi, déplacementsAvecEnnemi,
 
     return traite_sans_ennemis(déplacementsSansEnnemi), traite_avec_ennemis(déplacementsAvecEnnemi)
 
+def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
+    """ Fonction de test. """
+
+    def nouveau_terrain(terrainActuel, modification):
+        return (terrainActuel + modification) % 3
+
+    def nv_case(u):
+        return 2 * n - (u + 1)
+
+    depsInfini = []
+    i, j = d + x, g + y
+    k = 1
+    while 0 <= i < n and 0 <= j < n and k < nCasesMax:
+        depsInfini.append((p, i, j))
+        i += x
+        j += y
+
+        if i < n <= j:
+            p, i, j = nouveau_terrain(p, 1), nv_case(j), i
+            x, y = -y, x
+        elif j < n <= i:
+            p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
+            x, y = y, -x
+
+        k += 1
+    return depsInfini
+
 if __name__ == '__main__':
     # print(test_infini(2, 0, 0, 0, 1))
-    print(traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 0), 6))
+    depssE, depacE = traduction_en_couples_déplacements(*Cavalier.deplacements_possibles(None), (0, 5, 5), 6)
+    listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
+                                  Joueur("Florian", 2, ROUGE))
+    dep_effectifs(depssE, depacE, Cavalier, plat.initialisation_plateau(listJoueur))
