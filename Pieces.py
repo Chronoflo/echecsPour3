@@ -4,6 +4,7 @@ from fonctions import signe
 import pygame.image
 
 
+
 class SP(tuple):
     """ Classe servant à régler les cas particuliers se déroulant au centre du plateau. """
     def __new__(cls, *args, **kwargs):

@@ -1,0 +1,53 @@
+#:kivy 1.11.0
+#:import Factory kivy.factory.Factory
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+
+<QuitConfirmationPopup@Popup>:
+    size_hint: 0.4, 0.2
+    title: "Steuplaît reste... "
+    BoxLayout:
+        Button:
+            text: "Bon, d'accord..."
+            on_release: root.dismiss()
+        Button:
+            text: "NAN !!"
+            on_release: quit()
+
+<SuperSettings>:
+    size_hint: 0.8, 0.6
+
+<MultiplayerScreen@Screen>:
+    name: 'multiplayer'
+
+    Button:
+        text: 'RETOUR'
+        on_release: app.root.current = 'main'
+
+<MyScreenManager>:
+    transition: FadeTransition()
+    MainScreen:
+    MultiplayerScreen:
+
+
+<MainScreen>:
+    name: 'main'
+
+    BoxLayout:
+        pos: root.width * 0.5 - self.width / 2, root.height * 0.5 - self.height / 2
+        size_hint: 0.4, 0.6
+        orientation: 'vertical'
+
+        Button:
+            text: "UN JOUEUR"
+            on_release: app.lance_partie(1)
+        Button:
+            text: "MULTIJOUEUR"
+            on_release: app.root.current = 'multiplayer'
+        Button:
+            text: "PARAMÈTRES"
+            on_release: app.open_settings()
+        Button:
+            text: "QUITTER"
+            on_release: Factory.QuitConfirmationPopup().open()
+

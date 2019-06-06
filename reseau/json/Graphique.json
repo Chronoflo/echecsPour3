@@ -1,0 +1,13 @@
+[
+    {
+        "type": "title",
+        "title": "Écran"
+    },
+    {
+        "type": "bool",
+        "title": "Plein écran",
+        "desc": "Met la fenêtre en fenêtrée ou en plein écran",
+        "section": "graphics",
+        "key": "fullscreen"
+    }
+]

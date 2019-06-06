@@ -10,7 +10,8 @@ if __name__ == '__main__':
     listeJoueurs = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
                                   Joueur("Florian", 2, ROUGE))
     plateau = Plateau(listeJoueurs)
-
+    print(isinstance(plateau[0][0][0], Piece))
+    print(plateau[0][0][0])
     pygame.init()
 
     fenetre = pygame.display.set_mode((800, 600))
