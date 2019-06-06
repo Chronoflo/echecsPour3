@@ -1,4 +1,4 @@
-from Pieces import *
+import Pieces
 
 
 class Joueur:
@@ -8,22 +8,22 @@ class Joueur:
         self.pseudo = nomJoueur
         self.couleur = couleur
 
-        self.roi = Roi(self, terrainDOrigine)
-        self.reine = Reine(self, terrainDOrigine)
-        self.fou1 = Fou(self, terrainDOrigine)
-        self.fou2 = Fou(self, terrainDOrigine)
-        self.tour1 = Tour(self, terrainDOrigine)
-        self.tour2 = Tour(self, terrainDOrigine)
-        self.cavalier1 = Cavalier(self, terrainDOrigine)
-        self.cavalier2 = Cavalier(self, terrainDOrigine)
-        self.pion1 = Pion(self, terrainDOrigine)
-        self.pion2 = Pion(self, terrainDOrigine)
-        self.pion3 = Pion(self, terrainDOrigine)
-        self.pion4 = Pion(self, terrainDOrigine)
-        self.pion5 = Pion(self, terrainDOrigine)
-        self.pion6 = Pion(self, terrainDOrigine)
-        self.pion7 = Pion(self, terrainDOrigine)
-        self.chevre = Chevre(self, terrainDOrigine)
+        self.roi = Pieces.Roi(self, terrainDOrigine)
+        self.reine = Pieces.Reine(self, terrainDOrigine)
+        self.fou1 = Pieces.Fou(self, terrainDOrigine)
+        self.fou2 = Pieces.Fou(self, terrainDOrigine)
+        self.tour1 = Pieces.Tour(self, terrainDOrigine)
+        self.tour2 = Pieces.Tour(self, terrainDOrigine)
+        self.cavalier1 = Pieces.Cavalier(self, terrainDOrigine)
+        self.cavalier2 = Pieces.Cavalier(self, terrainDOrigine)
+        self.pion1 = Pieces.Pion(self, terrainDOrigine)
+        self.pion2 = Pieces.Pion(self, terrainDOrigine)
+        self.pion3 = Pieces.Pion(self, terrainDOrigine)
+        self.pion4 = Pieces.Pion(self, terrainDOrigine)
+        self.pion5 = Pieces.Pion(self, terrainDOrigine)
+        self.pion6 = Pieces.Pion(self, terrainDOrigine)
+        self.pion7 = Pieces.Pion(self, terrainDOrigine)
+        self.chevre = Pieces.Chevre(self, terrainDOrigine)
 
         self.piecesRestantes = [self.roi, self.reine, self.fou1, self.fou2, self.tour1, self.tour2,
                                 self.cavalier1, self.cavalier2, self.pion1, self.pion2, self.pion3,
