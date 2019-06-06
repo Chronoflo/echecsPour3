@@ -1,4 +1,6 @@
-from Pieces import traduction_en_couples_déplacements, Piece
+#from Pieces import traduction_en_couples_déplacements, Piece
+import Pieces
+
 
 class Plateau(list):
     def __init__(self, listeJoueurs):
@@ -6,7 +8,7 @@ class Plateau(list):
 
     def sur_sélection_pièce(self, coordonnées):
         p, d, g = coordonnées
-        depAVerifier, depAVerifierEnnemis = traduction_en_couples_déplacements(
+        depAVerifier, depAVerifierEnnemis = Pieces.traduction_en_couples_déplacements(
             *self[p][d][g].deplacementsPossibles(), coordonnées)
         depVerifies = []
         for dep in depAVerifier:
@@ -15,7 +17,7 @@ class Plateau(list):
     def sur_déplacement_validé(self, coordonnéesPion, coordonnéesCible):
         p1,d1,g1, p2,d2,g2 = *coordonnéesPion, *coordonnéesCible
         if self[p2][d2][g2] is not None:
-            pionEnnemi: Piece = self[p2][d2][g2]
+            pionEnnemi: Pieces.Piece = self[p2][d2][g2]
             pionEnnemi.joueur.piecesRestantes.remove(pionEnnemi)
         self[p1][d1][g1], self[p2][d2][g2] = None, self[p1][d1][g1]
 

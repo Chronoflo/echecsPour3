@@ -2,7 +2,7 @@
 from constantes import *
 from fonctions import signe
 import pygame.image
-import plateau as plat
+import plateau
 from joueur import Joueur, ListesDeJoueur
 from Interface import ROUGE, VERT, BLEU
 
@@ -290,8 +290,8 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
     return traite(déplacementsSansEnnemi), traite(déplacementsAvecEnnemi)
 
 
-def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plateau):
-    nom = piece.Joueur.nomJoueur
+def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, pos, plateau):
+    nom = piece.joueur
     """effectue les tests pour verifier si il y a ou non des ennemis, pour le
     bon déplacement"""
     def traite_sans_ennemis(couplesVecteurs):
@@ -304,7 +304,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                 depsFini = []
                 for case in cases:
 
-                    if not(isinstance(case,Piece)):
+                    if not(isinstance(case, Piece)):
                         #test si la case est libre
                         depsFini.append(case)
 
@@ -375,6 +375,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                         bloqué = True
                         if nom != plateau[p][x][y].Joueur.nomJoueur:
                             depsInfini.append(case)
+                    i+=1
 
                 if depsInfini:
                     depsPossibles.append((INFINI, depsInfini))
@@ -416,7 +417,8 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 
 if __name__ == '__main__':
     # print(test_infini(2, 0, 0, 0, 1))
-    depssE, depacE = traduction_en_couples_déplacements(*Cavalier.deplacements_possibles(None), (0, 5, 5), 6)
+    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 5, 2), 6)
     listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
                                   Joueur("Florian", 2, ROUGE))
-    dep_effectifs(depssE, depacE, Cavalier, plat.initialisation_plateau(listJoueur))
+    Tour.joueur = "Arthur"
+    print(dep_effectifs(depssE, depacE, Tour, (0, 5, 2) , plateau.initialisation_plateau(listJoueur)))
