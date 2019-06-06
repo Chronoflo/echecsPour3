@@ -2,9 +2,6 @@
 from constantes import *
 from fonctions import signe
 import pygame.image
-import plateau
-from joueur import Joueur, ListesDeJoueur
-from Interface import ROUGE, VERT, BLEU
 
 class SP(tuple):
     """ Classe servant à régler les cas particuliers se déroulant au centre du plateau. """
@@ -290,99 +287,99 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
     return traite(déplacementsSansEnnemi), traite(déplacementsAvecEnnemi)
 
 
-def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, pos, plateau):
+def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plateau):
     nom = piece.joueur
     """effectue les tests pour verifier si il y a ou non des ennemis, pour le
     bon déplacement"""
     def traite_sans_ennemis(couplesVecteurs):
         # traite cas sans ennemies
-        p, d, g = pos
         depsPossibles = []  # contiendra le résultat final de traite
+        depsFini = []
+        depsInfini = []
+        depsRock = []
 
         for typeDep, cases in couplesVecteurs:
             if typeDep == FINI:
-                depsFini = []
                 for case in cases:
-
-                    if not(isinstance(case, Piece)):
+                    p,x,y = case
+                    if not(isinstance(plateau[p][x][y], Piece)):
                         #test si la case est libre
                         depsFini.append(case)
 
-                if depsFini:
-                    depsPossibles.append((FINI, depsFini))
-
             elif typeDep == INFINI:
-                depsInfini = []
                 i = 0
                 bloqué = False
 
                 while not(bloqué) and i<len(cases):
                     case = cases[i]
-                    p,x,y = case
-                    if isinstance(plateau[p][x][y],Piece):
+                    p, x, y = case
+                    if isinstance(plateau[0][0][0], Piece):
+                        print("lol")
                         #test si la case est libre
                         bloqué = True
                     else :
                         depsInfini.append(case)
                     i+=1
 
-                if depsInfini:
-                    depsPossibles.append((INFINI, depsInfini))
-
             elif typeDep == ROCK:
-                depsRock = []
                 if piece.emplacementInitial :
-                    if tour1.emplacementInitial and not(isinstance(plateau[p][d+1][g],Piece) and nom == plateau[p][d+2][g].Joueur.nomJoueur) :
+                    p, x, y = cases[0]
+                    if tour1.emplacementInitial and not(isinstance(plateau[p][x-1][y],Piece) and nom == plateau[p][x][y].joueur) :
                         #test si la case est libre et si les bonnes pieces sont au bons endroit sans avoir bougé
-                        depsRock.append(cases[0])
+                        depsRock.append((p,x,y))
 
-                    if tour2.emplacementInitial and nom == plateau[p][d][g+1].Joueur.nomJoueur:
+                    p, x, y = cases[1]
+                    if tour2.emplacementInitial and nom == plateau[p][x][y].joueur:
                         #test si la case est libre et si les bonnes pieces sont au bons endroit sans avoir bougé
-                        depsRock.append(cases[1])
-                if depsRock:
-                    depsPossibles.append((ROCK, depsRock))
+                        depsRock.append((p,x,y))
+
             else :
                 raise ValueError("Type de déplacement inconnu.")
+
+        if depsFini:
+            depsPossibles.append((FINI, depsFini))
+        if depsInfini:
+            depsPossibles.append((INFINI, depsInfini))
+        if depsRock:
+            depsPossibles.append((ROCK, depsRock))
 
         return depsPossibles
 
     def traite_avec_ennemis(couplesVecteurs):
         # traite cas avec ennemies
-        p, d, g = pos
         depsPossibles = []  # contiendra le résultat final de traite
+        depsFini = []
+        depsInfini = []
 
         for typeDep, cases in couplesVecteurs:
             if typeDep == FINI:
-                depsFini = []
                 for case in cases:
                     p,x,y = case
 
-                    if isinstance(plateau[p][x][y],Piece) and (nom != plateau[p][x][y].Joueur.nomJoueur):
+                    if isinstance(plateau[p][x][y],Piece) and (nom != plateau[p][x][y].joueur):
                         depsFini.append(case)
 
-                if depsFini:
-                    depsPossibles.append((FINI, depsFini))
-
             elif typeDep == INFINI:
-                depsInfini = []
                 i=0
                 bloqué = False
                 while not(bloqué) and i<len(cases):
                     case = cases[i]
                     p,x,y = case
 
-                    if isinstance(plateau[p][x][y],Piece):
+                    if isinstance(plateau[p][x][y], Piece):
                         bloqué = True
-                        if nom != plateau[p][x][y].Joueur.nomJoueur:
+                        if nom != plateau[p][x][y].joueur:
                             depsInfini.append(case)
                     i+=1
-
-                if depsInfini:
-                    depsPossibles.append((INFINI, depsInfini))
 
             else :
                 raise ValueError("Type de déplacement inconnu.")
                 #Un déplacement de typer ROCK ne peut pas pendre de piece
+
+        if depsFini:
+            depsPossibles.append((FINI, depsFini))
+        if depsInfini:
+            depsPossibles.append((INFINI, depsInfini))
 
         return depsPossibles
 
@@ -416,9 +413,14 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
     return depsInfini
 
 if __name__ == '__main__':
-    # print(test_infini(2, 0, 0, 0, 1))
-    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 5, 2), 6)
+    from plateau import Plateau
+    from joueur import Joueur, ListesDeJoueur
+    from Interface import ROUGE, VERT, BLEU
+
+    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
     listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
                                   Joueur("Florian", 2, ROUGE))
     Tour.joueur = "Arthur"
-    print(dep_effectifs(depssE, depacE, Tour, (0, 5, 2) , plateau.initialisation_plateau(listJoueur)))
+    plateau = Plateau(listJoueur)
+    print(plateau[0][0][0])
+    print(dep_effectifs(depssE, depacE, Tour, plateau))
