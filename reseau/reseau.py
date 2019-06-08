@@ -3,12 +3,12 @@ import threading
 from select import select
 
 
-class Serveur(threading.Thread):
+class ServeurThread(threading.Thread):
     nServeurs = 0
 
     def __init__(self):
-        Serveur.nServeurs += 1
-        super().__init__(name="Serveur-{}".format(Serveur.nServeurs), daemon=True)
+        ServeurThread.nServeurs += 1
+        super().__init__(name="Serveur-{}".format(ServeurThread.nServeurs), daemon=True)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.serveurAllumé = False
         self.clients = []
@@ -18,6 +18,7 @@ class Serveur(threading.Thread):
 
     def start(self):
         self.serveurAllumé = True
+        print("Réseau :: Serveur en ligne")
         super().start()
 
     def run(self):
@@ -48,6 +49,18 @@ class Serveur(threading.Thread):
         self.socket.close()
 
 
+class Serveur:
+    def __init__(self):
+        self.serveur = None
+
+    def start(self):
+        if self.serveur is None:
+            self.serveur = ServeurThread()
+            self.serveur.start()
+        else:
+            print("Réseau :: Serveur déjà lancé")
+
+
 class Client:
     nClients = 0
 
@@ -57,3 +70,8 @@ class Client:
 
     def connect(self, address=s.gethostname(), port=12800):
         self.socket.connect((address, port))
+        self.socket.send(b"Coucou")
+
+
+if __name__ == '__main__':
+    Client().connect()

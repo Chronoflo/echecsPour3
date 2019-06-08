@@ -1,6 +1,30 @@
 #:kivy 1.11.0
 #:import Factory kivy.factory.Factory
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import Serveur reseau.Serveur
+
+
+<BackgroundColor@Widget>
+    background_color: 1, 1, 1, 1
+    canvas.before:
+        Color:
+            hsv: root.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<SuperLabel@Label+BackgroundColor>
+    background_color: 0, 0, 0, 0
+
+<SuperScreen@Screen+BackgroundColor>
+    background_color: 0, 0, 0, 0
+
+<SBoxLayout@BoxLayout+BackgroundColor>
+    background_color: 0, 0, 0, 0
+
+<SImage@Image+BackgroundColor>
+    background_color: 0, 0, 0, 0
+
 
 
 <QuitConfirmationPopup@Popup>:
@@ -17,17 +41,80 @@
 <SuperSettings>:
     size_hint: 0.8, 0.6
 
-<MultiplayerScreen@Screen>:
+<MultiplayerScreen@SuperScreen+MouseEvents>:
     name: 'multiplayer'
+    server: Serveur()
+    on_pre_enter: self.server.start()
 
-    Button:
-        text: 'RETOUR'
-        on_release: app.root.current = 'main'
+
+    BoxLayout:
+        orientation: 'vertical'
+        SBoxLayout:
+            background_color: 0.627,0.7,0.7,1
+            size_hint: 1, 0.1
+
+            canvas:
+                Color:
+                    hsv: 0, 0,0.7,1
+                Rectangle:
+                    size: root.width, root.height * 0.0005
+                    pos: self.pos
+            Label:
+                text: 'Héberger'
+                color: 0.9,0.9,0.9, 1
+                outline_color: 0.6,0.6,0.9
+                outline_width: 0.5
+                halign: 'left'
+                valign: 'middle'
+                text_size: self.size
+                padding: 10, 0
+                font_size: min(self.size[0]/6, self.size[1]/2)
+            BoxLayout:
+                id: middle_section
+                padding: 5,5,5,5
+                spacing: 10
+                size_hint_x: 0.5
+                Button:
+                    text: 'Ajouter IA'
+                Button:
+                    text: 'Rejoindre'
+        SBoxLayout:
+            background_color: 0.627, 0.7, 0.3, 1
+            canvas.before:
+                Color:
+                    hsv: 0.627, 0.6,0.7,1
+                Rectangle:
+                    size: root.width, root.height * 0.0005
+                    pos: self.pos
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'PROFIL'
+                Label:
+                    text: 'VIDE'
+                Label:
+                    text: 'VIDE'
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Règles'
+        SBoxLayout:
+            background_color: 0.627, 0.7, 0.2, 1
+            size_hint: 1, 0.3
+            TextInput:
+                id: chat
+                text: 'CHAT'
+            Image:
+                size_hint: None, None
+                size: 3/2* chat.height, chat.height
+                source: "images/blue_flower.jpeg"
+
 
 <MyScreenManager>:
     transition: FadeTransition()
     MainScreen:
     MultiplayerScreen:
+        right_click: root.to_last
 
 
 <MainScreen>:

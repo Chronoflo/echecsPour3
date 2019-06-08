@@ -1,9 +1,12 @@
 import json
 from random import randint
-
+from kivy.config import Config
+# Désactive le multitouch
+Config.set('input', 'mouse', 'mouse,disable_multitouch')
 import kivy
 from kivy.app import App
 from kivy.config import ConfigParser
+from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.properties import NumericProperty, ReferenceListProperty, Clock, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
@@ -24,12 +27,57 @@ with open('kv/demarrage.kv', encoding='utf-8') as f:
 def lance_partie(n_joueurs):
     print("Partie lancée pour {} joueurs.".format(n_joueurs))
 
+
 class MyScreenManager(ScreenManager):
-    pass
+    def __init__(self, **kwargs):
+        super(MyScreenManager, self).__init__(**kwargs)
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
+        self.last = self.current
+
+    def to_last(self):
+        self.current = self.last
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        app: DemarrageApp = App.get_running_app()
+        keyname = keycode[1]
+
+        print(keyname)
+        if keyname == 'escape' or keyname == 'backspace':
+            if not app.settings_open:
+                if self.current != 'main':
+                    self.current = 'main'
+                elif keyname == 'escape':
+                    quit()
+            else:
+                app.close_settings()
+        elif keyname == 'p':
+            if not app.settings_open:
+                app.open_settings()
+            else:
+                app.close_settings()
+        elif keyname == 'm':
+            self.current = 'multiplayer'
+        return True
+
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
 
 
 class MainScreen(Screen):
     settings_popup = ObjectProperty(None, allownone=True)
+
+
+class MouseEvents(Widget):
+    def __init__(self, **kwargs):
+        super(MouseEvents, self).__init__(**kwargs)
+        self.right_click = None
+
+    def on_touch_down(self, touch):
+        super(MouseEvents, self).on_touch_down(touch)
+        if touch.button == 'right' and self.right_click is not None:
+            self.right_click()
 
 
 class SuperSettings(Popup):
@@ -50,6 +98,7 @@ class DemarrageApp(App):
         super(DemarrageApp, self).__init__()
         self.use_kivy_settings = False
         self.settings_cls = SettingsWithSidebar
+        self.settings_open = False
         self.lance_partie = lance_partie
 
     def build(self):
@@ -64,6 +113,14 @@ class DemarrageApp(App):
         for page in pages:
             with open("json/{}.json".format(page), encoding='utf-8') as f:
                 settings.add_json_panel(page, self.config, data=f.read())
+
+    def open_settings(self, *largs):
+        super(DemarrageApp, self).open_settings(*largs)
+        self.settings_open = True
+
+    def close_settings(self, *largs):
+        super(DemarrageApp, self).close_settings(*largs)
+        self.settings_open = False
 
     def on_config_change(self, config, section, key, value):
         self.applique_parametres()
