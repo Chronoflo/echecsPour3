@@ -313,7 +313,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                 while not(bloqué) and i<len(cases):
                     case = cases[i]
                     p, x, y = case
-                    if isinstance(plateau[0][0][0], Pieces.Piece):
+                    if isinstance(plateau[p][x][y], Pieces.Piece):
                         #test si la case est libre
                         bloqué = True
                     else :
@@ -335,12 +335,16 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
             else :
                 raise ValueError("Type de déplacement inconnu.")
 
+
         if depsFini:
             depsPossibles.append((FINI, depsFini))
+
         if depsInfini:
             depsPossibles.append((INFINI, depsInfini))
-        if depsRock:
+
+        if depsRock :
             depsPossibles.append((ROCK, depsRock))
+
 
         return depsPossibles
 
@@ -377,6 +381,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
 
         if depsFini:
             depsPossibles.append((FINI, depsFini))
+
         if depsInfini:
             depsPossibles.append((INFINI, depsInfini))
 
