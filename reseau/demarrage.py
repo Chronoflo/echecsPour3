@@ -1,11 +1,11 @@
 import os
+import threading
 
 from kivy.config import Config
 from kivy.metrics import dp
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 
-from fonctions import make_tab
 from reseau import Serveur, Client
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
@@ -215,7 +215,7 @@ class DemarrageApp(App):
         self.lance_partie = lance_partie
 
     def send_msg(self, text):
-        self.send(make_tab("m: " + self.player + ":\t" + text))
+        self.send("m: " + "[i]" + self.player + "[/i]: " + text)
 
     def send(self, text):
         if self.serveur.estActivé():
@@ -250,6 +250,7 @@ class DemarrageApp(App):
                     raise ValueError("Un message de profils doit contenir au moins un profil.")
         elif id == 'd':
             joueur = contenu
+            print(self.otherPlayers.index(joueur))
             self.otherPlayers[self.otherPlayers.index(joueur)] = 'Vide'
 
     def serveur_to_client(self):
@@ -301,10 +302,9 @@ class DemarrageApp(App):
         self.applique_parametres()
 
     def on_stop(self):
-        self.send_msg("m: *{} s'est déconnecté*".format(self.player))
-        self.send("d: {}".format(self.player))
-        self.serveur.désactive()
-        self.client.désactive()
+        self.send("m: *{p} s'est déconnecté*\bd: {p}".format(p=self.player))
+        threading.Timer(0.5, self.serveur.désactive)
+        threading.Timer(0.5, self.client.désactive)
 
         if self.newProfileOptions:
             res = ""

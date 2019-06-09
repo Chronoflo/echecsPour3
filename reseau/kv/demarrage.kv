@@ -2,7 +2,6 @@
 #:import Factory kivy.factory.Factory
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import Serveur reseau.Serveur
-#:import fonctions fonctions
 
 <BackgroundColor@Widget>
     background_color: 1, 1, 1, 1
@@ -80,7 +79,7 @@
         height: self.minimum_height
         multiline: False
         text_validate_unfocus: False
-        on_text_validate: if self.text: app.send_msg(self.text); messages.add(fonctions.make_tab("[i]" + app.player + "[/i]:\t" + self.text)); self.text = "";
+        on_text_validate: if self.text: app.send_msg(self.text); messages.add("[i]" + app.player + "[/i]: " + self.text); self.text = "";
 
 
 <SuperSettings>:

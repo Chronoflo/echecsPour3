@@ -7,7 +7,7 @@ def signe(x):
         return 0
 
 
-tab_width = 6
+tab_width = 4
 
 
 def make_tab(txt):
@@ -15,10 +15,7 @@ def make_tab(txt):
     res = ""
     for char in txt:
         if char == '\t':
-            if False:
-                res += " " * (tab_width - i)
-            else:
-                res += ' '
+            res += " " * (tab_width - i)
         else:
             res += char
         i = (i + 1) % tab_width
