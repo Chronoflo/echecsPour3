@@ -3,7 +3,7 @@
         "type": "superoptions",
         "title": "Profil",
         "desc": "Sélectionner le profil du joueur actuel",
-        "options": ["Florian", "Arthur", "Sarah", "Mr. Charignon", "Moi"],
+        "options": ["Florian", "Arthur", "Sarah", "Mr. Charignon"],
         "section": "gameplay",
         "key": "profile"
     }

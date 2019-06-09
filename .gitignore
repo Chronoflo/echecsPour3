@@ -4,3 +4,5 @@
 __pycache__/
 
 reseau/demarrage\.ini
+
+reseau/json/Jeu\.json
