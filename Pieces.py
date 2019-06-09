@@ -388,6 +388,14 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
 
     return traite_sans_ennemis(déplacementsSansEnnemi), traite_avec_ennemis(déplacementsAvecEnnemi)
 
+
+def promotionReine(piece, pos, plateau):
+    """procédure plaçant une reine a l'endroit du pion
+    le pion doit être au bon endroit pour la promotion"""
+    p, d, g = pos
+    plateau[p][d][g] = joueur.plateau[p][d][g].Pieces.Reine(self, piece.terrainOrigine)
+
+
 def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
     """ Fonction de test. """
 
