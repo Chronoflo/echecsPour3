@@ -25,7 +25,11 @@ class ServeurThread(threading.Thread):
     def broadcast(self, text: str):
         msg = text.encode()
         for client in self.clients:
-            client.send(msg)
+            try:
+                client.send(msg)
+            except (ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError):
+                self.clients.remove(client)
+                self.callback("Un client s'est déconnecté.")
 
     def run(self):
         while self.allumé:
@@ -85,19 +89,18 @@ class Serveur:
         self.serveurThread.broadcast(text)
 
 
-class Client(threading.Thread):
+class ClientThread(threading.Thread):
     nClients = 0
 
     def __init__(self, callback=None):
-        super(Client, self).__init__(daemon=True)
+        super(ClientThread, self).__init__(daemon=True)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.callback = callback
-        self.adresseCible = s.gethostname()
-        self.portCible = 12800
+
         self.connecté = False
 
-    def connect(self):
-        self.socket.connect((self.adresseCible, self.portCible))
+    def connect(self, adresse, port):
+        self.socket.connect((adresse, port))
         self.connecté = True
         self.start()
 
@@ -107,16 +110,44 @@ class Client(threading.Thread):
                 msgReçu = self.socket.recv(1024).decode()
                 if self.callback is not None:
                     self.callback(msgReçu)
-            except ConnectionError:
-                if self.callback is not None:
-                    self.callback("*Déconnecté*")
+            except (ConnectionAbortedError, ConnectionRefusedError, ConnectionResetError):
+                self.désactive()
 
     def send(self, text):
-        self.socket.send(text.encode())
+        try:
+            self.socket.send(text.encode())
+        except (ConnectionAbortedError, ConnectionRefusedError, ConnectionResetError):
+            self.désactive()
 
     def désactive(self):
         self.connecté = False
         self.socket.close()
+        if self.callback is not None:
+            self.callback("*Déconnecté*")
+
+
+class Client:
+    def __init__(self, callback=None):
+        self.adresseCible = s.gethostname()
+        self.portCible = 12800
+        self.callback = callback
+        self.thread = ClientThread(callback)
+
+    def connect(self):
+        if not self.thread.connecté:
+            self.thread.connect(self.adresseCible, self.portCible)
+        else:
+            print("ClientThread déjà connectée.")
+
+    def send(self, text):
+        if self.thread.connecté:
+            self.thread.send(text)
+        else:
+            self.thread = ClientThread(self.callback)
+
+    def désactive(self):
+        self.thread.désactive()
+        self.thread = ClientThread(self.callback)
 
 
 if __name__ == '__main__':
