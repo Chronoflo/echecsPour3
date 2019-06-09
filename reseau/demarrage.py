@@ -4,6 +4,8 @@ from kivy.config import Config
 from kivy.metrics import dp
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
+
+from fonctions import make_tab
 from reseau import Serveur, Client
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
@@ -213,7 +215,7 @@ class DemarrageApp(App):
         self.lance_partie = lance_partie
 
     def send_msg(self, text):
-        self.send("m: " + text)
+        self.send(make_tab("m: " + self.player + ":\t" + text))
 
     def send(self, text):
         if self.serveur.estActivé():
@@ -242,7 +244,10 @@ class DemarrageApp(App):
                 if len(joueurs) >= 2:
                     self.otherPlayers[1] = joueurs[1]
             else:
-                raise ValueError("Un message de profils doit contenir au moins un profil.")
+                if contenu == self.player:
+                    print("Ce profil est déjà utilisé.")
+                else:
+                    raise ValueError("Un message de profils doit contenir au moins un profil.")
         elif id == 'd':
             joueur = contenu
             self.otherPlayers[self.otherPlayers.index(joueur)] = 'Vide'
@@ -251,9 +256,8 @@ class DemarrageApp(App):
         self.serveur.désactive()
         try:
             self.client.connect()
-            profile = self.config.get('gameplay', 'profile')
-            self.client.send("m: *Connexion de {}*".format(profile))
-            self.client.send("p: {}".format(profile))
+            self.client.send("m: *Connexion de {}*".format(self.player))
+            self.client.send("p: {}".format(self.player))
             self.messagesHistoric.add("*Connecté*")
         except ValueError:
             print("Échec")
