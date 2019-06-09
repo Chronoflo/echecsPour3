@@ -11,7 +11,8 @@ from kivy.app import App
 from kivy.config import ConfigParser
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import NumericProperty, ReferenceListProperty, Clock, ObjectProperty, ListProperty, BooleanProperty
+from kivy.properties import NumericProperty, ReferenceListProperty, Clock, ObjectProperty, ListProperty, \
+    BooleanProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
@@ -137,6 +138,7 @@ class SettingSuperOptions(SettingOptions):
                 newProfileOptions.append(textInput.text)
                 self._update_popup()
                 popup.dismiss()
+
         textInput.on_text_validate = on_validate
         textInput.height = textInput.minimum_height
         content.add_widget(textInput)
@@ -198,6 +200,7 @@ class SettingSuperOptions(SettingOptions):
 class DemarrageApp(App):
     messagesHistoric = ObjectProperty(None)
     newProfileOptions = ListProperty([])
+    player = StringProperty()
     otherPlayers = ListProperty(['Vide', 'Vide'])
 
     def __init__(self, lance_partie):
@@ -227,15 +230,29 @@ class DemarrageApp(App):
             if self.messagesHistoric is not None:
                 self.messagesHistoric.add(contenu)
         elif id == 'p':
-            joueurs = contenu.split(', ')
-            self.otherPlayers[0], self.otherPlayers[1] = joueurs[0], joueurs[1]
+            joueurs = [joueur for joueur in contenu.split(', ') if joueur != self.player]
+            if len(joueurs) == 1:
+                for i in range(2):
+                    if self.otherPlayers[i] == 'Vide':
+                        self.otherPlayers[i] = joueurs[0]
+                        break
+            elif len(joueurs):
+                if self.otherPlayers[0] == 'Vide':
+                    self.otherPlayers[0] = joueurs[0]
+                if len(joueurs) >= 2:
+                    self.otherPlayers[1] = joueurs[1]
+            else:
+                raise ValueError("Un message de profils doit contenir au moins un profil.")
+        elif id == 'd':
+            joueur = contenu
+            self.otherPlayers[self.otherPlayers.index(joueur)] = 'Vide'
 
     def serveur_to_client(self):
         self.serveur.désactive()
         try:
             self.client.connect()
             profile = self.config.get('gameplay', 'profile')
-            self.client.send("*Connexion de {}*".format(profile))
+            self.client.send("m: *Connexion de {}*".format(profile))
             self.client.send("p: {}".format(profile))
             self.messagesHistoric.add("*Connecté*")
         except ValueError:
@@ -249,6 +266,7 @@ class DemarrageApp(App):
             config.read("demarrage.ini")
         else:
             config.read('default.ini')
+        self.player = config.get('gameplay', 'profile')
 
     def build_settings(self, settings: Settings):
         settings.register_type("superoptions", SettingSuperOptions)
@@ -271,6 +289,7 @@ class DemarrageApp(App):
         self.settings_open = False
 
     def on_config_change(self, config, section, key, value):
+        self.player = config.get('gameplay', 'profile')
         self.applique_parametres()
 
     def on_start(self):
@@ -278,7 +297,8 @@ class DemarrageApp(App):
         self.applique_parametres()
 
     def on_stop(self):
-        self.send_msg("*{} s'est déconnecté*".format(self.config.get('gameplay', 'profile')))
+        self.send_msg("m: *{} s'est déconnecté*".format(self.player))
+        self.send("d: {}".format(self.player))
         self.serveur.désactive()
         self.client.désactive()
 
@@ -291,7 +311,8 @@ class DemarrageApp(App):
             with open(file_path, encoding='utf-8') as f:
                 for line in f:
                     if line.strip()[:9] == '"options"':
-                        res += '        "options": {}],\n'.format(line[19:-3] + ', ' + ", ".join(['"' + name + '"' for name in self.newProfileOptions]))
+                        res += '        "options": {}],\n'.format(
+                            line[19:-3] + ', ' + ", ".join(['"' + name + '"' for name in self.newProfileOptions]))
                     else:
                         res += line
             self.newProfileOptions = []
