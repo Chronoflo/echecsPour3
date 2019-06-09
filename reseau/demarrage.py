@@ -218,6 +218,7 @@ class DemarrageApp(App):
         self.send("m: " + "[i]" + self.player + "[/i]: " + text)
 
     def send(self, text):
+        print("Envoyé {}".format(text))
         if self.serveur.estActivé():
             self.serveur.broadcast(text)
         elif self.client.estConnecté():
@@ -250,7 +251,6 @@ class DemarrageApp(App):
                     raise ValueError("Un message de profils doit contenir au moins un profil.")
         elif id == 'd':
             joueur = contenu
-            print(self.otherPlayers.index(joueur))
             self.otherPlayers[self.otherPlayers.index(joueur)] = 'Vide'
 
     def serveur_to_client(self):
