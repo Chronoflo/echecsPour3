@@ -228,7 +228,7 @@ class DemarrageApp(App):
         self.serveur.désactive()
         try:
             self.client.connect()
-            self.client.send_msg("*Connexion de {}*".format(self.config.get('gameplay', 'profile')))
+            self.client.send("*Connexion de {}*".format(self.config.get('gameplay', 'profile')))
             self.messagesHistoric.add("*Connecté*")
         except:
             print("Échec")
