@@ -44,7 +44,7 @@ class MyScreenManager(ScreenManager):
                 if self.current != 'main':
                     self.current = 'main'
                 elif keyname == 'escape':
-                    quit()
+                    app.stop()
             else:
                 app.close_settings()
         elif keyname == 'p':
@@ -171,6 +171,7 @@ class DemarrageApp(App):
         self.applique_parametres()
 
     def on_stop(self):
+        self.send("*{} s'est déconnecté*".format(self.config.get('gameplay', 'profile')))
         self.serveur.désactive()
         self.client.désactive()
 
