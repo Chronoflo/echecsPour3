@@ -130,7 +130,7 @@ class ClientThread(threading.Thread):
         self.connecté = False
         self.socket.close()
         if self.callback is not None:
-            self.callback("*Déconnecté*")
+            self.callback("m: *Déconnecté*")
 
 
 class Client:

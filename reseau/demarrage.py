@@ -214,7 +214,7 @@ class DemarrageApp(App):
         if self.serveur.estActivé():
             self.serveur.broadcast(text)
         elif self.client.estConnecté():
-            self.client.send_msg(text)
+            self.client.send(text)
 
     def on_received(self, text):
         id, contenu = text[0], text[3:]
