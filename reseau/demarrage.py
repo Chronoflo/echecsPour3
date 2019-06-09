@@ -1,3 +1,5 @@
+import os
+
 from kivy.config import Config
 
 from reseau import Serveur, Client
@@ -146,7 +148,10 @@ class DemarrageApp(App):
         return MyScreenManager()
 
     def build_config(self, config: ConfigParser):
-        config.read("demarrage.ini")
+        if os.path.isfile('demarrage.ini'):
+            config.read("demarrage.ini")
+        else:
+            config.read('default.ini')
 
     def build_settings(self, settings: Settings):
         pages = ("Jeu", "Graphique", "Réseau", "Autre")
