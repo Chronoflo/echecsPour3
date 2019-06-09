@@ -114,7 +114,7 @@ class Client(threading.Thread):
     def send(self, text):
         self.socket.send(text.encode())
 
-    def stop(self):
+    def désactive(self):
         self.connecté = False
         self.socket.close()
 
