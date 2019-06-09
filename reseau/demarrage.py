@@ -198,23 +198,28 @@ class SettingSuperOptions(SettingOptions):
 class DemarrageApp(App):
     messagesHistoric = ObjectProperty(None)
     newProfileOptions = ListProperty([])
-    otherPlayers = ListProperty()
+    otherPlayers = ListProperty(['Vide', 'Vide'])
 
     def __init__(self, lance_partie):
         super(DemarrageApp, self).__init__()
         self.use_kivy_settings = False
         self.settings_cls = SettingsWithSidebar
         self.settings_open = False
-        self.serveur = Serveur(self.on_received)
+        self.serveur = Serveur(self.on_received, self.on_external_connection)
         self.client = Client(self.on_received)
         self.lance_partie = lance_partie
 
     def send_msg(self, text):
-        text = "m: " + text
+        self.send("m: " + text)
+
+    def send(self, text):
         if self.serveur.estActivé():
             self.serveur.broadcast(text)
         elif self.client.estConnecté():
             self.client.send(text)
+
+    def on_external_connection(self):
+        self.send("p: " + ", ".join([self.config.get('gameplay', 'profile')] + self.otherPlayers))
 
     def on_received(self, text):
         id, contenu = text[0], text[3:]
@@ -222,15 +227,18 @@ class DemarrageApp(App):
             if self.messagesHistoric is not None:
                 self.messagesHistoric.add(contenu)
         elif id == 'p':
-            self.otherPlayers.append(contenu)
+            joueurs = contenu.split(', ')
+            self.otherPlayers[0], self.otherPlayers[1] = joueurs[0], joueurs[1]
 
     def serveur_to_client(self):
         self.serveur.désactive()
         try:
             self.client.connect()
-            self.client.send("*Connexion de {}*".format(self.config.get('gameplay', 'profile')))
+            profile = self.config.get('gameplay', 'profile')
+            self.client.send("*Connexion de {}*".format(profile))
+            self.client.send("p: {}".format(profile))
             self.messagesHistoric.add("*Connecté*")
-        except:
+        except ValueError:
             print("Échec")
 
     def build(self):

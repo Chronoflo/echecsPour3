@@ -6,11 +6,12 @@ from select import select
 class ServeurThread(threading.Thread):
     nServeurs = 0
 
-    def __init__(self, callback=None, endCallback=None):
+    def __init__(self, callback=None, connectionCallback=None, endCallback=None):
         ServeurThread.nServeurs += 1
         super().__init__(name="Serveur-{}".format(ServeurThread.nServeurs), daemon=True)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.guiCallback = callback
+        self.connectionCallback = connectionCallback
         self.endCallback = endCallback
         self.allumé = False
         self.clients = []
@@ -38,6 +39,8 @@ class ServeurThread(threading.Thread):
 
             for connexion in connexions_demandees:
                 socketClient, infoConnexion = connexion.accept()
+                if self.connectionCallback is not None:
+                    self.connectionCallback()
                 self.clients.append(socketClient)
 
             if self.clients:
@@ -70,14 +73,15 @@ class ServeurThread(threading.Thread):
 
 
 class Serveur:
-    def __init__(self, callback):
+    def __init__(self, callback, connectionCallback):
         self.serveurThread: ServeurThread = None
         self.callback = callback
+        self.connectionCallback = connectionCallback
 
     def start(self):
         if self.serveurThread is None:
             try:
-                self.serveurThread = ServeurThread(self.callback, self.désactive)
+                self.serveurThread = ServeurThread(self.callback, self.connectionCallback, self.désactive)
                 self.serveurThread.start()
             except:
                 print("Réseau :: Échec mise en place serveur")
