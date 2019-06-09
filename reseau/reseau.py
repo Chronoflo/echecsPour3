@@ -6,11 +6,11 @@ from select import select
 class ServeurThread(threading.Thread):
     nServeurs = 0
 
-    def __init__(self, guiCallback=None, endCallback=None):
+    def __init__(self, callback=None, endCallback=None):
         ServeurThread.nServeurs += 1
         super().__init__(name="Serveur-{}".format(ServeurThread.nServeurs), daemon=True)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
-        self.guiCallback = guiCallback
+        self.guiCallback = callback
         self.endCallback = endCallback
         self.allumé = False
         self.clients = []
@@ -27,7 +27,7 @@ class ServeurThread(threading.Thread):
         msg = text.encode()
         for client in self.clients:
             try:
-                client.send(msg)
+                client.send_msg(msg)
             except (ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError):
                 self.clients.remove(client)
                 print("Réseau :: Un client s'est déconnecté.")
@@ -52,7 +52,7 @@ class ServeurThread(threading.Thread):
 
                         for autreClient in self.clients:
                             if autreClient != client:
-                                autreClient.send(msgRecu.encode())
+                                autreClient.send_msg(msgRecu.encode())
                         if msgRecu == "fin":
                             if self.endCallback is not None:
                                 self.endCallback()
@@ -144,10 +144,14 @@ class Client:
         return self.thread.connecté and self.thread.is_alive()
 
     def connect(self):
-        if not self.thread.connecté:
+        try:
+            if not self.thread.connecté:
+                self.thread.connect(self.adresseCible, self.portCible)
+            else:
+                print("ClientThread déjà connectée.")
+        except (ConnectionRefusedError, ConnectionError):
+            self.désactive()
             self.thread.connect(self.adresseCible, self.portCible)
-        else:
-            print("ClientThread déjà connectée.")
 
     def send(self, text):
         if self.thread.connecté:

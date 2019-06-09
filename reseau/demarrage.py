@@ -198,6 +198,7 @@ class SettingSuperOptions(SettingOptions):
 class DemarrageApp(App):
     messagesHistoric = ObjectProperty(None)
     newProfileOptions = ListProperty([])
+    otherPlayers = ListProperty()
 
     def __init__(self, lance_partie):
         super(DemarrageApp, self).__init__()
@@ -208,21 +209,26 @@ class DemarrageApp(App):
         self.client = Client(self.on_received)
         self.lance_partie = lance_partie
 
-    def send(self, text):
+    def send_msg(self, text):
+        text = "m: " + text
         if self.serveur.estActivé():
             self.serveur.broadcast(text)
         elif self.client.estConnecté():
-            self.client.send(text)
+            self.client.send_msg(text)
 
-    def on_received(self, msg):
-        if self.messagesHistoric is not None:
-            self.messagesHistoric.add(msg)
+    def on_received(self, text):
+        id, contenu = text[0], text[3:]
+        if id == 'm':
+            if self.messagesHistoric is not None:
+                self.messagesHistoric.add(contenu)
+        elif id == 'p':
+            self.otherPlayers.append(contenu)
 
     def serveur_to_client(self):
         self.serveur.désactive()
         try:
             self.client.connect()
-            self.client.send("*Connexion de {}*".format(self.config.get('gameplay', 'profile')))
+            self.client.send_msg("*Connexion de {}*".format(self.config.get('gameplay', 'profile')))
             self.messagesHistoric.add("*Connecté*")
         except:
             print("Échec")
@@ -264,7 +270,7 @@ class DemarrageApp(App):
         self.applique_parametres()
 
     def on_stop(self):
-        self.send("*{} s'est déconnecté*".format(self.config.get('gameplay', 'profile')))
+        self.send_msg("*{} s'est déconnecté*".format(self.config.get('gameplay', 'profile')))
         self.serveur.désactive()
         self.client.désactive()
 
