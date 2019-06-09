@@ -38,7 +38,7 @@ class MyScreenManager(ScreenManager):
         app: DemarrageApp = App.get_running_app()
         keyname = keycode[1]
 
-        print(keyname)
+        # print(keyname)
         if keyname == 'escape' or keyname == 'backspace':
             if not app.settings_open:
                 if self.current != 'main':

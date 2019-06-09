@@ -6,11 +6,12 @@ from select import select
 class ServeurThread(threading.Thread):
     nServeurs = 0
 
-    def __init__(self, callback):
+    def __init__(self, guiCallback=None, endCallback=None):
         ServeurThread.nServeurs += 1
         super().__init__(name="Serveur-{}".format(ServeurThread.nServeurs), daemon=True)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
-        self.callback = callback
+        self.guiCallback = guiCallback
+        self.endCallback = endCallback
         self.allumé = False
         self.clients = []
 
@@ -29,7 +30,7 @@ class ServeurThread(threading.Thread):
                 client.send(msg)
             except (ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError):
                 self.clients.remove(client)
-                self.callback("Un client s'est déconnecté.")
+                print("Réseau :: Un client s'est déconnecté.")
 
     def run(self):
         while self.allumé:
@@ -44,14 +45,20 @@ class ServeurThread(threading.Thread):
                                                       [], [], 0.05)
 
                 for client in clients_a_lire:
-                    msgRecu = client.recv(1024).decode()
-                    print("Reçu {}".format(msgRecu))
-                    self.callback(msgRecu)
-                    for autreClient in self.clients:
-                        if autreClient != client:
-                            autreClient.send(msgRecu.encode())
-                    if msgRecu == "fin":
-                        self.stop()
+                    try:
+                        msgRecu = client.recv(1024).decode()
+                        print("Reçu {}".format(msgRecu))
+                        self.guiCallback(msgRecu)
+
+                        for autreClient in self.clients:
+                            if autreClient != client:
+                                autreClient.send(msgRecu.encode())
+                        if msgRecu == "fin":
+                            if self.endCallback is not None:
+                                self.endCallback()
+                    except (ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError):
+                        self.clients.remove(client)
+                        self.guiCallback("Un client s'est déconnecté.")
 
     def stop(self):
         print("Réseau :: Serveur : Fermeture des connexions")
@@ -70,10 +77,10 @@ class Serveur:
     def start(self):
         if self.serveurThread is None:
             try:
-                self.serveurThread = ServeurThread(self.callback)
+                self.serveurThread = ServeurThread(self.callback, self.désactive)
                 self.serveurThread.start()
             except:
-                pass
+                print("Réseau :: Échec mise en place serveur")
         else:
             print("Réseau :: Serveur déjà lancé")
 
