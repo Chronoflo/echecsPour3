@@ -103,12 +103,20 @@ class Client(threading.Thread):
 
     def run(self):
         while self.connecté:
-            msgReçu = self.socket.recv(1024).decode()
-            if self.callback is not None:
-                self.callback(msgReçu)
+            try:
+                msgReçu = self.socket.recv(1024).decode()
+                if self.callback is not None:
+                    self.callback(msgReçu)
+            except ConnectionError:
+                if self.callback is not None:
+                    self.callback("*Déconnecté*")
 
     def send(self, text):
         self.socket.send(text.encode())
+
+    def stop(self):
+        self.connecté = False
+        self.socket.close()
 
 
 if __name__ == '__main__':

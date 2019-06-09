@@ -170,6 +170,10 @@ class DemarrageApp(App):
         """ Appelé une fois que la fenêtre a été affichée. """
         self.applique_parametres()
 
+    def on_stop(self):
+        self.serveur.désactive()
+        self.client.désactive()
+
     def applique_parametres(self):
         if self.config.get('graphics', 'fullscreen') == '1':
             self.root_window.fullscreen = 'auto'
