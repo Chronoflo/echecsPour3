@@ -6,23 +6,29 @@ from select import select
 class ServeurThread(threading.Thread):
     nServeurs = 0
 
-    def __init__(self):
+    def __init__(self, callback):
         ServeurThread.nServeurs += 1
         super().__init__(name="Serveur-{}".format(ServeurThread.nServeurs), daemon=True)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
-        self.serveurAllumé = False
+        self.callback = callback
+        self.allumé = False
         self.clients = []
 
         self.socket.bind(("", 12800))
         self.socket.listen(10)
 
     def start(self):
-        self.serveurAllumé = True
+        self.allumé = True
         print("Réseau :: Serveur en ligne")
         super().start()
 
+    def broadcast(self, text: str):
+        msg = text.encode()
+        for client in self.clients:
+            client.send(msg)
+
     def run(self):
-        while self.serveurAllumé:
+        while self.allumé:
             connexions_demandees, wlist, xlist = select([self.socket], [], [], 0.05)
 
             for connexion in connexions_demandees:
@@ -36,41 +42,74 @@ class ServeurThread(threading.Thread):
                 for client in clients_a_lire:
                     msgRecu = client.recv(1024).decode()
                     print("Reçu {}".format(msgRecu))
-                    client.send(b"5 / 5")
+                    self.callback(msgRecu)
+                    for autreClient in self.clients:
+                        if autreClient != client:
+                            autreClient.send(msgRecu.encode())
                     if msgRecu == "fin":
-                        self.serveurAllumé = False
+                        self.stop()
 
     def stop(self):
-        print("ServeurFermeture des connexions")
-        self.serveurAllumé = False
+        print("Réseau :: Serveur : Fermeture des connexions")
+        self.allumé = False
         for client in self.clients:
             client.close()
 
-        self.socket.close()
+        # self.socket.close()
 
 
 class Serveur:
-    def __init__(self):
-        self.serveur = None
+    def __init__(self, callback):
+        self.serveurThread: ServeurThread = None
+        self.callback = callback
 
     def start(self):
-        if self.serveur is None:
-            self.serveur = ServeurThread()
-            self.serveur.start()
+        if self.serveurThread is None:
+            try:
+                self.serveurThread = ServeurThread(self.callback)
+                self.serveurThread.start()
+            except:
+                pass
         else:
             print("Réseau :: Serveur déjà lancé")
 
+    def estActivé(self):
+        return self.serveurThread is not None and self.serveurThread.allumé
 
-class Client:
+    def désactive(self):
+        if self.serveurThread is not None:
+            self.serveurThread.stop()
+            self.serveurThread = None
+
+    def broadcast(self, text):
+        self.serveurThread.broadcast(text)
+
+
+class Client(threading.Thread):
     nClients = 0
 
-    def __init__(self):
+    def __init__(self, callback):
+        super(Client, self).__init__()
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
-        self.serveur = None
+        self.callback = callback
+        self.adresseCible = s.gethostname()
+        self.portCible = 12800
+        self.connecté = False
 
-    def connect(self, address=s.gethostname(), port=12800):
-        self.socket.connect((address, port))
-        self.socket.send(b"Coucou")
+    def connect(self):
+        self.socket.connect((self.adresseCible, self.portCible))
+        self.connecté = True
+        self.socket.send(b"s: Coucou")
+        self.start()
+
+    def run(self):
+        while self.connecté:
+            msgReçu = self.socket.recv(1024).decode()
+            if self.callback is not None:
+                self.callback(msgReçu)
+
+    def send(self, text):
+        self.socket.send(text.encode())
 
 
 if __name__ == '__main__':

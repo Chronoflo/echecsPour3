@@ -1,27 +1,37 @@
-﻿from plateau import Plateau
-from Pieces import Piece
+﻿from constantes import INFINI
+from plateau import Plateau
+from Pieces import Piece, traduction_en_couples_déplacements, Cavalier, Roi, Tour, Fou, Pion, Chevre, Reine, dep_effectifs
 from joueur import Joueur, ListesDeJoueur
 import pygame
 from pygame.locals import *
-from Interface import ROUGE, VERT, BLEU, dessine_composants
+from numpy import exp, pi, sqrt
+from Interface import ROUGE, VERT, BLEU, BLANC
+
+
+def dessine_composants():
+    pass
+
 
 
 if __name__ == '__main__':
     listeJoueurs = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
                                   Joueur("Florian", 2, ROUGE))
     plateau = Plateau(listeJoueurs)
-    print(isinstance(plateau[0][0][0], Piece))
-    print(plateau[0][0][0])
+
     pygame.init()
 
-    fenetre = pygame.display.set_mode((800, 600))
+    fenetre = pygame.display.set_mode((800, 600), RESIZABLE)
     fond = pygame.image.load("Image/Menu 1.jpg").convert()
-    Piece.charge_images()
+    centrePlateau = (400, 400)
 
     fenetre.blit(fond, (0, 0))
-    dessine_composants()
+    pos = (0,0,0)
+    piece = Roi(Joueur("Moi", 0, ROUGE), 0)
+    piece.emplacementInitial = True
+    piece.terrainActuel = pos[0]
     pygame.display.flip()
     continuer = 1
+    print(plateau[0][2][0])
 
     while continuer:
         for event in pygame.event.get():

@@ -38,13 +38,56 @@
             text: "NAN !!"
             on_release: quit()
 
+<InformationsDeConnexionPopup@Popup>:
+    size_hint: 0.4, 0.3
+    title: "Connexion"
+    adresseInput: adresse
+    BoxLayout:
+        orientation: 'vertical'
+        NumericalInput:
+            id: adresse
+            focus: True
+            multiline: False
+            write_tab: False
+            keyboon_key_down: None
+            hint_text: "adresse"
+            on_text_validate: port.focus = True
+        NumericalInput:
+            id: port
+            maxLength: 5
+            multiline: False
+            write_tab: False
+            hint_text: "port"
+            on_text_validate: app.client.adresseCible = adresse.text; app.client.portCible = int(port.text);  app.serveur_to_client(); root.dismiss()
+        Button:
+            text: "Se connecter"
+            on_release: app.client.adresseCible = adresse.text; app.client.portCible = int(port.text);  app.serveur_to_client(); root.dismiss()
+
+
+<Chat>:
+    orientation: 'vertical'
+    messages: messages
+    MessageHistoric:
+        id: messages
+        halign: "left"
+        valign: "bottom"
+        text_size: self.size
+        padding: 5, 2
+    ChatTextInput:
+        size_hint_y: None
+        hint_text: "Envoyer un message"
+        height: self.minimum_height
+        multiline: False
+        text_validate_unfocus: False
+        on_text_validate: if self.text: app.send(self.text); messages.add(self.text); self.text = "";
+
+
 <SuperSettings>:
     size_hint: 0.8, 0.6
 
 <MultiplayerScreen@SuperScreen+MouseEvents>:
     name: 'multiplayer'
-    server: Serveur()
-    on_pre_enter: self.server.start()
+    on_pre_enter: app.serveur.start(); app.messagesHistoric = chat.messages; titre.text = 'Héberger'
 
 
     BoxLayout:
@@ -60,6 +103,7 @@
                     size: root.width, root.height * 0.0005
                     pos: self.pos
             Label:
+                id: titre
                 text: 'Héberger'
                 color: 0.9,0.9,0.9, 1
                 outline_color: 0.6,0.6,0.9
@@ -78,6 +122,7 @@
                     text: 'Ajouter IA'
                 Button:
                     text: 'Rejoindre'
+                    on_release: Factory.InformationsDeConnexionPopup().open(); chat.messages.text = ""; titre.text = "Rejoindre"
         SBoxLayout:
             background_color: 0.627, 0.7, 0.3, 1
             canvas.before:
@@ -101,9 +146,8 @@
         SBoxLayout:
             background_color: 0.627, 0.7, 0.2, 1
             size_hint: 1, 0.3
-            TextInput:
+            Chat:
                 id: chat
-                text: 'CHAT'
             Image:
                 size_hint: None, None
                 size: 3/2* chat.height, chat.height

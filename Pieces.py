@@ -34,14 +34,14 @@ class Piece:
     @classmethod
     def charge_images(cls):
         for piece in cls.piècesCréées:
-            piece.image = pygame.image.load(piece.cheminImage).convert_alpha()
+            pass
 
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Pion", joueur, terrainOrigine)
+        super(Pion, self).__init__("Pion", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
         """ Envois une constante : False,True,Rock
@@ -51,7 +51,7 @@ class Pion(Piece):
         Separe le cas où il y a une piece ennemie et où il n'y a rien.
         Avec à la fin le max des déplacements possibles si déplacement infini"""
 
-        differenceTerrain = (abs( self.terrainOrigine - self.terrainActuel)) % 3
+        differenceTerrain = abs(self.terrainOrigine - self.terrainActuel) % 3
 
         if differenceTerrain == 0:
             if self.emplacementInitial:
@@ -75,7 +75,7 @@ class Pion(Piece):
         """ La régle de la prise en passant n'est pas présente dans cette
         version """
 
-        return (tabSansEnnemis, tabAvecEnnemis)
+        return tabSansEnnemis, tabAvecEnnemis
 
 
 class Roi(Piece):
@@ -111,7 +111,6 @@ class Cavalier(Piece):
 
         tab = [(FINI, [(2, 1), (1, 2), (-2, 1), (-1, 2),
                        (2, -1), (1, -2), (-2, -1), (-1, -2), SP(2, 1), SP(1, 2)])]
-        print(*[type(vect) for vect in tab[0][1]])
         return (tab, tab)
 
 
@@ -323,7 +322,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
             elif typeDep == ROCK:
                 if piece.emplacementInitial :
                     p, x, y = cases[0]
-                    if tour1.emplacementInitial and not(isinstance(plateau[p][x-1][y],Piece) and nom == plateau[p][x][y].joueur) :
+                    if tour1.emplacementInitial and not isinstance(plateau[p][x-1][y],Pieces.Piece) and nom == plateau[p][x][y].joueur:
                         #test si la case est libre et si les bonnes pieces sont au bons endroit sans avoir bougé
                         depsRock.append((p,x,y))
 

@@ -2,6 +2,10 @@ import json
 from random import randint
 from kivy.config import Config
 # Désactive le multitouch
+from kivy.uix.relativelayout import RelativeLayout
+
+from reseau import Serveur, Client
+
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 import kivy
 from kivy.app import App
@@ -80,6 +84,28 @@ class MouseEvents(Widget):
             self.right_click()
 
 
+class NumericalInput(TextInput):
+    maxLength = NumericProperty(12)
+
+    def insert_text(self, substring, from_undo=False):
+        modified = "".join([char for char in substring if char in ".0123456789"])
+        if len(self.text) + len(modified) <= self.maxLength:
+            super(NumericalInput, self).insert_text(modified, from_undo=from_undo)
+
+
+class Chat(BoxLayout):
+    test = NumericProperty(2)
+
+
+class ChatTextInput(TextInput):
+    pass
+
+
+class MessageHistoric(Label):
+    def add(self, line):
+        self.text = self.text + "\n" + line
+
+
 class SuperSettings(Popup):
     def __init__(self):
         super(SuperSettings, self).__init__()
@@ -94,12 +120,33 @@ class SuperSettings(Popup):
 
 
 class DemarrageApp(App):
+    messagesHistoric = ObjectProperty(None)
+
     def __init__(self, lance_partie):
         super(DemarrageApp, self).__init__()
         self.use_kivy_settings = False
         self.settings_cls = SettingsWithSidebar
         self.settings_open = False
+        self.serveur = Serveur(self.on_received)
+        self.client = Client(self.on_received)
         self.lance_partie = lance_partie
+
+    def send(self, text):
+        if self.serveur.estActivé():
+            self.serveur.broadcast(text)
+        elif self.client.connecté:
+            self.client.send(text)
+
+    def on_received(self, msg):
+        if self.messagesHistoric is not None:
+            self.messagesHistoric.add(msg)
+
+    def serveur_to_client(self):
+        self.serveur.désactive()
+        try:
+            self.client.connect()
+        except:
+            pass
 
     def build(self):
         return MyScreenManager()
