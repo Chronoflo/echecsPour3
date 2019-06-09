@@ -126,7 +126,7 @@ class DemarrageApp(App):
     def send(self, text):
         if self.serveur.estActivé():
             self.serveur.broadcast(text)
-        elif self.client.connecté:
+        elif self.client.estConnecté():
             self.client.send(text)
 
     def on_received(self, msg):

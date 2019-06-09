@@ -133,6 +133,9 @@ class Client:
         self.callback = callback
         self.thread = ClientThread(callback)
 
+    def estConnecté(self):
+        return self.thread.connecté and self.thread.is_alive()
+
     def connect(self):
         if not self.thread.connecté:
             self.thread.connect(self.adresseCible, self.portCible)
