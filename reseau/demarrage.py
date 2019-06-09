@@ -85,7 +85,7 @@ class MouseEvents(Widget):
 
 
 class NumericalInput(TextInput):
-    maxLength = NumericProperty(12)
+    maxLength = NumericProperty(15)
 
     def insert_text(self, substring, from_undo=False):
         modified = "".join([char for char in substring if char in ".0123456789"])
@@ -145,8 +145,9 @@ class DemarrageApp(App):
         self.serveur.désactive()
         try:
             self.client.connect()
+            self.client.send("*Connexion de {}".format(self.config.get('gameplay', 'profile')))
         except:
-            pass
+            print("Échec")
 
     def build(self):
         return MyScreenManager()

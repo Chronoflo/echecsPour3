@@ -99,7 +99,6 @@ class Client(threading.Thread):
     def connect(self):
         self.socket.connect((self.adresseCible, self.portCible))
         self.connecté = True
-        self.socket.send(b"s: Coucou")
         self.start()
 
     def run(self):
