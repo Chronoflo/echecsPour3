@@ -4,7 +4,9 @@ import threading
 from kivy.config import Config
 from kivy.metrics import dp
 from kivy.uix.button import Button
+from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.togglebutton import ToggleButton
+from kivy.uix.video import Video
 
 from reseau import Serveur, Client
 
@@ -13,7 +15,7 @@ from kivy.app import App
 from kivy.config import ConfigParser
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import NumericProperty, ReferenceListProperty, Clock, ObjectProperty, ListProperty, \
+from kivy.properties import NumericProperty, ObjectProperty, ListProperty, \
     BooleanProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -93,6 +95,14 @@ class NumericalInput(TextInput):
         modified = "".join([char for char in substring if char in ".0123456789"])
         if len(self.text) + len(modified) <= self.maxLength:
             super(NumericalInput, self).insert_text(modified, from_undo=from_undo)
+
+
+# class SuperVideo(RelativeLayout):
+#     video = ObjectProperty(None, allownone=True)
+#     video = Video()
+#     video.opacity
+#     video.bind(loaded=self.on_loaded)
+#     def
 
 
 class Chat(BoxLayout):
@@ -218,7 +228,8 @@ class DemarrageApp(App):
         self.send("m: " + "[i]" + self.player + "[/i]: " + text)
 
     def send(self, text):
-        print("Envoyé {}".format(text))
+        if self.serveur.estActivé() or self.client.estConnecté():
+            print("Envoyé {}".format(" | ".join(text.split("\b"))))
         if self.serveur.estActivé():
             self.serveur.broadcast(text)
         elif self.client.estConnecté():
@@ -303,8 +314,8 @@ class DemarrageApp(App):
 
     def on_stop(self):
         self.send("m: *{p} s'est déconnecté*\bd: {p}".format(p=self.player))
-        threading.Timer(0.5, self.serveur.désactive)
-        threading.Timer(0.5, self.client.désactive)
+        threading.Timer(1, self.serveur.désactive)
+        threading.Timer(1, self.client.désactive)
 
         if self.newProfileOptions:
             res = ""

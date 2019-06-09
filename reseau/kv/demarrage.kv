@@ -164,8 +164,14 @@
 
 <MainScreen>:
     name: 'main'
-
+    Video:
+        source: 'video/poney.mp4'
+        state: 'play'
+        opacity: 0
+        on_loaded: self.opacity = 1
+        on_state: if self.state == 'stop': self.position = 0 ; self.state = 'play'
     BoxLayout:
+        opacity: 0.8
         pos: root.width * 0.5 - self.width / 2, root.height * 0.5 - self.height / 2
         size_hint: 0.4, 0.6
         orientation: 'vertical'
@@ -182,4 +188,7 @@
         Button:
             text: "QUITTER"
             on_release: Factory.QuitConfirmationPopup().open()
+
+
+
 
