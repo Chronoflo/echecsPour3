@@ -88,8 +88,8 @@ class Serveur:
 class Client(threading.Thread):
     nClients = 0
 
-    def __init__(self, callback):
-        super(Client, self).__init__()
+    def __init__(self, callback=None):
+        super(Client, self).__init__(daemon=True)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.callback = callback
         self.adresseCible = s.gethostname()

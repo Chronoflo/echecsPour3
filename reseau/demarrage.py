@@ -1,28 +1,20 @@
-import json
-from random import randint
 from kivy.config import Config
-# Désactive le multitouch
-from kivy.uix.relativelayout import RelativeLayout
 
 from reseau import Serveur, Client
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
-import kivy
 from kivy.app import App
 from kivy.config import ConfigParser
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.properties import NumericProperty, ReferenceListProperty, Clock, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.uix.settings import Settings, SettingsWithSidebar
 from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
-from kivy.vector import Vector
 
 with open('kv/demarrage.kv', encoding='utf-8') as f:
     Builder.load_string(f.read())
@@ -146,6 +138,7 @@ class DemarrageApp(App):
         try:
             self.client.connect()
             self.client.send("*Connexion de {}*".format(self.config.get('gameplay', 'profile')))
+            self.messagesHistoric.add("*Connecté*")
         except:
             print("Échec")
 
