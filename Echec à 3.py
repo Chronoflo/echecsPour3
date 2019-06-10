@@ -12,7 +12,6 @@ def dessine_composants():
     pass
 
 
-
 if __name__ == '__main__':
     listeJoueurs = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
                                   Joueur("Florian", 2, ROUGE))
@@ -37,3 +36,4 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == QUIT:
                 continuer = 0
+

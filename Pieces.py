@@ -32,7 +32,7 @@ class Piece:
     @classmethod
     def classe_de_méthode(cls):
         for piece in cls.piècesCréées:
-            pass  # faire quelque chose sur toutes les pièces
+            pass  # permet de faire quelque chose sur toutes les pièces
 
 
 class Pion(Piece):
