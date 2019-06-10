@@ -3,6 +3,7 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import Serveur reseau.Serveur
 #:import Color kivy.graphics.Color
+#:import rand random
 
 <BackgroundColor@Widget>
     background_color: 1, 1, 1, 1
@@ -186,22 +187,35 @@
         orientation: 'vertical'
         btn_color: Color(0.4,0.4,1, mode='hsv').rgba
 
-        Button:
+        DanceAvecLesBouttons:
+            id: fiston
+            rayon: 100
+            theta_i: rand.random() * 3.14
+            vitesse_i: 2 * rand.random() - 1
             text: "UN JOUEUR"
 #            background_normal: ""
             background_color: papa.btn_color
             on_release: app.lance_partie(1)
-        Button:
+        DanceAvecLesBouttons:
+            rayon: fiston.rayon + self.height
+            theta_i: rand.random() * 3.14
+            vitesse_i: 2 * rand.random() - 1
             text: "MULTIJOUEUR"
 #            background_normal: ""
             background_color: papa.btn_color
             on_release: app.root.current = 'multiplayer'
-        Button:
+        DanceAvecLesBouttons:
+            rayon: fiston.rayon + 2 * self.height
+            theta_i: rand.random() * 3.14
+            vitesse_i: 2 * rand.random() - 1
             text: "PARAMÈTRES"
 #            background_normal: ""
             background_color: papa.btn_color
             on_release: app.open_settings()
-        Button:
+        DanceAvecLesBouttons:
+            rayon: fiston.rayon + 3 * self.height
+            theta_i: rand.random() * 3.14
+            vitesse_i: 2 * rand.random() - 1
             text: "QUITTER"
 #            background_normal: ""
             background_color: papa.btn_color
