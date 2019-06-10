@@ -5,7 +5,7 @@ from math import pi, cos, sin
 
 from kivy.clock import Clock
 from kivy.config import Config
-from kivy.metrics import dp
+from kivy.metrics import dp, cm
 from kivy.uix.behaviors import CoverBehavior
 from kivy.uix.button import Button
 from kivy.uix.image import Image
@@ -144,10 +144,15 @@ class SuperSettings(Popup):
 
 
 class DanceAvecLesBouttons(Button):
+    theta_i = NumericProperty()
+    vitesse_i = NumericProperty()
+    rayon = NumericProperty()
+    pulsation = NumericProperty()
+
     def oscille(self, dt):
         root = App.get_running_app().root
         self.t += dt
-        sommet = root.width / 2, root.height * 0.75
+        sommet = root.width / 2, root.height * 0.8
         theta = self.theta_i * cos(self.pulsation * self.t) + self.vitesse_i * sin(self.pulsation * self.t)
         pos = self.pos
         self.pos = sommet[0] + self.rayon * sin(theta) - self.width / 2,\
@@ -156,11 +161,7 @@ class DanceAvecLesBouttons(Button):
     def __init__(self, *trucs, **autres_trucs):
         super(DanceAvecLesBouttons, self).__init__()
         self.t = 0
-        self.theta_i = 0
-        self.vitesse_i = 1
-        self.rayon = 40
         Clock.schedule_interval(self.oscille, 0)
-        self.pulsation = 2 * 3.1415926 / 2
 
 
 class SettingSuperOptions(SettingOptions):

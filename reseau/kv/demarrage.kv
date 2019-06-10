@@ -4,6 +4,8 @@
 #:import Serveur reseau.Serveur
 #:import Color kivy.graphics.Color
 #:import rand random
+#:import math math
+#:import f fonctions
 
 <BackgroundColor@Widget>
     background_color: 1, 1, 1, 1
@@ -179,8 +181,19 @@
         size: self.texture.size
         allow_stretch: True
         keep_ration: False
+    AnchorLayout:
+        anchor_y: 'top'
+        pos: 0, fils.height * 0.15
+        Image:
+            id: fils
+            source: 'images/titre.png'
+            allow_stretch: True
+#            size: self.texture.size
+            size: 0.6 * root.size[0], 0.6 * root.height
+            size_hint: None, None
     BoxLayout:
         id: papa
+        triche: 0.3
         opacity: 0.95
         pos: root.width * 0.5 - self.width / 2, root.height * 0.5 - self.height / 2
         size_hint: 0.3, 0.45
@@ -189,33 +202,37 @@
 
         DanceAvecLesBouttons:
             id: fiston
-            rayon: 100
-            theta_i: rand.random() * 3.14
+            rayon: root.height * 0.27
+            theta_i: rand.random() * 1.5 + 0.3
             vitesse_i: 2 * rand.random() - 1
+            pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "UN JOUEUR"
 #            background_normal: ""
             background_color: papa.btn_color
             on_release: app.lance_partie(1)
         DanceAvecLesBouttons:
             rayon: fiston.rayon + self.height
-            theta_i: rand.random() * 3.14
+            theta_i: rand.random() * 2.5 + 0.4
             vitesse_i: 2 * rand.random() - 1
+            pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "MULTIJOUEUR"
 #            background_normal: ""
             background_color: papa.btn_color
             on_release: app.root.current = 'multiplayer'
         DanceAvecLesBouttons:
             rayon: fiston.rayon + 2 * self.height
-            theta_i: rand.random() * 3.14
+            theta_i: rand.random() * 2.5 +0.4
             vitesse_i: 2 * rand.random() - 1
+            pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "PARAMÈTRES"
 #            background_normal: ""
             background_color: papa.btn_color
             on_release: app.open_settings()
         DanceAvecLesBouttons:
             rayon: fiston.rayon + 3 * self.height
-            theta_i: rand.random() * 3.14
+            theta_i: rand.random() *1.9 + 0.5
             vitesse_i: 2 * rand.random() - 1
+            pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "QUITTER"
 #            background_normal: ""
             background_color: papa.btn_color
