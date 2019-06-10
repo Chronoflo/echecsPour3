@@ -22,8 +22,6 @@ class Piece:
     def __init__(self, nom, joueur, terrainOrigine):
         self.nom = nom
         self.joueur = joueur
-        self.cheminImage = "Image/Pieces/" + joueur.couleur.nom + "_" + "Cavalier.png"
-        self.image = None
 
         self.emplacementInitial = True
         self.terrainOrigine = terrainOrigine
@@ -32,9 +30,9 @@ class Piece:
         Piece.piècesCréées.append(self)
 
     @classmethod
-    def charge_images(cls):
+    def classe_de_méthode(cls):
         for piece in cls.piècesCréées:
-            pass
+            pass  # faire quelque chose sur toutes les pièces
 
 
 class Pion(Piece):

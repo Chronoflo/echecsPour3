@@ -3,7 +3,9 @@ import threading
 
 from kivy.config import Config
 from kivy.metrics import dp
+from kivy.uix.behaviors import CoverBehavior
 from kivy.uix.button import Button
+from kivy.uix.image import Image
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.video import Video
@@ -25,7 +27,14 @@ from kivy.uix.settings import Settings, SettingsWithSidebar, SettingItem, Settin
 import kivy.uix.settings
 from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
-
+import kivy
+from kivy.core.audio import SoundLoader
+sound = SoundLoader.load("video/poney.mp3")
+if sound:
+    print(sound)
+    print("Sound found at %s" % sound.source)
+    print("Sound is %.3f seconds" % sound.length)
+    sound.play()
 kivy.uix.settings.__all__ += tuple("SettingSuperOptions")
 
 with open('kv/demarrage.kv', encoding='utf-8') as f:

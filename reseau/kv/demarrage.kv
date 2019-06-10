@@ -2,6 +2,7 @@
 #:import Factory kivy.factory.Factory
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import Serveur reseau.Serveur
+#:import Color kivy.graphics.Color
 
 <BackgroundColor@Widget>
     background_color: 1, 1, 1, 1
@@ -161,32 +162,49 @@
     MultiplayerScreen:
         right_click: root.to_last
 
+<CoverImage@CoverBehavior+Image>:
+    reference_size: self.texture_size
 
 <MainScreen>:
     name: 'main'
-    Video:
-        source: 'video/poney.mp4'
-        state: 'play'
-        opacity: 0
-        on_loaded: self.opacity = 1
-        on_state: if self.state == 'stop': self.position = 0 ; self.state = 'play'
+#    Video:
+#        source: 'video/poney.mp4'
+#        state: 'play'
+#        opacity: 0
+#        on_loaded: self.opacity = 1
+#        on_state: if self.state == 'stop': self.position = 0 ; self.state = 'play'
+    CoverImage:
+        source: 'images/poneys.jpg'
+        size: self.texture.size
+        allow_stretch: True
+        keep_ration: False
     BoxLayout:
-        opacity: 0.8
+        id: papa
+        opacity: 0.95
         pos: root.width * 0.5 - self.width / 2, root.height * 0.5 - self.height / 2
-        size_hint: 0.4, 0.6
+        size_hint: 0.3, 0.45
         orientation: 'vertical'
+        btn_color: Color(0.4,0.4,1, mode='hsv').rgba
 
         Button:
             text: "UN JOUEUR"
+#            background_normal: ""
+            background_color: papa.btn_color
             on_release: app.lance_partie(1)
         Button:
             text: "MULTIJOUEUR"
+#            background_normal: ""
+            background_color: papa.btn_color
             on_release: app.root.current = 'multiplayer'
         Button:
             text: "PARAMÈTRES"
+#            background_normal: ""
+            background_color: papa.btn_color
             on_release: app.open_settings()
         Button:
             text: "QUITTER"
+#            background_normal: ""
+            background_color: papa.btn_color
             on_release: Factory.QuitConfirmationPopup().open()
 
 
