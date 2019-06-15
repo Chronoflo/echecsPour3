@@ -11,6 +11,24 @@ class SuperColor(pygame.Color):
 
 def dessine_composants():
     pass
+#def affichage_pièces (plateau, joueurActuel):
+  #      jA= joueurActuel.terrainDOrigine
+   #     fenetre.blit(listeJoueurs[jA], (0,0))
+    #    for p in range (3) :
+     #       for d in range (6):
+      #          for g in range (6):
+       #             case = plateau[p][d][g]
+        #            if isinstance (case, Piece) :
+         #               p0 : fenetre.blit(case.cheminImage, (centre + (hauteur/24, largeur/24) + (5-d)*u + (5-g)*v)
+         #               p1 : fenetre.blit(case.cheminImage, (centre + (hauteur/24, -largeur/24) + (g-d)*v + (g-5)*u)
+         #               p2 : fenetre.blit(case.cheminImage, (centre + (-hauteur/24, 0) + (d-5)*v + (d-g)*u)
+
+centre = (389, 297)
+hauteur =plateau.get_rect()
+largeur =
+u = (-hauteur/12,largeur/12)
+v = (-hauteur/12,0)
+390,556
 
 
 ROUGE = SuperColor("rouge", (255,   0,   0))
