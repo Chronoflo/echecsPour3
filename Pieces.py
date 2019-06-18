@@ -112,14 +112,14 @@ class Cavalier(Piece):
         return (tab, tab)
 
 
-class Chevre(Piece):
-    """ Definit la Chevre, deplacements autorisés etc... (nouvelle piece) """
+class Chat(Piece):
+    """ Definit la Chat, deplacements autorisés etc... (nouvelle piece) """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Chevre", joueur, terrainOrigine)
+        super().__init__("Chat", joueur, terrainOrigine)
 
     def deplacements_possibles(self):
-        """ Envois le tableau des déplacement possible de la Chevre """
+        """ Envois le tableau des déplacement possible de la Chat """
 
         tab = [(FINI, [(2, 0), (0, 2), (-2, 0), (0, -2),
                        (2, 2), (-2, -2), (-2, 2), (2, -2)])]
@@ -428,8 +428,7 @@ if __name__ == '__main__':
     from Interface import ROUGE, VERT, BLEU
 
     depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
-    listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
-                                  Joueur("Florian", 2, ROUGE))
+    listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     Tour.joueur = Joueur("Arthur", 0, BLEU)
     plateau = Plateau(listJoueur)
     print(isinstance(plateau[0][0][0], Pieces.Piece))

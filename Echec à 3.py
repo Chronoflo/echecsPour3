@@ -1,6 +1,6 @@
 ﻿from constantes import INFINI
 from plateau import Plateau
-from Pieces import Piece, traduction_en_couples_déplacements, Cavalier, Roi, Tour, Fou, Pion, Chevre, Reine, dep_effectifs
+from Pieces import Piece, traduction_en_couples_déplacements, Cavalier, Roi, Tour, Fou, Pion, Chat, Reine, dep_effectifs
 from joueur import Joueur, ListesDeJoueur
 import pygame
 from pygame.locals import *
