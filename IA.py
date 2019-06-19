@@ -1,5 +1,6 @@
 import Pieces
 import joueur
+import copy
 
 ptsVert = 110
 ptsRouge = 110
@@ -23,13 +24,15 @@ def coup_à_jouer(player, plateau):
     coupsPossible = coups_possible(posPlateau, plateau)
     aJouer = coupsPossible[0]
     scoreEssai = score(player, jouer(aJouer, plateau), profondeur)
-    for coup in coupsPossible :
+    pieceChoisie = 0
+    for i, coup in enumerate(coupsPossible) :
     	scoreTest = score(player, jouer(coup, plateau), profondeur)
     	if scoreTest > scoreEssai :
-    		scoreEssai = scoreTest
-    		aJouer = coup
+            scoreEssai = scoreTest
+            aJouer = coup
+            pieceChoisie = i
 
-    return aJouer
+    return pieceChoisie, aJouer
 
 
 
@@ -41,6 +44,10 @@ def score(player, plateau, profondeur):
     	coup = prochainCoup(joueur.joueur_suivant(player), plateau)
 
     return score(joueur.joueur_suivant(player), jouer(coup,plateau), profondeur-1)
+
+
+def jouer(coup,plateau):
+    truc
 
 
 
@@ -77,7 +84,12 @@ def jeu_IA(plateau, difficulté, IA):
     Précondition : c'est à l'IA de jouer
     Sortie : déplacement de la piece par l'IA"""
 
+    nouvPlat = copy.deepcopy(plateau) # utilise un autre plateau pour les tests
+
     profondeur = 3*difficulté
 
-    tabPosPieces = trouve_pieces_joueur(IA ,plateau)
-    coupsPossible =  coup_possible(tabPosPieces, plateau)
+    tabPosPieces = trouve_pieces_joueur(IA ,nouvPlat)
+    coupsPossible =  coup_possible(tabPosPieces, nouvPlat)
+    numPiece, coupJoué = coup_à_jouer(IA, nouvPlat)
+    pieceJoué = tabPosPieces[numPiece]
+    return pieceJoué, coupJoué
