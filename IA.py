@@ -1,58 +1,83 @@
-# Les 2 programmes suivant sont ceux du prof
-
 import Pieces
+import joueur
 
-ptsVert = 0
-ptsRouge = 0
-ptsBleu = 0
+ptsVert = 110
+ptsRouge = 110
+ptsBleu = 110
+
 
 def initialise_var():
     global ptsVert
     global ptsRouge
     global ptsBleu
-    ptsVert = 0
-    ptsRouge = 0
-    ptsBleu = 0
+    ptsVert = 110
+    ptsRouge = 110
+    ptsBleu = 110
 
 
-def coup_à_jouer(joueur, plateau):
-    """Entrées : joueur, etatJeu
-    Précondition : c’est à joueur de jouer
-    Sorties : le prochain coup joué par joueur"""
-    m = 0
-    aJouer = coupPossible(truc)
-    for c in coupsPossibles :
-    	essai = score(joueur, jouer(c, etatJeu), profondeur)
-    	if essai > m :
-    		m = essai
-    		aJouer = c
+
+def coup_à_jouer(player, plateau):
+    """Entrées : player, plateau
+    Précondition : c’est à player de jouer
+    Sorties : le prochain coup joué par player"""
+    coupsPossible = coups_possible(posPlateau, plateau)
+    aJouer = coupsPossible[0]
+    scoreEssai = score(player, jouer(aJouer, plateau), profondeur)
+    for coup in coupsPossible :
+    	scoreTest = score(player, jouer(coup, plateau), profondeur)
+    	if scoreTest > scoreEssai :
+    		scoreEssai = scoreTest
+    		aJouer = coup
 
     return aJouer
 
-import joueur
 
-def score(player, jouer, profondeur):
-    """Entrées : player,etatJeu,profondeur
-    précondition : c’est à l’adversaire de player de jouer
+
+def score(player, plateau, profondeur):
+    """Entrées : player,plateau,profondeur
     Sorties : un entier d’autant plus grand que player a de chances de gagner"""
 
     if profondeur!=0 and not(partie_finie) :
-        #changer autre(player) car il y a 3 joueurs
-    	c = prochainCoup(joueur.joueur_suivant(player), etatJeu)
+    	coup = prochainCoup(joueur.joueur_suivant(player), plateau)
 
-    return score(autre(player), player(c,etatJeu), profondeur-1)
-
+    return score(joueur.joueur_suivant(player), jouer(coup,plateau), profondeur-1)
 
 
-def coup_possibles(posPlateau, plateau):
+
+def coups_possible(posPlateau, plateau):
     """ fonction qui crée la tableau de tous les déplacements possibles
     de toutes les pieces possibles appartenant à l'IA"""
-    #a gerer : cas ou la foncion renvois un couple
     coupPossibles=[]
     for position in posPlateau:
-        i, j, k = posPlateau
-        piece = plateau[i][j][k]
+        p, d, g = posPlateau
+        piece = plateau[p][d][g]
         deplacements = Pieces.dep_effectifs(Pieces.traduction_en_couples_déplacements(*piece.deplacements_possibles(None), position))
         coupPossibles.append((deplacements))
 
     return coupPossibles
+
+
+
+def trouve_pieces_joueur(player, plateau):
+    tabPieces=[]
+    for p in range(3):
+        for x in range(6):
+            for y in range(6):
+                if joueur.plateau[p][x][y] == player:
+                    tabPieces.append((p,x,y))
+
+    return tabPieces
+
+
+
+def jeu_IA(plateau, difficulté, IA):
+    """fonction principale qui s'occupe de faire jouer l'IA
+    Entrée : le plateau qui contient l'etat du jeu,
+             la difficulté qui détermine le niveau de l'IA c'est à dire combien de tours a l'avance prévoit l'IA
+    Précondition : c'est à l'IA de jouer
+    Sortie : déplacement de la piece par l'IA"""
+
+    profondeur = 3*difficulté
+
+    tabPosPieces = trouve_pieces_joueur(IA ,plateau)
+    coupsPossible =  coup_possible(tabPosPieces, plateau)
