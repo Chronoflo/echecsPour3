@@ -1,6 +1,11 @@
 import pygame
 from pygame.locals import *
 
+import numpy as np
+from plateau import Plateau
+from Pieces import Piece
+from joueur import Joueur, ListeDeJoueurs
+
 
 class SuperColor(pygame.Color):
     """ Une couleur pygame dotée d'un nom. """
@@ -9,27 +14,7 @@ class SuperColor(pygame.Color):
         self.nom = nom
 
 
-def dessine_composants():
-    pass
-#def affichage_pièces (plateau, joueurActuel):
-  #      jA= joueurActuel.terrainDOrigine
-   #     fenetre.blit(listeJoueurs[jA], (0,0))
-    #    for p in range (3) :
-     #       for d in range (6):
-      #          for g in range (6):
-       #             case = plateau[p][d][g]
-        #            if isinstance (case, Piece) :
-         #               p0 : fenetre.blit(case.cheminImage, (centre + (hauteur/24, largeur/24) + (5-d)*u + (5-g)*v)
-         #               p1 : fenetre.blit(case.cheminImage, (centre + (hauteur/24, -largeur/24) + (g-d)*v + (g-5)*u)
-         #               p2 : fenetre.blit(case.cheminImage, (centre + (-hauteur/24, 0) + (d-5)*v + (d-g)*u)
-
-centre = (389, 297)
-hauteur =plateau.get_rect()
-largeur =
-u = (-hauteur/12,largeur/12)
-v = (-hauteur/12,0)
-390,556
-
+##390,556
 
 ROUGE = SuperColor("rouge", (255,   0,   0))
 VERT = SuperColor("vert", (0, 255,   0))
@@ -37,17 +22,21 @@ BLEU = SuperColor("bleu", (0,   0, 255))
 BLANC = SuperColor("blanc", (255, 255, 255))
 NOIR = SuperColor("noir", (0, 0, 0))
 
-
 def affichage():
     pygame.init()
+
+    listeJoueurs = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
+                              Joueur("Florian", 2, ROUGE))
+    plateau = Plateau(listeJoueurs)
 
     fenetre = pygame.display.set_mode((800,600))
     fond = pygame.image.load("Image/Menu 1.jpg").convert()
     pygame.display.set_caption("Coucou Sarah :p")
-    joueurBleu = pygame.image.load("Image/Plateau joueur Bleu.jpg").convert()
-    joueurVert = pygame.image.load("Image/Plateau joueur Vert.jpg").convert()
-    joueurRouge = pygame.image.load("Image/Plateau joueur Rouge.jpg").convert()
-    listeJoueurs = [joueurBleu, joueurRouge, joueurVert]
+    terrainBleu = pygame.image.load("Image/Plateau joueur Bleu.jpg").convert()
+    terrainVert = pygame.image.load("Image/Plateau joueur Vert.jpg").convert()
+    terrainRouge = pygame.image.load("Image/Plateau joueur Rouge.jpg").convert()
+    listeTerrains = [terrainBleu, terrainRouge, terrainVert]
+
     fenetre.blit(fond, (0, 0))
 
     bouton1 = pygame.image.load("Image/Commencer 1.png").convert_alpha()
@@ -84,17 +73,34 @@ def affichage():
                         j = 0
         #BOUCLE JEU:
             if jeu:
-                fenetre.blit(listeJoueurs[j], (0,0))
+                fenetre.blit(listeTerrains[j], (0,0))
+                affichage_pièces (plateau, listeTerrains[j], fenetre)
                 if event.type == KEYDOWN:
                     j=(j+1)%3
             #fenetre.blit(joueurRouge, (0,0))
             pygame.display.flip()
 
 
+
+def affichage_pièces (plateau, imagePlateau, fenetre):
+    def cercle(pos, r=8):
+        a, b = pos
+        pygame.draw.circle(fenetre, VERT, (int(a), int(b)), r)
+
+    hauteur = imagePlateau.get_rect()[3]
+    largeur = imagePlateau.get_rect()[2]
+    centre = complex(largeur/2, hauteur/2)
+
+    Image = pygame.image.load("Image/Pieces/rouge_Cavalier.png").convert_alpha()
+    u = complex(largeur/12, 0)
+    v = complex(0, hauteur/12)
+    for p in range (3) :
+        for d in range (6):
+            for g in range (6):
+                case = plateau[p][d][g]
+                if isinstance (case, Piece) :
+                    z = np.exp(2j*p*np.pi/3)*(centre +  + (5-d)*u + (5-g)*v)
+                    #fenetre.blit(Image, (z.real, z.imag))
+                    cercle((z.real, z.imag))
 if __name__ == '__main__':
     affichage()
-
-
-
-
-

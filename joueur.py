@@ -30,7 +30,7 @@ class Joueur:
                                 self.pion4, self.pion5, self.pion6, self.pion7, self.chevre]
 
 
-class ListesDeJoueur:
+class ListeDeJoueurs:
     def __init__(self, *joueurs):
         self.joueurs = list(joueurs)
         self.iJoueurActuel = 0
