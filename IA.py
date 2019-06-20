@@ -23,20 +23,27 @@ def coup_à_jouer(player, plateau):
 
 
 
-def pas_score_mais_autre_chose(player, plateau, profondeur):
-    """Entrées : player,plateau,profondeur
+def pas_score_mais_autre_chose(player, plateau, profondeur, score):
+    """Entrées : celui qui joue, plateau, niveau de l'IA
     Sorties : un entier d’autant plus grand que player a de chances de gagner"""
 
     nouvPlat = copy.deepcopy(plateau) # utilise un autre plateau pour les tests
 
-    if profondeur!=0 and not(partie_finie) :
-    	coup = coup_à_jouer(joueur.joueur_suivant(player), nouvPlat)
 
-    return score(joueur.joueur_suivant(player), jouer(coup,nouvPlat), profondeur-1)
+    if profondeur==0 or partie_finie :
+        return score
+
+    else:
+        coup = coup_à_jouer(joueur.joueur_suivant(player), nouvPlat)
+
+    return jouer(joueur.joueur_suivant(player), jouer(coup,nouvPlat), profondeur-1)
 
 
-def jouer(coup,plateau):
-    truc
+def jouer(piece,nouvCase,plateau):
+    """joue un coup sur une copie du plateau et enregistre le score actuel
+    Entrée : le coup a jouer c'est a dire la piece et la case sur laquelle elle va
+    Sortie : le nouveau plateau (la copie qui a changée) , et le score des joueurs """
+
 
 
 
