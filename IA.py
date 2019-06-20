@@ -2,19 +2,6 @@ import Pieces
 import joueur
 import copy
 
-ptsVert = 110
-ptsRouge = 110
-ptsBleu = 110
-
-
-def initialise_var():
-    global ptsVert
-    global ptsRouge
-    global ptsBleu
-    ptsVert = 110
-    ptsRouge = 110
-    ptsBleu = 110
-
 
 
 def coup_à_jouer(player, plateau):
@@ -36,14 +23,16 @@ def coup_à_jouer(player, plateau):
 
 
 
-def score(player, plateau, profondeur):
+def pas_score_mais_autre_chose(player, plateau, profondeur):
     """Entrées : player,plateau,profondeur
     Sorties : un entier d’autant plus grand que player a de chances de gagner"""
 
-    if profondeur!=0 and not(partie_finie) :
-    	coup = prochainCoup(joueur.joueur_suivant(player), plateau)
+    nouvPlat = copy.deepcopy(plateau) # utilise un autre plateau pour les tests
 
-    return score(joueur.joueur_suivant(player), jouer(coup,plateau), profondeur-1)
+    if profondeur!=0 and not(partie_finie) :
+    	coup = coup_à_jouer(joueur.joueur_suivant(player), nouvPlat)
+
+    return score(joueur.joueur_suivant(player), jouer(coup,nouvPlat), profondeur-1)
 
 
 def jouer(coup,plateau):
@@ -84,12 +73,10 @@ def jeu_IA(plateau, difficulté, IA):
     Précondition : c'est à l'IA de jouer
     Sortie : déplacement de la piece par l'IA"""
 
-    nouvPlat = copy.deepcopy(plateau) # utilise un autre plateau pour les tests
-
     profondeur = 3*difficulté
 
-    tabPosPieces = trouve_pieces_joueur(IA ,nouvPlat)
-    coupsPossible =  coup_possible(tabPosPieces, nouvPlat)
-    numPiece, coupJoué = coup_à_jouer(IA, nouvPlat)
+    tabPosPieces = trouve_pieces_joueur(IA ,plateau)
+    coupsPossible =  coup_possible(tabPosPieces, plateau)
+    numPiece, coupJoué = coup_à_jouer(IA, plateau)
     pieceJoué = tabPosPieces[numPiece]
     return pieceJoué, coupJoué

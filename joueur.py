@@ -7,6 +7,7 @@ class Joueur:
         """ Crée un joueur."""
         self.pseudo = nomJoueur
         self.couleur = couleur
+        self.score = 110
 
         self.roi = Pieces.Roi(self, terrainDOrigine)
         self.reine = Pieces.Reine(self, terrainDOrigine)
