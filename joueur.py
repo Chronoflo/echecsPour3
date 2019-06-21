@@ -31,6 +31,9 @@ class Joueur:
                                 self.pion4, self.pion5, self.pion6, self.pion7, self.chat]
 
 
+<<<<<<< HEAD
+class ListeDeJoueurs:
+=======
 class IA(Joueur):
     """C'est l'IA, donc n'est pas controlée par les joueurs"""
     nomIA = ["Truc 1", "Truc 2", "Truc 3"]
@@ -41,6 +44,7 @@ class IA(Joueur):
         self.difficulté = difficulté
 
 class ListesDeJoueur:
+>>>>>>> master
     def __init__(self, *joueurs):
         self.joueurs = list(joueurs)
         self.iJoueurActuel = 0

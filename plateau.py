@@ -1,7 +1,6 @@
 #from Pieces import traduction_en_couples_déplacements, Piece
 import Pieces
 
-
 class Plateau(list):
     def __init__(self, listeJoueurs):
         super().__init__(initialisation_plateau(listeJoueurs))

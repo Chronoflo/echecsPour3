@@ -1,7 +1,7 @@
 ﻿from constantes import INFINI
 from plateau import Plateau
 from Pieces import Piece, traduction_en_couples_déplacements, Cavalier, Roi, Tour, Fou, Pion, Chat, Reine, dep_effectifs
-from joueur import Joueur, ListesDeJoueur
+from joueur import Joueur, ListeDeJoueurs
 import pygame
 from pygame.locals import *
 from numpy import exp, pi, sqrt
@@ -13,7 +13,7 @@ def dessine_composants():
 
 
 if __name__ == '__main__':
-    listeJoueurs = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
+    listeJoueurs = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
                                   Joueur("Florian", 2, ROUGE))
     plateau = Plateau(listeJoueurs)
 
@@ -33,6 +33,7 @@ if __name__ == '__main__':
     print(plateau[0][2][0])
 
     while continuer:
+        print (fenetre.get_rect())
         for event in pygame.event.get():
             if event.type == QUIT:
                 continuer = 0
