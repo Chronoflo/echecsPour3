@@ -7,6 +7,7 @@ class Joueur:
         """ Crée un joueur."""
         self.pseudo = nomJoueur
         self.couleur = couleur
+        self.score = 110
 
         self.roi = Pieces.Roi(self, terrainDOrigine)
         self.reine = Pieces.Reine(self, terrainDOrigine)
@@ -30,7 +31,20 @@ class Joueur:
                                 self.pion4, self.pion5, self.pion6, self.pion7, self.chat]
 
 
+<<<<<<< HEAD
 class ListeDeJoueurs:
+=======
+class IA(Joueur):
+    """C'est l'IA, donc n'est pas controlée par les joueurs"""
+    nomIA = ["Truc 1", "Truc 2", "Truc 3"]
+    numIA = 0
+    def __init__(self, terrainDOrigine, couleur, difficulté):
+        super(IA, self).__init__(IA.nomIA[IA.numIA], terrainDOrigine, couleur)
+        IA.numIA +=1
+        self.difficulté = difficulté
+
+class ListesDeJoueur:
+>>>>>>> master
     def __init__(self, *joueurs):
         self.joueurs = list(joueurs)
         self.iJoueurActuel = 0

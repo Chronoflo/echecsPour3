@@ -19,13 +19,15 @@ class Piece:
     """
     piècesCréées = []
 
-    def __init__(self, nom, joueur, terrainOrigine):
+    def __init__(self, nom, joueur, terrainOrigine, scorePiece):
         self.nom = nom
         self.joueur = joueur
 
         self.emplacementInitial = True
         self.terrainOrigine = terrainOrigine
         self.terrainActuel = terrainOrigine
+
+        self.scorePiece = scorePiece
 
         Piece.piècesCréées.append(self)
 
@@ -39,7 +41,7 @@ class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super(Pion, self).__init__("Pion", joueur, terrainOrigine)
+        super(Pion, self).__init__("Pion", joueur, terrainOrigine, 1)
 
     def deplacements_possibles(self):
         """ Envois une constante : False,True,Rock
@@ -80,7 +82,7 @@ class Roi(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Roi", joueur, terrainOrigine)
+        super(Roi, self).__init__("Roi", joueur, terrainOrigine, None)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Roi
@@ -102,7 +104,7 @@ class Cavalier(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Cavalier", joueur, terrainOrigine)
+        super(Cavalier, self).__init__("Cavalier", joueur, terrainOrigine, 3)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Cavalier """
@@ -116,7 +118,7 @@ class Chat(Piece):
     """ Definit la Chat, deplacements autorisés etc... (nouvelle piece) """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Chat", joueur, terrainOrigine)
+        super(Chat, self).__init__("Chat", joueur, terrainOrigine, 3)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Chat """
@@ -131,7 +133,7 @@ class Tour(Piece):
     """ Definit la Tour, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Tour", joueur, terrainOrigine)
+        super(Tour, self).__init__("Tour", joueur, terrainOrigine, 5)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
@@ -145,7 +147,7 @@ class Fou(Piece):
     """ Definit le Fou, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Fou", joueur, terrainOrigine)
+        super(Fou, self).__init__("Fou", joueur, terrainOrigine, 5)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Fou"""
@@ -159,7 +161,7 @@ class Reine(Piece):
     """ Definit la Reine, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Reine", joueur, terrainOrigine)
+        super(Reine, self).__init__("Reine", joueur, terrainOrigine, 10)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Reine"""
@@ -421,6 +423,7 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
         k += 1
     return depsInfini
 
+<<<<<<< HEAD
 ##if __name__ == '__main__':
 ##    import Pieces
 ##    from plateau import Plateau
@@ -434,6 +437,13 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 ##    plateau = Plateau(listJoueur)
 ##    print(isinstance(plateau[0][0][0], Pieces.Piece))
 ##    print(dep_effectifs(depssE, depacE, Tour, plateau))
+=======
+if __name__ == '__main__':
+    import Pieces
+    from plateau import Plateau
+    from joueur import Joueur, ListesDeJoueur
+    from Interface import ROUGE, VERT, BLEU, BLANC
+>>>>>>> master
 
     depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
     listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
