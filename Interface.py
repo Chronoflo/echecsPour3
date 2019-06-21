@@ -105,10 +105,13 @@ def affichage():
                 imageRedim = redimensionne(listeTerrains[j], (largeurFenetre, hauteurFenetre))
                 hauteur = imageRedim.get_rect()[3]
                 largeur = imageRedim.get_rect()[2]
-                fenetre.blit(imageRedim, ((largeurFenetre-largeur)/2, (hauteurFenetre-hauteur)/2))
+                xPlateau, yPlateau = (largeurFenetre-largeur)/2, (hauteurFenetre-hauteur)/2
+                fenetre.blit(imageRedim, (xPlateau, yPlateau))
                 affichage_pièces (plateau, imageRedim, fenetre)
                 if event.type == KEYDOWN:
                     j=(j+1)%3
+                if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                    detecteCaseCurseur(event, largeur, hauteur, xPlateau, yPlateau)
                 pygame.display.flip()
 
 
@@ -121,7 +124,7 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
     largeur = imagePlateau.get_rect()[2]
     hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
     centre = complex(largeurFenetre/2, hauteurFenetre/2)
-    Image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion.png").convert_alpha(), (largeur/8, hauteur/8))
+    Image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion00.png").convert_alpha(), (largeur/8, hauteur/8))
     u = complex(largeur/12, -hauteur/24) # selon l'axe d
     v = complex(-largeur/12, -hauteur/24)# attention l'axe est vers le bas
 
@@ -135,12 +138,15 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
                     z = décaleImage + centre + np.exp(2j*p*np.pi/3)*(centreCase + d*u + g*v - centre)
                     fenetre.blit(Image, (z.real, z.imag))
 
-def detecteCaseCurseur(imagePlateau):
-    if event.type == MOUSEBUTTONDOWN and event.button == 1:
+def detecteCaseCurseur(event, largeurPlateau, hauteurPlateau, xPlateau, yPlateau):
         xCurseur = event.pos[0]
         yCurseur = event.pos[1]
-        def
-        if
+        def frontiere01(x):
+            return 3*hauteurPlateau/4 - x * (x*np.tan(np.pi/6))
+        def frontiere02(x):
+            return hauteurPlateau/4 + x * (x*tan(np.pi/6))
+        if yCurseur < frontiere01(xCurseur) and xCurseur < (largeurPlateau+xPlateau)/2 :
+            print ("terrain 1")
 
 
 

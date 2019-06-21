@@ -423,7 +423,6 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
         k += 1
     return depsInfini
 
-<<<<<<< HEAD
 ##if __name__ == '__main__':
 ##    import Pieces
 ##    from plateau import Plateau
@@ -437,13 +436,13 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 ##    plateau = Plateau(listJoueur)
 ##    print(isinstance(plateau[0][0][0], Pieces.Piece))
 ##    print(dep_effectifs(depssE, depacE, Tour, plateau))
-=======
+
 if __name__ == '__main__':
     import Pieces
     from plateau import Plateau
     from joueur import Joueur, ListesDeJoueur
     from Interface import ROUGE, VERT, BLEU, BLANC
->>>>>>> master
+
 
     depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
     listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
