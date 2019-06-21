@@ -31,6 +31,15 @@ class Joueur:
                                 self.pion4, self.pion5, self.pion6, self.pion7, self.chat]
 
 
+class IA(Joueur):
+    """C'est l'IA, donc n'est pas controlée par les joueurs"""
+    nomIA = ["Truc 1", "Truc 2", "Truc 3"]
+    numIA = 0
+    def __init__(self, terrainDOrigine, couleur, difficulté):
+        super(IA, self).__init__(IA.nomIA[IA.numIA], terrainDOrigine, couleur)
+        IA.numIA +=1
+        self.difficulté = difficulté
+
 class ListesDeJoueur:
     def __init__(self, *joueurs):
         self.joueurs = list(joueurs)

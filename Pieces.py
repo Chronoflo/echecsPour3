@@ -82,7 +82,7 @@ class Roi(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Roi", joueur, terrainOrigine, None)
+        super(Roi, self).__init__("Roi", joueur, terrainOrigine, None)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Roi
@@ -104,7 +104,7 @@ class Cavalier(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Cavalier", joueur, terrainOrigine, 3)
+        super(Cavalier, self).__init__("Cavalier", joueur, terrainOrigine, 3)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Cavalier """
@@ -118,7 +118,7 @@ class Chat(Piece):
     """ Definit la Chat, deplacements autorisés etc... (nouvelle piece) """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Chat", joueur, terrainOrigine, 3)
+        super(Chat, self).__init__("Chat", joueur, terrainOrigine, 3)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Chat """
@@ -133,7 +133,7 @@ class Tour(Piece):
     """ Definit la Tour, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Tour", joueur, terrainOrigine, 5)
+        super(Tour, self).__init__("Tour", joueur, terrainOrigine, 5)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
@@ -147,7 +147,7 @@ class Fou(Piece):
     """ Definit le Fou, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Fou", joueur, terrainOrigine, 5)
+        super(Fou, self).__init__("Fou", joueur, terrainOrigine, 5)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Fou"""
@@ -161,7 +161,7 @@ class Reine(Piece):
     """ Definit la Reine, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super().__init__("Reine", joueur, terrainOrigine, 10)
+        super(Reine, self).__init__("Reine", joueur, terrainOrigine, 10)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Reine"""
