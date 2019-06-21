@@ -23,11 +23,11 @@ class Joueur:
         self.pion5 = Pieces.Pion(self, terrainDOrigine)
         self.pion6 = Pieces.Pion(self, terrainDOrigine)
         self.pion7 = Pieces.Pion(self, terrainDOrigine)
-        self.chevre = Pieces.Chevre(self, terrainDOrigine)
+        self.chat = Pieces.Chat(self, terrainDOrigine)
 
         self.piecesRestantes = [self.roi, self.reine, self.fou1, self.fou2, self.tour1, self.tour2,
                                 self.cavalier1, self.cavalier2, self.pion1, self.pion2, self.pion3,
-                                self.pion4, self.pion5, self.pion6, self.pion7, self.chevre]
+                                self.pion4, self.pion5, self.pion6, self.pion7, self.chat]
 
 
 class ListeDeJoueurs:
