@@ -69,22 +69,47 @@ def jouer(player, coordPiece, nouvCase, plateau: Plateau):
         modif_score(player, coordPiece, nouvCase, plateau, False)
 
 def modif_score(player, coordPiece, nouvCase, plateau, bool):
+    """Entrée : player est celui qui joue, piece est la piece a bouger sur nouvCase,
+        bool contient 'il y a un ennemi sur la case'
+    Sortie : modifie le score en fonction d'un mouvement puis fais le mouvement"""
+
     p1, x1, y1 = coordPiece
+    piece = plateau[p1][x1][y1]
     p2, x2, y2 = nouvCase
+    case = plateau[p2][x2][y2]
+    platOriPiece = piece.terrainOrigine
+    platActPiece = piece.terrainActuel
+
 
     differenceTerrain = abs(p1 - p2) % 3
 
-    if differenceTerrain == 0:
-        factTer = 1
-    elif differenceTerrain == 1 and plateau[p1][x1][y1].terrainActuel == plateau[p1][x1][y1].terrainOrigine:
-
-
-    if bool:
-        truc_pour_modif_score_des_2_joueurs
-
+    if differenceTerrain == 0 or platActPiece == platOriPiece:
+        scoreSupp1 = piece.scorePiece*(x2-x1)*(y2-y1)
+    elif platOriPiece == p2:
+        scoreSupp1 = piece.scorePiece*(x2*y2-(5-x1)*(5-y1)) -25
     else :
-        scoreSupp = truc
-        player.score += scoreSupp
+        scoreSupp1 = piece.scorePiece*((5-x2)*(5-y2)-x1*y1) +25
+    #trouve le changement de score de player
+
+    if bool: # vérifie si il y a un ennemi
+        if case.terrainOrigine == p2:
+            nouvScore2 = case.scorePiece*x2*y2
+        else:
+            nouvScore2 = case.scorePiece*((5-x2)*(5-y2)+25)
+
+        NouvScore2 = case.joueur.score - nouvScore2
+        NouvScore1 = score1 + scoreSupp1
+        coupleIfEnnemi = (True, case.joueur, NouvScore2)
+    # trouve le nouveau score dans le cas ou il y a un ennemi
+
+
+    else : # la case est libre
+        NouvScore1 = score1 + scoreSupp1
+        coupleIfEnnemi = (False, None, None)
+    # trouve le nouveau score dans le cas ou il n'y a pas d'ennemi
+
+
+    return NouvScore1, coupleIfEnnemi
 
 
 def jeu_IA(plateau: Plateau, difficulté, IA):

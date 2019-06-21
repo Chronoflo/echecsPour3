@@ -49,7 +49,7 @@ class Pion(Piece):
         fini, le tableau des déplacements fini (vecteur des déplacements
         infinis) possible du Pion.
         Separe le cas où il y a une piece ennemie et où il n'y a rien.
-        Avec à la fin le max des déplacements possibles si déplacement infini"""
+        Avec au début le max des déplacements possibles si déplacement infini"""
 
         differenceTerrain = abs(self.terrainOrigine - self.terrainActuel) % 3
 
