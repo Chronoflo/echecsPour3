@@ -82,7 +82,7 @@ class Roi(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super(Roi, self).__init__("Roi", joueur, terrainOrigine, None)
+        super(Roi, self).__init__("Roi", joueur, terrainOrigine, 0)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Roi
