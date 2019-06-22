@@ -142,11 +142,25 @@ def detecteCaseCurseur(event, largeurPlateau, hauteurPlateau, xPlateau, yPlateau
         xCurseur = event.pos[0]
         yCurseur = event.pos[1]
         def frontiere01(x):
-            return 3*hauteurPlateau/4 - x * (x*np.tan(np.pi/6))
+            return 3*hauteurPlateau/4 + yPlateau - (x-xPlateau) * np.tan(np.pi/6)
         def frontiere02(x):
-            return hauteurPlateau/4 + x * (x*tan(np.pi/6))
-        if yCurseur < frontiere01(xCurseur) and xCurseur < (largeurPlateau+xPlateau)/2 :
+            return hauteurPlateau/4 + yPlateau + (x-xPlateau) * np.tan(np.pi/6)
+        def haut1(x):
+            return hauteurPlateau / 4 + yPlateau - (x - xPlateau)*np.tan(np.pi / 6)
+        def bas1(x):
+            return 5*hauteurPlateau / 4 + yPlateau - (x - xPlateau)*np.tan(np.pi / 6)
+        def haut2(x):
+            return -hauteurPlateau / 4 + yPlateau + (x - xPlateau)*np.tan(np.pi / 6)
+        def bas2(x):
+            return 3*hauteurPlateau / 4 + yPlateau + (x - xPlateau)*np.tan(np.pi / 6)
+        if yCurseur<haut1(xCurseur) or yCurseur<haut2(xCurseur) or yCurseur>bas1(xCurseur) or yCurseur>bas2(xCurseur) or xCurseur<xPlateau or xCurseur>xPlateau+largeurPlateau :
+            None
+        elif yCurseur < frontiere01(xCurseur) and xCurseur < (largeurPlateau/2+xPlateau) :
             print ("terrain 1")
+        elif yCurseur > frontiere02(xCurseur) :
+            print ("terrain 0")
+        else :
+            print ("terrain 2")
 
 
 
