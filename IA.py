@@ -39,7 +39,7 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
         else :
             tabcoups.append([])
 
-    i=1
+    i=0
     trouvé = False
     while i<(len(pieces)-1) and not(trouvé):
         if tabcoups[2*i] != []:
@@ -52,11 +52,14 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
             t = int((i-1)/2)
         i+=1
     p,d,g = pieces[t]
-    print(pieces[t], tabcoups[j], tabcoups[j][0])
 
     if i==len(pieces): return None
-    pieceJoué, coupJoué = pieces[t], tabcoups[j]
-    scoreJouer = coup_immediat(player, jouer(player, pieceJoué, coupJoué, nouvPlat), profondeur)
+    pieceJoué, coupJoué = pieces[t], tabcoups[j][0]
+    print(pieces[t], tabcoups[j][0])
+
+    nouvPlat.sur_déplacement_validé(self, pieceJoué, coupJoué)
+
+    scoreJouer = coup_immediat(player, jouer(player, nouvPlat, profondeur, tab_score(player, plateau)))
     coordPieceChoisie = 0
     for i, coup in enumerate(tabcoups[(i+1):]) :
         nouvPlat = copy_plat(plateau) # utilise un autre plateau pour les tests
@@ -99,7 +102,7 @@ def copy_plat(plateau: Plateau):
 def coup_immediat(player, plateau: Plateau, profondeur, tabScores):
 
     if profondeur==0 or partie_finie :
-        return scoreJoueur
+        return tabScores[0]
 
     else:
         coup = coup_a_jouer(joueur.joueur_suivant(player), nouvPlat,  profondeur-1)
@@ -114,10 +117,11 @@ def coup_immediat(player, plateau: Plateau, profondeur, tabScores):
 
 
 
-def tab_score(player, plateau: Plateau, profondeur):
+def tab_score(player, plateau: Plateau):
     scoreJoueur = player.score
-    scoreEnnemi1 = joueur.joueur_suivant(player).score
-    scoreEnnemi2 = joueur.joueur_suivant(joueur.joueur_suivant(player)).score
+    scoreEnnemi1 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur).score
+    scoreEnnemi2 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur).score
+    joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
     return [scoreJoueur, scoreEnnemi1, scoreEnnemi2]
 
 
@@ -145,6 +149,13 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
         bool contient 'il y a un ennemi sur la case'
     Sortie : modifie le score en fonction d'un mouvement puis fait le mouvement"""
 
+##    numTab = 0
+##    for i, score in enumerate(tabScore):
+##        if joueur.player.score == score:
+##            numTab = i
+
+    tabScore = tab_score(player, plateau)
+
     p1, x1, y1 = coordPiece
     piece = plateau[p1][x1][y1]
     p2, x2, y2 = nouvCase
@@ -162,8 +173,8 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
         scoreSupp1 = piece.scorePiece*((5-x2)*(5-y2)-x1*y1) +25
     # trouve le changement de score de player
 
+        if case.scorePiece == 0:
     if bool: # vérifie s'il y a un ennemi
-        if case.score == 1:
             nouvScore2 = case.joueur.score
         elif case.terrainOrigine == p2 :
             nouvScore2 = case.scorePiece*x2*y2
@@ -172,18 +183,18 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
             nouvScore2 = case.scorePiece*((5-x2)*(5-y2)+25)
 
 
-        if case.joueur == joueur.joueur_suivant(player):
+        if case.joueur == joueur.ListeDeJoueurs.joueur_suivant(listJoueur):
             numScore = 1
         else:
             numScore = 2
-        NouvScore2 = case.joueur.score - nouvScore2
-        NouvScore1 = score1 + scoreSupp1
+        NouvScore2 = tabScore[numScore] - nouvScore2
+        NouvScore1 =  tabScore[0] + scoreSupp1
         coupleIfEnnemi = (numScore, NouvScore2)
     # trouve le nouveau score dans le cas où il y a un ennemi
 
 
     else : # la case est libre
-        NouvScore1 = score1 + scoreSupp1
+        NouvScore1 = tabScore[0] + scoreSupp1
         coupleIfEnnemi = (None, None, None)
     # trouve le nouveau score dans le cas où il n'y a pas d'ennemi
 
@@ -196,6 +207,14 @@ def jeu_IA(plateau: Plateau, difficulte, IA):
              la difficulté qui détermine le niveau de l'IA, c'est à dire combien de tours à l'avance prévoit l'IA
     Précondition : c'est à l'IA de jouer
     Sortie : déplacement de la pièce par l'IA"""
+
+##    scoreIA = joueur.IA.score
+##    E1 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
+##    scoreE1 = joueur.E1.score
+##    E2 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
+##    scoreE2 = joueur.E2.score
+##    joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
+##    tabScore = [scoreIA, scoreE1, scoreE2]
 
     profondeur = 3*difficulte
     # profondeur = nombre de coups d'avance (compte les coups des 3 joueurs)
