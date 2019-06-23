@@ -27,21 +27,35 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
     Sorties : le prochain coup joue par player"""
     nouvPlat = copy_plat(plateau) # utilise un autre plateau pour les tests
     pieces, coups = trouve_pieces_et_coups_joueur(player, plateau)
-    tabcoups = []
-    if len(coups[0]) != 0:
-        for couples in coups[0][1]:
-            tabcoups.append(couples)
-            print(couples)
-    if len(coups[1]) != 0:
-        for couples in coups[1][1]:
-            tabcoups.append(couples)
-            print(couples)
-    i=0
-    while i<(len(tabcoups)-1) and tabcoups[i] == []:
-        print(pieces[i], tabcoups[i])
+    tabcoups = [] # contiendra 2 fois plus de cases que pieces
+    for couples in coups:
+        tabSSE, tabACE = couples
+        if tabSSE:
+            tabcoups.append(tabSSE[0][1])
+        else :
+            tabcoups.append([])
+        if tabACE:
+            tabcoups.append(tabACE[0][1])
+        else :
+            tabcoups.append([])
+
+    i=1
+    trouvé = False
+    while i<(len(pieces)-1) and not(trouvé):
+        if tabcoups[2*i] != []:
+            trouvé = True
+            j = 2*i
+            t = int(i/2)
+        elif tabcoups[2*i+1] != [] :
+            trouvé = True
+            j = 2*i+1
+            t = int((i-1)/2)
         i+=1
+    p,d,g = pieces[t]
+    print(pieces[t], tabcoups[j], tabcoups[j][0])
+
     if i==len(pieces): return None
-    pieceJoué, coupJoué = pieces[i], tabcoups[i]
+    pieceJoué, coupJoué = pieces[t], tabcoups[j]
     scoreJouer = coup_immediat(player, jouer(player, pieceJoué, coupJoué, nouvPlat), profondeur)
     coordPieceChoisie = 0
     for i, coup in enumerate(tabcoups[(i+1):]) :
@@ -202,4 +216,4 @@ if __name__ == '__main__':
     listJoueur = ListeDeJoueurs(J1, Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     plateau = Plateau(listJoueur)
     print(coup_à_jouer(J1, plateau, 1))
-##    print(jeu_IA(plateau,1 , Joueur("Arthur", 0, BLEU)))
+##    print(jeu_IA(plateau,1 , J1))
