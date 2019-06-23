@@ -1,18 +1,19 @@
 import Pieces
 import joueur
-from copy import deepcopy
 from plateau import Plateau
 
 def trouve_pieces_et_coups_joueur(player, plateau: Plateau):
-    """fonction qui enregistre dans un tableau tous les déplacements possibles de l'IA"""
+    """Fonction qui enregistre dans un tableau tous les déplacements possibles de l'IA"""
     piecesCoupPossibles = []
     piecePossible = []
     for p in range(3):
         for x in range(6):
             for y in range(6):
                 if isinstance(plateau[p][x][y], Pieces.Piece) and plateau[p][x][y].joueur == player:
+                    piece = plateau[p][x][y]
                     position = (p,x,y)
-                    deplacements = Pieces.dep_effectifs(Pieces.traduction_en_couples_déplacements(*piece.deplacements_possibles(None), position))
+                    depSans, depAvec = Pieces.traduction_en_couples_déplacements(*piece.deplacements_possibles(), position)
+                    deplacements = Pieces.dep_effectifs(depSans, depAvec, piece, plateau)
                     piecePossible.append(position)
                     piecesCoupPossibles.append(deplacements)
 
@@ -22,16 +23,47 @@ def trouve_pieces_et_coups_joueur(player, plateau: Plateau):
 
 def coup_à_jouer(player, plateau: Plateau, profondeur):
     """Entrées : player, plateau
-    Precondition : c'est a player de jouer
-    Sorties : le prochain coup joue par player"""
-    nouvPlat = deepcopy(plateau) # utilise un autre plateau pour les tests
-    piecesCoupPossibles = trouve_pieces_et_coups_joueur(player, plateau)
-    aJouer = piecesCoupPossibles[0]
-    scoreJouer = coup_immediat(player, jouer(aJouer, nouvPlat), profondeur)
+    Précondition : c'est à player de jouer
+    Sorties : le prochain coup joué par player"""
+    nouvPlat = copy_plat(plateau) # utilise un autre plateau pour les tests
+    pieces, coups = trouve_pieces_et_coups_joueur(player, plateau)
+    tabcoups = [] # contiendra 2 fois plus de cases que pieces
+    for couples in coups:
+        tabSSE, tabACE = couples
+        if tabSSE:
+            tabcoups.append(tabSSE[0][1])
+        else :
+            tabcoups.append([])
+        if tabACE:
+            tabcoups.append(tabACE[0][1])
+        else :
+            tabcoups.append([])
+
+    i=0
+    trouvé = False
+    while i<(len(pieces)-1) and not(trouvé):
+        if tabcoups[2*i] != []:
+            trouvé = True
+            j = 2*i
+            t = int(i/2)
+        elif tabcoups[2*i+1] != [] :
+            trouvé = True
+            j = 2*i+1
+            t = int((i-1)/2)
+        i+=1
+    p,d,g = pieces[t]
+
+    if i==len(pieces): return None
+    pieceJoué, coupJoué = pieces[t], tabcoups[j][0]
+    print(pieces[t], tabcoups[j][0])
+
+    nouvPlat.sur_déplacement_validé(self, pieceJoué, coupJoué)
+
+    scoreJouer = coup_immediat(player, jouer(player, nouvPlat, profondeur, tab_score(player, plateau)))
     coordPieceChoisie = 0
-    for i, coup in enumerate(piecesCoupPossibles[1:]) :
-        nouvPlat = deepcopy(plateau) # utilise un autre plateau pour les tests
-        scoreTest = coup_immediat(player, jouer(coup, nouvPlat), profondeur)
+    for i, coup in enumerate(tabcoups[(i+1):]) :
+        nouvPlat = copy_plat(plateau) # utilise un autre plateau pour les tests
+        scoreTest = coup_immediat(player, jouer(player, pieces[i], coup, nouvPlat), profondeur)
         if scoreTest > scoreJouer :
             scoreJouer = scoreTest
             aJouer = coup
@@ -40,11 +72,37 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
     return coordPieceChoisie, aJouer
 
 
+def copy_plat(plateau: Plateau):
+    nouvPlat = [[[None for g in range(6)] for d in range(6)] for p in range(3)]
+    for p in range(3):
+        for d in range(6):
+            for g in range(6):
+                if isinstance(plateau[p][d][g], Pieces.Piece):
+                    piece = plateau[p][d][g]
+
+                    if isinstance(piece, Pieces.Roi):
+                        nouvPiece = Pieces.Roi(piece.joueur, piece.terrainOrigine)
+                    elif isinstance(piece, Pieces.Reine):
+                        nouvPiece = Pieces.Reine(piece.joueur, piece.terrainOrigine)
+                    elif isinstance(piece, Pieces.Fou):
+                        nouvPiece = Pieces.Fou(piece.joueur, piece.terrainOrigine)
+                    elif isinstance(piece, Pieces.Tour):
+                        nouvPiece = Pieces.Tour(piece.joueur, piece.terrainOrigine)
+                    elif isinstance(piece, Pieces.Cavalier):
+                        nouvPiece = Pieces.Cavalier(piece.joueur, piece.terrainOrigine)
+                    elif isinstance(piece, Pieces.Pion):
+                        nouvPiece = Pieces.Pion(piece.joueur, piece.terrainOrigine)
+                    else:
+                        nouvPiece = Pieces.Chat(piece.joueur, piece.terrainOrigine)
+
+                    nouvPlat[p][d][g] = nouvPiece
+    return nouvPlat
+
 
 def coup_immediat(player, plateau: Plateau, profondeur, tabScores):
 
     if profondeur==0 or partie_finie :
-        return scoreJoueur
+        return tabScores[0]
 
     else:
         coup = coup_a_jouer(joueur.joueur_suivant(player), nouvPlat,  profondeur-1)
@@ -59,19 +117,21 @@ def coup_immediat(player, plateau: Plateau, profondeur, tabScores):
 
 
 
-def tab_score(player, plateau: Plateau, profondeur):
+def tab_score(player, plateau: Plateau):
     scoreJoueur = player.score
-    scoreEnnemi1 = joueur.joueur_suivant(player).score
-    scoreEnnemi2 = joueur.joueur_suivant(joueur.joueur_suivant(player)).score
+    scoreEnnemi1 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur).score
+    scoreEnnemi2 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur).score
+    joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
     return [scoreJoueur, scoreEnnemi1, scoreEnnemi2]
 
 
 
 def jouer(player, coordPiece, nouvCase, plateau: Plateau):
-    """joue un coup sur une copie du plateau et enregistre le score actuel
-    Entrée : le coup a jouer c'est a dire la piece et la case sur laquelle elle va
-    Sortie : le nouveau plateau (la copie qui a changee) , et le score des joueurs """
+    """Joue un coup sur une copie du plateau et enregistre le score actuel
+    Entrée : le coup à jouer, c'est à dire la pièce et la case sur laquelle elle va
+    Sortie : le nouveau plateau (la copie qui a changé) , et le score des joueurs """
     p1, x1, y1 = coordPiece
+    print(nouvCase)
     p2, x2, y2 = nouvCase
 
     if isinstance(plateau[p2][x2][y2], Pieces.Piece):
@@ -82,10 +142,19 @@ def jouer(player, coordPiece, nouvCase, plateau: Plateau):
         plateau.sur_deplacement_valide(coordPiece, nouvCase)
         modif_score(player, coordPiece, nouvCase, plateau, False)
 
+
+
 def modif_score(player, coordPiece, nouvCase, plateau, bool):
-    """Entrée : player est celui qui joue, piece est la piece a bouger sur nouvCase,
+    """Entrée : player est celui qui joue, piece est la pièce à bouger sur nouvCase,
         bool contient 'il y a un ennemi sur la case'
-    Sortie : modifie le score en fonction d'un mouvement puis fais le mouvement"""
+    Sortie : modifie le score en fonction d'un mouvement puis fait le mouvement"""
+
+##    numTab = 0
+##    for i, score in enumerate(tabScore):
+##        if joueur.player.score == score:
+##            numTab = i
+
+    tabScore = tab_score(player, plateau)
 
     p1, x1, y1 = coordPiece
     piece = plateau[p1][x1][y1]
@@ -102,10 +171,10 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
         scoreSupp1 = piece.scorePiece*(x2*y2-(5-x1)*(5-y1)) -25
     else :
         scoreSupp1 = piece.scorePiece*((5-x2)*(5-y2)-x1*y1) +25
-    #trouve le changement de score de player
+    # trouve le changement de score de player
 
-    if bool: # verifie si il y a un ennemi
-        if case.score == 1:
+        if case.scorePiece == 0:
+    if bool: # vérifie s'il y a un ennemi
             nouvScore2 = case.joueur.score
         elif case.terrainOrigine == p2 :
             nouvScore2 = case.scorePiece*x2*y2
@@ -114,36 +183,44 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
             nouvScore2 = case.scorePiece*((5-x2)*(5-y2)+25)
 
 
-        if case.joueur == joueur.joueur_suivant(player):
+        if case.joueur == joueur.ListeDeJoueurs.joueur_suivant(listJoueur):
             numScore = 1
         else:
             numScore = 2
-        NouvScore2 = case.joueur.score - nouvScore2
-        NouvScore1 = score1 + scoreSupp1
+        NouvScore2 = tabScore[numScore] - nouvScore2
+        NouvScore1 =  tabScore[0] + scoreSupp1
         coupleIfEnnemi = (numScore, NouvScore2)
-    # trouve le nouveau score dans le cas ou il y a un ennemi
+    # trouve le nouveau score dans le cas où il y a un ennemi
 
 
     else : # la case est libre
-        NouvScore1 = score1 + scoreSupp1
+        NouvScore1 = tabScore[0] + scoreSupp1
         coupleIfEnnemi = (None, None, None)
-    # trouve le nouveau score dans le cas ou il n'y a pas d'ennemi
+    # trouve le nouveau score dans le cas où il n'y a pas d'ennemi
 
     return NouvScore1, coupleIfEnnemi
 
 
 def jeu_IA(plateau: Plateau, difficulte, IA):
-    """fonction principale qui s'occupe de faire jouer l'IA
-    Entrée : le plateau qui contient l'etat du jeu,
-             la difficulte qui determine le niveau de l'IA c'est a dire combien de tours a l'avance prevoit l'IA
-    Precondition : c'est a l'IA de jouer
-    Sortie : deplacement de la piece par l'IA"""
+    """Fonction principale qui s'occupe de faire jouer l'IA
+    Entrée : le plateau qui contient l'état du jeu,
+             la difficulté qui détermine le niveau de l'IA, c'est à dire combien de tours à l'avance prévoit l'IA
+    Précondition : c'est à l'IA de jouer
+    Sortie : déplacement de la pièce par l'IA"""
+
+##    scoreIA = joueur.IA.score
+##    E1 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
+##    scoreE1 = joueur.E1.score
+##    E2 = joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
+##    scoreE2 = joueur.E2.score
+##    joueur.ListeDeJoueurs.joueur_suivant(listJoueur)
+##    tabScore = [scoreIA, scoreE1, scoreE2]
 
     profondeur = 3*difficulte
     # profondeur = nombre de coups d'avance (compte les coups des 3 joueurs)
-    # difficulte = nombre de tours de plateau d'avance (ne compte que les fois oÃ¹ l'IA joue)
+    # difficulte = nombre de tours de plateau d'avance (ne compte que les fois où l'IA joue)
 
-    numPiece, coupJoue = coup_a_jouer(IA, plateau, profondeur)
+    numPiece, coupJoue = coup_à_jouer(IA, plateau, profondeur)
     pieceJoue = tabPosPieces[numPiece]
     return pieceJoue, coupJoue
 
@@ -153,7 +230,9 @@ if __name__ == '__main__':
     from joueur import Joueur, ListeDeJoueurs
     from Interface import ROUGE, VERT, BLEU, BLANC
 
-    listJoueur = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
+    J1 = Joueur("Arthur", 0, BLEU)
+    listJoueur = ListeDeJoueurs(J1, Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     plateau = Plateau(listJoueur)
-    print(coup_à_jouer(Joueur("Arthur", 0, BLEU), plateau, 1))
-    print(jeu_IA(plateau,1 , Joueur("Arthur", 0, BLEU)))
+    print(coup_à_jouer(J1, plateau, 1))
+
+##    print(jeu_IA(plateau,1 , J1))
