@@ -32,14 +32,17 @@ class Piece:
 
         Piece.piècesCréées.append(self)
 
+    def déplacements_possibles(self, pos, plateau):
+        return dep_effectifs(*traduction_en_couples_déplacements(*self.vecteurs_deplacements_possibles(), pos), self, plateau)
+
+    def vecteurs_deplacements_possibles(self):
+        return [], []
+
     @classmethod
     def chargeImages(cls):
         for piece in cls.piècesCréées:
             piece.image = pygame.image.load("Image/Pieces/"+str(piece.joueur.couleur.nom)+"_"+str(piece.nom)+".png").convert_alpha()
 
-    @classmethod
-    def classe_de_méthode(cls):
-        pass # permet de faire quelque chose sur toutes les pièces
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
@@ -47,7 +50,7 @@ class Pion(Piece):
     def __init__(self, joueur, terrainOrigine):
         super(Pion, self).__init__("Pion", joueur, terrainOrigine, 1)
 
-    def deplacements_possibles(self):
+    def vecteurs_deplacements_possibles(self):
         """ Envois une constante : False,True,Rock
         devant qui dit si le déplacement est infini ou
         fini, le tableau des déplacements fini (vecteur des déplacements
@@ -88,7 +91,7 @@ class Roi(Piece):
     def __init__(self, joueur, terrainOrigine):
         super(Roi, self).__init__("Roi", joueur, terrainOrigine, 0)
 
-    def deplacements_possibles(self):
+    def vecteurs_deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Roi
         Avec la possiblilité de rock"""
 
@@ -110,7 +113,7 @@ class Cavalier(Piece):
     def __init__(self, joueur, terrainOrigine):
         super(Cavalier, self).__init__("Cavalier", joueur, terrainOrigine, 3)
 
-    def deplacements_possibles(self):
+    def vecteurs_deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Cavalier """
 
         tab = [(FINI, [(2, 1), (1, 2), (-2, 1), (-1, 2),
@@ -124,7 +127,7 @@ class Chat(Piece):
     def __init__(self, joueur, terrainOrigine):
         super(Chat, self).__init__("Chat", joueur, terrainOrigine, 3)
 
-    def deplacements_possibles(self):
+    def vecteurs_deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Chat """
 
         tab = [(FINI, [(2, 0), (0, 2), (-2, 0), (0, -2),
@@ -139,7 +142,7 @@ class Tour(Piece):
     def __init__(self, joueur, terrainOrigine):
         super(Tour, self).__init__("Tour", joueur, terrainOrigine, 5)
 
-    def deplacements_possibles(self):
+    def vecteurs_deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Tour """
 
         tab = [(INFINI, [SANSLIMITE, (1, 0), (0, 1), (-1, 0), (0, -1)])]
@@ -153,7 +156,7 @@ class Fou(Piece):
     def __init__(self, joueur, terrainOrigine):
         super(Fou, self).__init__("Fou", joueur, terrainOrigine, 5)
 
-    def deplacements_possibles(self):
+    def vecteurs_deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Fou"""
 
         tab = [(INFINI, [SANSLIMITE, (1, 1), (1, -1), (-1, 1), (-1, -1)])]
@@ -167,7 +170,7 @@ class Reine(Piece):
     def __init__(self, joueur, terrainOrigine):
         super(Reine, self).__init__("Reine", joueur, terrainOrigine, 10)
 
-    def deplacements_possibles(self):
+    def vecteurs_deplacements_possibles(self):
         """ Envois le tableau des déplacement possible de la Reine"""
 
         tab = [(INFINI, [SANSLIMITE, (1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (1, -1),
@@ -305,7 +308,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
             if typeDep == FINI:
                 for case in cases:
                     p,x,y = case
-                    if not(isinstance(plateau[p][x][y], Pieces.Piece)):
+                    if not(isinstance(plateau[p][x][y], Piece)):
                         #test si la case est libre
                         depsFini.append(case)
 
@@ -316,7 +319,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                 while not(bloqué) and i<len(cases):
                     case = cases[i]
                     p, x, y = case
-                    if isinstance(plateau[p][x][y], Pieces.Piece):
+                    if isinstance(plateau[p][x][y], Piece):
                         #test si la case est libre
                         bloqué = True
                     else :
@@ -326,7 +329,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
             elif typeDep == ROCK:
                 if piece.emplacementInitial :
                     p, x, y = cases[0]
-                    if tour1.emplacementInitial and not isinstance(plateau[p][x-1][y],Pieces.Piece) and nom == plateau[p][x][y].joueur:
+                    if tour1.emplacementInitial and not isinstance(plateau[p][x-1][y],Piece) and nom == plateau[p][x][y].joueur:
                         #test si la case est libre et si les bonnes pieces sont au bons endroit sans avoir bougé
                         depsRock.append((p,x,y))
 
@@ -362,7 +365,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                 for case in cases:
                     p,x,y = case
 
-                    if isinstance(plateau[p][x][y], Pieces.Piece) and (nom != plateau[p][x][y].joueur):
+                    if isinstance(plateau[p][x][y], Piece) and (nom != plateau[p][x][y].joueur):
                         depsFini.append(case)
 
             elif typeDep == INFINI:
@@ -372,7 +375,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                     case = cases[i]
                     p,x,y = case
 
-                    if isinstance(plateau[p][x][y], Pieces.Piece):
+                    if isinstance(plateau[p][x][y], Piece):
                         bloqué = True
                         if nom != plateau[p][x][y].joueur:
                             depsInfini.append(case)
@@ -433,7 +436,7 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 ##    from joueur import Joueur, ListesDeJoueur
 ##    from Interface import ROUGE, VERT, BLEU
 ##
-##    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
+##    depssE, depacE = traduction_en_couples_déplacements(*Tour.vecteurs_deplacements_possibles(None), (0, 0, 5), 6)
 ##    listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
 ##                                  Joueur("Florian", 2, ROUGE))
 ##    Tour.joueur = Joueur("Arthur", 0, BLEU)
@@ -448,7 +451,7 @@ if __name__ == '__main__':
     from Interface import ROUGE, VERT, BLEU, BLANC
 
 
-    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
+    depssE, depacE = traduction_en_couples_déplacements(*Tour.vecteurs_deplacements_possibles(None), (0, 0, 5), 6)
     listJoueur = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     Tour.joueur = Joueur("Arthur", 0, BLEU)
     plateau = Plateau(listJoueur)

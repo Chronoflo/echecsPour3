@@ -13,7 +13,9 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.video import Video
 
-from reseau import Serveur, Client
+from Interface import affichage
+from reseau.reseau import Serveur, Client
+from fonctions import rand_sign
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 from kivy.app import App
@@ -161,6 +163,7 @@ class DanceAvecLesBouttons(Button):
     def __init__(self, *trucs, **autres_trucs):
         super(DanceAvecLesBouttons, self).__init__()
         self.t = 0
+        self.theta_i = rand_sign() * (random.random() * .2 + .2)
         Clock.schedule_interval(self.oscille, 0)
 
 
@@ -246,16 +249,38 @@ class DemarrageApp(App):
     messagesHistoric = ObjectProperty(None)
     newProfileOptions = ListProperty([])
     player = StringProperty()
+    numéroJoueur = NumericProperty(0)
     otherPlayers = ListProperty(['Vide', 'Vide'])
+    applicationJeu = ObjectProperty(affichage)
 
-    def __init__(self, lance_partie):
+    def __init__(self, lance_partie=lance_partie):
         super(DemarrageApp, self).__init__()
         self.use_kivy_settings = False
         self.settings_cls = SettingsWithSidebar
         self.settings_open = False
         self.serveur = Serveur(self.on_received, self.on_external_connection)
         self.client = Client(self.on_received)
+
         self.lance_partie = lance_partie
+        self.jeu = None
+        self.plateau = None
+        self.listeJoueurs = None
+
+    def créer_partie(self, joueurs=()):
+        if self.jeu is None:
+            if len(joueurs) == 0:
+                self.jeu = threading.Thread(daemon=True, target=affichage, args=(self.player, self.player, *self.otherPlayers, self.sur_déplacement_pièce, self.sur_attente_autres_joueurs))
+                self.send("c: {};{};{}".format(self.player, *self.otherPlayers))
+            else:
+                self.jeu = threading.Thread(daemon=True, target=affichage, args=(self.player, *joueurs, self.sur_déplacement_pièce, self.sur_attente_autres_joueurs))
+            self.jeu.start()
+
+    def sur_déplacement_pièce(self, pos_piece, pos_cible):
+        self.send("g: {};{}".format(pos_piece, pos_cible))
+
+    def sur_attente_autres_joueurs(self, plateau, listeJoueurs):
+        self.plateau = plateau
+        self.listeJoueurs = listeJoueurs
 
     def send_msg(self, text):
         self.send("m: " + "[i]" + self.player + "[/i]: " + text)
@@ -296,6 +321,13 @@ class DemarrageApp(App):
         elif id == 'd':
             joueur = contenu
             self.otherPlayers[self.otherPlayers.index(joueur)] = 'Vide'
+        elif id == 'c':
+            self.créer_partie(contenu.split(";"))
+        elif id == 'g':
+            if self.plateau is not None:
+                self.plateau.sur_déplacement_validé(*[[int(i) for i in str_couple[1:-1].split(', ')] for str_couple in contenu.split(";")])
+            if self.listeJoueurs is not None:
+                self.listeJoueurs.joueur_suivant()
 
     def serveur_to_client(self):
         self.serveur.désactive()
@@ -376,4 +408,4 @@ class DemarrageApp(App):
 
 
 if __name__ == '__main__':
-    DemarrageApp(lance_partie).run()
+    DemarrageApp().run()
