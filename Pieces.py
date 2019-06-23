@@ -28,14 +28,18 @@ class Piece:
         self.terrainActuel = terrainOrigine
 
         self.scorePiece = scorePiece
+        self.image = None
 
         Piece.piècesCréées.append(self)
 
     @classmethod
-    def classe_de_méthode(cls):
+    def chargeImages(cls):
         for piece in cls.piècesCréées:
-            pass  # permet de faire quelque chose sur toutes les pièces
+            piece.image = pygame.image.load("Image/Pieces/"+str(piece.joueur.couleur.nom)+"_"+str(piece.nom)+".png").convert_alpha()
 
+    @classmethod
+    def classe_de_méthode(cls):
+        pass # permet de faire quelque chose sur toutes les pièces
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """

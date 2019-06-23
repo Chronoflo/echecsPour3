@@ -101,6 +101,7 @@ def affichage():
         #BOUCLE JEU:
             if jeu:
                 fenetre.fill(BLANC)
+                Piece.chargeImages()
                 hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
                 centre = complex(largeurFenetre/2, hauteurFenetre/2)
                 imageRedim = redimensionne(listeTerrains[j], (largeurFenetre, hauteurFenetre))
@@ -125,7 +126,7 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
     largeur = imagePlateau.get_rect()[2]
     hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
     centre = complex(largeurFenetre/2, hauteurFenetre/2)
-    Image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion00.png").convert_alpha(), (largeur/8, hauteur/8))
+    image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion.png").convert_alpha(), (largeur/8, hauteur/8))
     u = complex(largeur/12, -hauteur/24) # selon l'axe d
     v = complex(-largeur/12, -hauteur/24)# attention l'axe est vers le bas
 
@@ -134,10 +135,11 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
             for g in range (6):
                 case = plateau[p][d][g]
                 if isinstance (case, Piece) :
-                    décaleImage = complex((-Image.get_rect()[2])/2, -(Image.get_rect()[3])/2)
+                    image = redimensionne(case.image, (largeur/12, hauteur/12))
+                    décaleImage = complex((-image.get_rect()[2])/2, -3*(image.get_rect()[3])/4)
                     centreCase = centre + complex(0, 11*hauteur/24)
                     z = décaleImage + centre + np.exp(2j*p*np.pi/3)*(centreCase + d*u + g*v - centre)
-                    fenetre.blit(Image, (z.real, z.imag))
+                    fenetre.blit(image, (z.real, z.imag))
 
 def detecte_terrain_curseur(centre, event, largeurPlateau, hauteurPlateau, xPlateau, yPlateau):
         xCurseur = event.pos[0]
@@ -164,14 +166,32 @@ def detecte_terrain_curseur(centre, event, largeurPlateau, hauteurPlateau, xPlat
             detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 2)
 
 def detecte_case_curseur (centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, p):
-    coordonnées = [p,5,0]
-    for d in range (5, 0, -1) :
-        if yCurseur > ((9-d)*hauteurPlateau)/12 + yPlateau + (xCurseur - xPlateau) * np.tan(np.pi / 6):
-            coordonnées[1] = coordonnées[1] - 1
-    for g in range (5, 0, -1) :
-        if yCurseur < centre + np.exp(2j*p*np.pi/3)*(((15-g)*hauteurPlateau)/12 + yPlateau - (xCurseur - xPlateau) * np.tan(np.pi / 6) - centre):
-            coordonnées[2] = coordonnées[2] + 1
+    if p==0 :
+        coordonnées = [p,5,5]
+        for d in range (5, 0, -1) :
+            if yCurseur > ((9-d)*hauteurPlateau)/12 + yPlateau + (xCurseur - xPlateau) * np.tan(np.pi / 6):
+                coordonnées[1] = coordonnées[1] - 1
+        for g in range (5, 0, -1) :
+            if yCurseur > (15-g)*hauteurPlateau/12 + yPlateau - (xCurseur - xPlateau) * np.tan(np.pi / 6):
+                coordonnées[2] = coordonnées[2] - 1
+    if p==1 :
+        coordonnées = [p, 5, 5]
+        for d in range (5, 0, -1) :
+            if yCurseur < (3+d)*hauteurPlateau/12 + yPlateau - (xCurseur - xPlateau) * np.tan(np.pi / 6) :
+                coordonnées[1] = coordonnées[1] - 1
+        for g in range (5, 0, -1) :
+            if xCurseur < xPlateau +  g*largeurPlateau/12 :
+                coordonnées[2] = coordonnées[2] - 1
+    if p==2 :
+        coordonnées = [p, 5, 5]
+        for d in range (5, 0, -1) :
+            if xCurseur > largeurPlateau/2+xPlateau+(6-d)*largeurPlateau/12 :
+                coordonnées[1] = coordonnées[1] - 1
+        for g in range (5, 0, -1) :
+            if yCurseur < (g-3)*hauteurPlateau/12 + yPlateau + (xCurseur-xPlateau) * np.tan(np.pi/6):
+                coordonnées[2] = coordonnées[2] - 1
     print (tuple(coordonnées))
+
 
 if __name__ == '__main__':
     affichage()
