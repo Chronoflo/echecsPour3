@@ -35,7 +35,7 @@ class Piece:
     @classmethod
     def chargeImages(cls):
         for piece in cls.piècesCréées:
-            self.image = pygame.image.load("Image/Pieces/"+str(piece.joueur.couleur)+"_"+str(piece.nom)+".png").convert_alpha()
+            piece.image = pygame.image.load("Image/Pieces/"+str(piece.joueur.couleur.nom)+"_"+str(piece.nom)+".png").convert_alpha()
 
     @classmethod
     def classe_de_méthode(cls):

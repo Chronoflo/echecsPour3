@@ -126,7 +126,7 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
     largeur = imagePlateau.get_rect()[2]
     hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
     centre = complex(largeurFenetre/2, hauteurFenetre/2)
-    image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion.png").convert_alpha(), (largeur/8, hauteur/8))
+    image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion.png").convert_alpha(), (largeur, hauteur))
     u = complex(largeur/12, -hauteur/24) # selon l'axe d
     v = complex(-largeur/12, -hauteur/24)# attention l'axe est vers le bas
 
@@ -138,7 +138,7 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
                     décaleImage = complex((-image.get_rect()[2])/2, -(image.get_rect()[3])/2)
                     centreCase = centre + complex(0, 11*hauteur/24)
                     z = décaleImage + centre + np.exp(2j*p*np.pi/3)*(centreCase + d*u + g*v - centre)
-                    image = redimensionne(Piece.image, (largeur/12, hauteur/12))
+                    image = redimensionne(case.image, (largeur/12, hauteur/12))
                     fenetre.blit(image, (z.real, z.imag))
 
 def detecte_terrain_curseur(centre, event, largeurPlateau, hauteurPlateau, xPlateau, yPlateau):
