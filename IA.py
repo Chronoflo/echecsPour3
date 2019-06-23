@@ -3,7 +3,6 @@ import joueur
 from copy import deepcopy
 from plateau import Plateau
 
-
 def trouve_pieces_et_coups_joueur(player, plateau: Plateau):
     """fonction qui enregistre dans un tableau tous les déplacements possibles de l'IA"""
     piecesCoupPossibles = []
@@ -156,5 +155,5 @@ if __name__ == '__main__':
 
     listJoueur = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     plateau = Plateau(listJoueur)
-    print(coup_a_jouer(Joueur("Arthur", 0, BLEU), plateau, 1))
+    print(coup_à_jouer(Joueur("Arthur", 0, BLEU), plateau, 1))
     print(jeu_IA(plateau,1 , Joueur("Arthur", 0, BLEU)))
