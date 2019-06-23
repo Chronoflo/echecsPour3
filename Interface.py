@@ -1,10 +1,8 @@
 import pygame
+from pygame.gfxdraw import circle
 from pygame.locals import *
 
-import numpy as np
-from plateau import Plateau
 from Pieces import Piece
-from joueur import Joueur, ListeDeJoueurs
 
 
 class SuperColor(pygame.Color):
@@ -14,60 +12,56 @@ class SuperColor(pygame.Color):
         self.nom = nom
 
 
+
+def affichage_pièces (fenetre, plateau, joueurActuel):
+    def cercle(x, y, r=8):
+        circle(fenetre, x, y, r, ROUGE)
+    # jA= joueurActuel.terrainDOrigine
+    for p in range (3) :
+        for d in range (6):
+            for g in range (6):
+                case = plateau[p][d][g]
+                if isinstance (case, Piece) :
+                    if p == 0:
+                        cercle()
+                        # fenetre.blit(case.cheminImage, (centre + (hauteur/24, largeur/24) + (5-d)*u + (5-g)*v))
+                    elif p == 1:
+                        # fenetre.blit(case.cheminImage, (centre + (hauteur/24, -largeur/24) + (g-d)*v + (g-5)*u))
+                    else:
+                        # fenetre.blit(case.cheminImage, (centre + (-hauteur/24, 0) + (d-5)*v + (d-g)*u))
+
+centre = (389, 297)
+hauteur =plateau.get_rect()
+largeur =
+u = (-hauteur/12,largeur/12)
+v = (-hauteur/12,0)
+390,556
+
+
 ROUGE = SuperColor("rouge", (255,   0,   0))
 VERT = SuperColor("vert", (0, 255,   0))
 BLEU = SuperColor("bleu", (0,   0, 255))
 BLANC = SuperColor("blanc", (255, 255, 255))
 NOIR = SuperColor("noir", (0, 0, 0))
 
-def redimensionne(img, boite):
-    """ Scales 'img' to fit into box bx/by.
-     This method will retain the original image's aspect ratio """
-    bx,by = boite
-    ix,iy = img.get_size()
-    if ix > iy:
-        # fit to width
-        scale_factor = bx/float(ix)
-        sy = scale_factor * iy
-        if sy > by:
-            scale_factor = by/float(iy)
-            sx = scale_factor * ix
-            sy = by
-        else:
-            sx = bx
-    else:
-        # fit to height
-        scale_factor = by/float(iy)
-        sx = scale_factor * ix
-        if sx > bx:
-            scale_factor = bx/float(ix)
-            sx = bx
-            sy = scale_factor * iy
-        else:
-            sy = by
-    return pygame.transform.scale(img, (int(sx),int(sy)))
 
 def affichage():
     pygame.init()
 
-    listeJoueurs = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
-                              Joueur("Florian", 2, ROUGE))
-    plateau = Plateau(listeJoueurs)
-
-    fenetre = pygame.display.set_mode((800,600), RESIZABLE)
+    fenetre = pygame.display.set_mode((800,600))
     fond = pygame.image.load("Image/Menu 1.jpg").convert()
     pygame.display.set_caption("Coucou Sarah :p")
-    terrainBleu = pygame.image.load("Image/Plateau - Echecs à 3.png").convert_alpha()
-    terrainVert = pygame.image.load("Image/Plateau - Echecs à 3.png").convert_alpha()
-    terrainRouge = pygame.image.load("Image/Plateau - Echecs à 3.png").convert_alpha()
-    listeTerrains = [terrainBleu, terrainRouge, terrainVert]
-
+    joueurBleu = pygame.image.load("Image/Plateau joueur Bleu.jpg").convert()
+    joueurVert = pygame.image.load("Image/Plateau joueur Vert.jpg").convert()
+    joueurRouge = pygame.image.load("Image/Plateau joueur Rouge.jpg").convert()
+    listeJoueurs = [joueurBleu, joueurRouge, joueurVert]
     fenetre.blit(fond, (0, 0))
 
     bouton1 = pygame.image.load("Image/Commencer 1.png").convert_alpha()
     bouton2 = pygame.image.load("Image/Commencer 2.png").convert_alpha()
     position_bouton = bouton1.get_rect()
     position_bouton = position_bouton.move(200, 300)
+
 
     fenetre.blit(bouton1, position_bouton)
 
@@ -81,8 +75,6 @@ def affichage():
         for event in pygame.event.get():
             if event.type == QUIT:
                 continuer = 0
-            if event.type == VIDEORESIZE:
-                pygame.display.set_mode(event.size, RESIZABLE)
         #BOUCLE MENU:
             pygame.time.Clock().tick(30)
             if accueil:
@@ -97,58 +89,19 @@ def affichage():
                         accueil = 0
                         jeu = 1
                         j = 0
-
         #BOUCLE JEU:
             if jeu:
-                fenetre.fill(BLANC)
-                hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
-                imageRedim = redimensionne(listeTerrains[j], (largeurFenetre, hauteurFenetre))
-                hauteur = imageRedim.get_rect()[3]
-                largeur = imageRedim.get_rect()[2]
-                xPlateau, yPlateau = (largeurFenetre-largeur)/2, (hauteurFenetre-hauteur)/2
-                fenetre.blit(imageRedim, (xPlateau, yPlateau))
-                affichage_pièces (plateau, imageRedim, fenetre)
+                fenetre.blit(listeJoueurs[j], (0,0))
                 if event.type == KEYDOWN:
                     j=(j+1)%3
-                if event.type == MOUSEBUTTONDOWN and event.button == 1:
-                    detecteCaseCurseur(event, largeur, hauteur, xPlateau, yPlateau)
-                pygame.display.flip()
-
-
-def affichage_pièces (plateau, imagePlateau, fenetre):
-    def cercle(pos, r=8):
-        a, b = pos
-        pygame.draw.circle(fenetre, VERT, (int(a), int(b)), r)
-
-    hauteur = imagePlateau.get_rect()[3]
-    largeur = imagePlateau.get_rect()[2]
-    hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
-    centre = complex(largeurFenetre/2, hauteurFenetre/2)
-    Image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion00.png").convert_alpha(), (largeur/8, hauteur/8))
-    u = complex(largeur/12, -hauteur/24) # selon l'axe d
-    v = complex(-largeur/12, -hauteur/24)# attention l'axe est vers le bas
-
-    for p in range (3) :
-        for d in range (6):
-            for g in range (6):
-                case = plateau[p][d][g]
-                if isinstance (case, Piece) :
-                    décaleImage = complex((-Image.get_rect()[2])/2, -(Image.get_rect()[3])/2)
-                    centreCase = centre + complex(0, 11*hauteur/24)
-                    z = décaleImage + centre + np.exp(2j*p*np.pi/3)*(centreCase + d*u + g*v - centre)
-                    fenetre.blit(Image, (z.real, z.imag))
-
-def detecteCaseCurseur(event, largeurPlateau, hauteurPlateau, xPlateau, yPlateau):
-        xCurseur = event.pos[0]
-        yCurseur = event.pos[1]
-        def frontiere01(x):
-            return 3*hauteurPlateau/4 - x * (x*np.tan(np.pi/6))
-        def frontiere02(x):
-            return hauteurPlateau/4 + x * (x*tan(np.pi/6))
-        if yCurseur < frontiere01(xCurseur) and xCurseur < (largeurPlateau+xPlateau)/2 :
-            print ("terrain 1")
-
+            #fenetre.blit(joueurRouge, (0,0))
+            pygame.display.flip()
 
 
 if __name__ == '__main__':
     affichage()
+
+
+
+
+
