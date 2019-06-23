@@ -12,7 +12,7 @@ def trouve_pieces_et_coups_joueur(player, plateau: Plateau):
                 if isinstance(plateau[p][x][y], Pieces.Piece) and plateau[p][x][y].joueur == player:
                     piece = plateau[p][x][y]
                     position = (p,x,y)
-                    depSans, depAvec = Pieces.traduction_en_couples_déplacements(*piece.deplacements_possibles(), position)
+                    depSans, depAvec = Pieces.traduction_en_couples_déplacements(*piece.vecteurs_deplacements_possibles(), position)
                     deplacements = Pieces.dep_effectifs(depSans, depAvec, piece, plateau)
                     piecePossible.append(position)
                     piecesCoupPossibles.append(deplacements)
