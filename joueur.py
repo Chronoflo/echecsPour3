@@ -5,7 +5,7 @@ class Joueur:
     """ Classe répresentant un joueur. Un joueur possède un nom, une couleur et ses pions. """
     def __init__(self, nomJoueur, terrainDOrigine, couleur):
         """ Crée un joueur."""
-        self.pseudo = nomJoueur
+        self.nom = nomJoueur
         self.couleur = couleur
         self.score = 110
 
@@ -31,11 +31,9 @@ class Joueur:
                                 self.pion4, self.pion5, self.pion6, self.pion7, self.chat]
 
 
-
-
 class IA(Joueur):
-    """C'est l'IA, donc n'est pas controlée par les joueurs"""
-    nomIA = ["Truc 1", "Truc 2", "Truc 3"]
+    """C'est l'IA, donc n'est pas contrôlée par les joueurs"""
+    nomIA = ["AlphaPasGo", "DownTech", "DeepOrange"]
     numIA = 0
     def __init__(self, terrainDOrigine, couleur, difficulté):
         super(IA, self).__init__(IA.nomIA[IA.numIA], terrainDOrigine, couleur)
@@ -54,6 +52,9 @@ class ListeDeJoueurs:
         else:
             self.iJoueurActuel = 0
 
+        return self.joueurs[self.iJoueurActuel]
+
+    def joueur_actuel(self):
         return self.joueurs[self.iJoueurActuel]
 
     def enleve_joueur(self, joueur):
