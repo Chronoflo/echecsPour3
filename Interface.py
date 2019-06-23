@@ -164,14 +164,32 @@ def detecte_terrain_curseur(centre, event, largeurPlateau, hauteurPlateau, xPlat
             detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 2)
 
 def detecte_case_curseur (centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, p):
-    coordonnées = [p,5,0]
-    for d in range (5, 0, -1) :
-        if yCurseur > ((9-d)*hauteurPlateau)/12 + yPlateau + (xCurseur - xPlateau) * np.tan(np.pi / 6):
-            coordonnées[1] = coordonnées[1] - 1
-    for g in range (5, 0, -1) :
-        if yCurseur < centre + np.exp(2j*p*np.pi/3)*(((15-g)*hauteurPlateau)/12 + yPlateau - (xCurseur - xPlateau) * np.tan(np.pi / 6) - centre):
-            coordonnées[2] = coordonnées[2] + 1
+    if p==0 :
+        coordonnées = [p,5,5]
+        for d in range (5, 0, -1) :
+            if yCurseur > ((9-d)*hauteurPlateau)/12 + yPlateau + (xCurseur - xPlateau) * np.tan(np.pi / 6):
+                coordonnées[1] = coordonnées[1] - 1
+        for g in range (5, 0, -1) :
+            if yCurseur > (15-g)*hauteurPlateau/12 + yPlateau - (xCurseur - xPlateau) * np.tan(np.pi / 6):
+                coordonnées[2] = coordonnées[2] - 1
+    if p==1 :
+        coordonnées = [p, 5, 5]
+        for d in range (5, 0, -1) :
+            if yCurseur < (3+d)*hauteurPlateau/12 + yPlateau - (xCurseur - xPlateau) * np.tan(np.pi / 6) :
+                coordonnées[1] = coordonnées[1] - 1
+        for g in range (5, 0, -1) :
+            if xCurseur < xPlateau +  d*largeurPlateau/12 :
+                coordonnées[2] = coordonnées[2] - 1
+    if p==2 :
+        coordonnées = [p, 5, 5]
+        for d in range (5, 0, -1) :
+            if xCurseur > largeurPlateau/2+xPlateau+(6-d)*largeurPlateau/12 :
+                coordonnées[1] = coordonnées[1] - 1
+        for g in range (5, 0, -1) :
+            if yCurseur < (g-3)*hauteurPlateau/12 + yPlateau + (xCurseur-xPlateau) * np.tan(np.pi/6):
+                coordonnées[2] = coordonnées[2] - 1
     print (tuple(coordonnées))
+
 
 if __name__ == '__main__':
     affichage()
