@@ -34,7 +34,7 @@ class Joueur:
 
 
 class IA(Joueur):
-    """C'est l'IA, donc n'est pas controlée par les joueurs"""
+    """C'est l'IA, donc n'est pas contrôlée par les joueurs"""
     nomIA = ["AlphaPasGo", "DownTech", "DeepOrange"]
     numIA = 0
     def __init__(self, terrainDOrigine, couleur, difficulté):

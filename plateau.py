@@ -1,4 +1,3 @@
-#from Pieces import traduction_en_couples_déplacements, Piece
 import Pieces
 
 class Plateau(list):
