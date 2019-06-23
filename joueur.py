@@ -35,7 +35,7 @@ class Joueur:
 
 class IA(Joueur):
     """C'est l'IA, donc n'est pas controlée par les joueurs"""
-    nomIA = ["Truc 1", "Truc 2", "Truc 3"]
+    nomIA = ["AlphaPasGo", "DownTech", "DeepOrange"]
     numIA = 0
     def __init__(self, terrainDOrigine, couleur, difficulté):
         super(IA, self).__init__(IA.nomIA[IA.numIA], terrainDOrigine, couleur)
