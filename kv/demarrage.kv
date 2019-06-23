@@ -1,7 +1,7 @@
 #:kivy 1.11.0
 #:import Factory kivy.factory.Factory
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
-#:import Serveur reseau.Serveur
+#:import Serveur reseau.reseau.Serveur
 #:import Color kivy.graphics.Color
 #:import rand random
 #:import math math
@@ -146,8 +146,18 @@
                     text: app.otherPlayers[1]
             BoxLayout:
                 orientation: 'vertical'
-                Label:
-                    text: 'Règles'
+                AnchorLayout:
+                    valign: 'middle'
+                    halign: 'center'
+                    Button:
+                        opacity: int(app.otherPlayers[0] != 'Vide' and app.otherPlayers[1] != 'Vide' and titre.text == 'Héberger')
+                        size_hint: 0.5,0.1
+                        background_color: Color(0.4,0.4,1, mode='hsv').rgba
+    #                    pos: (root.width - self.width) / 2, (root.height - self.height) / 2
+    #                    size: root.width, root.height * 0.0005
+                        text: 'Commencer partie'
+                        on_release: app.créer_partie()
+
         SBoxLayout:
             background_color: 0.627, 0.7, 0.2, 1
             size_hint: 1, 0.3
@@ -203,8 +213,8 @@
         DanceAvecLesBouttons:
             id: fiston
             rayon: root.height * 0.27
-            theta_i: rand.random() * 1.5 + 0.3
-            vitesse_i: 2 * rand.random() - 1
+#            theta_i: rand.random() * 1.5 + 0.3
+#            vitesse_i: 2 * rand.random() - 1
             pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "UN JOUEUR"
 #            background_normal: ""
@@ -212,8 +222,8 @@
             on_release: app.lance_partie(1)
         DanceAvecLesBouttons:
             rayon: fiston.rayon + self.height
-            theta_i: rand.random() * 2.5 + 0.4
-            vitesse_i: 2 * rand.random() - 1
+#            theta_i: rand.random() * 2.5 + 0.4
+#            vitesse_i: 2 * rand.random() - 1
             pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "MULTIJOUEUR"
 #            background_normal: ""
@@ -221,8 +231,8 @@
             on_release: app.root.current = 'multiplayer'
         DanceAvecLesBouttons:
             rayon: fiston.rayon + 2 * self.height
-            theta_i: rand.random() * 2.5 +0.4
-            vitesse_i: 2 * rand.random() - 1
+#            theta_i: rand.random() * 2.5 +0.4
+#            vitesse_i: 2 * rand.random() - 1
             pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "PARAMÈTRES"
 #            background_normal: ""
@@ -230,8 +240,8 @@
             on_release: app.open_settings()
         DanceAvecLesBouttons:
             rayon: fiston.rayon + 3 * self.height
-            theta_i: rand.random() *1.9 + 0.5
-            vitesse_i: 2 * rand.random() - 1
+#            theta_i: rand.random() *1.9 + 0.5
+#            vitesse_i: 2 * rand.random() - 1
             pulsation: math.sqrt(9.81 / f.px_to_m(self.rayon)) * papa.triche
             text: "QUITTER"
 #            background_normal: ""
