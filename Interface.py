@@ -101,6 +101,7 @@ def affichage():
         #BOUCLE JEU:
             if jeu:
                 fenetre.fill(BLANC)
+                Piece.chargeImages()
                 hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
                 centre = complex(largeurFenetre/2, hauteurFenetre/2)
                 imageRedim = redimensionne(listeTerrains[j], (largeurFenetre, hauteurFenetre))
@@ -125,7 +126,7 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
     largeur = imagePlateau.get_rect()[2]
     hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
     centre = complex(largeurFenetre/2, hauteurFenetre/2)
-    Image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion00.png").convert_alpha(), (largeur/8, hauteur/8))
+    image = redimensionne(pygame.image.load("Image/Pieces/bleu_Pion.png").convert_alpha(), (largeur/8, hauteur/8))
     u = complex(largeur/12, -hauteur/24) # selon l'axe d
     v = complex(-largeur/12, -hauteur/24)# attention l'axe est vers le bas
 
@@ -134,10 +135,11 @@ def affichage_pièces (plateau, imagePlateau, fenetre):
             for g in range (6):
                 case = plateau[p][d][g]
                 if isinstance (case, Piece) :
-                    décaleImage = complex((-Image.get_rect()[2])/2, -(Image.get_rect()[3])/2)
+                    décaleImage = complex((-image.get_rect()[2])/2, -(image.get_rect()[3])/2)
                     centreCase = centre + complex(0, 11*hauteur/24)
                     z = décaleImage + centre + np.exp(2j*p*np.pi/3)*(centreCase + d*u + g*v - centre)
-                    fenetre.blit(Image, (z.real, z.imag))
+                    image = redimensionne(Piece.image, (largeur/12, hauteur/12))
+                    fenetre.blit(image, (z.real, z.imag))
 
 def detecte_terrain_curseur(centre, event, largeurPlateau, hauteurPlateau, xPlateau, yPlateau):
         xCurseur = event.pos[0]
