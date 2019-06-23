@@ -306,7 +306,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
             if typeDep == FINI:
                 for case in cases:
                     p,x,y = case
-                    if not(isinstance(plateau[p][x][y], Piece)):
+                    if plateau[p][x][y] == None:
                         # teste si la case est libre
                         depsFini.append(case)
 
@@ -317,7 +317,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                 while not(bloqué) and i<len(cases):
                     case = cases[i]
                     p, x, y = case
-                    if isinstance(plateau[p][x][y], Piece):
+                    if plateau[p][x][y] != None:
                         # teste si la case est libre
                         bloqué = True
                     else :
@@ -328,7 +328,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                 if piece.emplacementInitial :
                     p, x, y = cases[0]
                     joueur = piece.joueur
-                    if joueur.tour1.emplacementInitial and not isinstance(plateau[p][x-1][y],Piece) and nom == plateau[p][x][y].joueur:
+                    if joueur.tour1.emplacementInitial and plateau[p][x-1][y] == None and nom == plateau[p][x][y].joueur:
                         # teste si la case est libre et si les bonnes pièces sont aux bons endroits sans avoir bougé
                         depsRock.append((p,x,y))
 
@@ -364,7 +364,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                 for case in cases:
                     p,x,y = case
 
-                    if isinstance(plateau[p][x][y], Piece) and (nom != plateau[p][x][y].joueur):
+                    if plateau[p][x][y]!=None and (nom != plateau[p][x][y].joueur):
                         depsFini.append(case)
 
             elif typeDep == INFINI:
@@ -374,7 +374,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                     case = cases[i]
                     p,x,y = case
 
-                    if isinstance(plateau[p][x][y], Piece):
+                    if plateau[p][x][y] != None:
                         bloqué = True
                         if nom != plateau[p][x][y].joueur:
                             depsInfini.append(case)
@@ -449,10 +449,10 @@ if __name__ == '__main__':
     from joueur import Joueur, ListeDeJoueurs
     from Interface import ROUGE, VERT, BLEU, BLANC
 
-
-    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
-    listJoueur = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
-    Tour.joueur = Joueur("Arthur", 0, BLEU)
+    J1 = Joueur("Arthur", 0, BLEU)
+    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 1), 6)
+    listJoueur = ListeDeJoueurs(J1, Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
+    Tour.joueur = J1
     plateau = Plateau(listJoueur)
     print(isinstance(plateau[0][0][0], Pieces.Piece))
     print(dep_effectifs(depssE, depacE, Tour, plateau))
