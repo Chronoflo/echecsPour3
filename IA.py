@@ -74,6 +74,7 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
 
 def copy_plat(plateau):
     """fait une copie du plateau"""
+    nouvPlat = Plateau(listJoueur)
     nouvPlat = [[[None for y in range(6)] for x in range(6)] for c in range(3)]
     for p in range(3):
         for d in range(6):

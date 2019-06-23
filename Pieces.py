@@ -452,17 +452,11 @@ if __name__ == '__main__':
     from joueur import Joueur, ListeDeJoueurs
     from Interface import ROUGE, VERT, BLEU, BLANC
 
-<<<<<<< HEAD
     J1 = Joueur("Arthur", 0, BLEU)
-    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 1), 6)
+    depssE, depacE = traduction_en_couples_déplacements(*Tour.vecteurs_deplacements_possibles(None), (0, 0, 1), 6)
     listJoueur = ListeDeJoueurs(J1, Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     Tour.joueur = J1
-=======
 
-    depssE, depacE = traduction_en_couples_déplacements(*Tour.vecteurs_deplacements_possibles(None), (0, 0, 5), 6)
-    listJoueur = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
-    Tour.joueur = Joueur("Arthur", 0, BLEU)
->>>>>>> master
     plateau = Plateau(listJoueur)
     print(isinstance(plateau[0][0][0], Pieces.Piece))
     print(dep_effectifs(depssE, depacE, Tour, plateau))
