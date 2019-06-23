@@ -178,7 +178,7 @@ def detecte_case_curseur (centre, xCurseur, yCurseur, largeurPlateau, hauteurPla
             if yCurseur < (3+d)*hauteurPlateau/12 + yPlateau - (xCurseur - xPlateau) * np.tan(np.pi / 6) :
                 coordonnées[1] = coordonnées[1] - 1
         for g in range (5, 0, -1) :
-            if xCurseur < xPlateau +  d*largeurPlateau/12 :
+            if xCurseur < xPlateau +  g*largeurPlateau/12 :
                 coordonnées[2] = coordonnées[2] - 1
     if p==2 :
         coordonnées = [p, 5, 5]
