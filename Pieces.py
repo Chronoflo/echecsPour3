@@ -28,14 +28,18 @@ class Piece:
         self.terrainActuel = terrainOrigine
 
         self.scorePiece = scorePiece
+        self.image = None
 
         Piece.piècesCréées.append(self)
 
     @classmethod
-    def classe_de_méthode(cls):
+    def chargeImages(cls):
         for piece in cls.piècesCréées:
-            pass  # permet de faire quelque chose sur toutes les pièces
+            piece.image = pygame.image.load("Image/Pieces/"+str(piece.joueur.couleur.nom)+"_"+str(piece.nom)+".png").convert_alpha()
 
+    @classmethod
+    def classe_de_méthode(cls):
+        pass # permet de faire quelque chose sur toutes les pièces
 
 class Pion(Piece):
     """ Definit le pion, deplacements autorisés etc... """
@@ -82,7 +86,7 @@ class Roi(Piece):
     """ Definit le Roi, deplacements autorisés etc... """
 
     def __init__(self, joueur, terrainOrigine):
-        super(Roi, self).__init__("Roi", joueur, terrainOrigine, None)
+        super(Roi, self).__init__("Roi", joueur, terrainOrigine, 0)
 
     def deplacements_possibles(self):
         """ Envois le tableau des déplacement possible du Roi
@@ -440,12 +444,12 @@ def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
 if __name__ == '__main__':
     import Pieces
     from plateau import Plateau
-    from joueur import Joueur, ListesDeJoueur
+    from joueur import Joueur, ListeDeJoueurs
     from Interface import ROUGE, VERT, BLEU, BLANC
 
 
     depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
-    listJoueur = ListesDeJoueur(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
+    listJoueur = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     Tour.joueur = Joueur("Arthur", 0, BLEU)
     plateau = Plateau(listJoueur)
     print(isinstance(plateau[0][0][0], Pieces.Piece))
