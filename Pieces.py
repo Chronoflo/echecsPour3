@@ -401,7 +401,9 @@ def promotionReine(piece, pos, plateau):
     """procédure plaçant une reine à l'endroit du pion
     le pion doit être au bon endroit pour la promotion"""
     p, d, g = pos
-    plateau[p][d][g] = joueur.plateau[p][d][g].Pieces.Reine(self, piece.terrainOrigine)
+    plateau[p][d][g] = Pieces.Reine(piece.terrainOrigine)
+    plateau[p][d][g].joueur = piece.joueur
+
 
 
 def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
@@ -452,10 +454,9 @@ if __name__ == '__main__':
     from Interface import ROUGE, VERT, BLEU, BLANC
 
     J1 = Joueur("Arthur", 0, BLEU)
-    depssE, depacE = traduction_en_couples_déplacements(*Tour.vecteurs_deplacements_possibles(None), (0, 0, 1), 6)
+    depssE, depacE = traduction_en_couples_déplacements(*Tour.vecteurs_deplacements_possibles(None), (0, 4, 5), 6)
     listJoueur = ListeDeJoueurs(J1, Joueur("Sarah", 1, VERT), Joueur("Florian", 2, ROUGE))
     Tour.joueur = J1
 
     plateau = Plateau(listJoueur)
-    print(isinstance(plateau[0][0][0], Pieces.Piece))
     print(dep_effectifs(depssE, depacE, Tour, plateau))
