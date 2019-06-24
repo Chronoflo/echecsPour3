@@ -25,8 +25,6 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
     Précondition : c'est à player de jouer
     Sorties : le prochain coup joué par player"""
 
-
-
     nouvPlat = copy_plat(plateau) # utilise un autre plateau pour les tests
     pieces, coups = trouve_pieces_et_coups_joueur(player, plateau)
     tabcoups = [] # contiendra 2 fois plus de cases que pieces
@@ -63,7 +61,7 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
     coordPieceChoisie = 0
     for i, coup in enumerate(tabcoups[(i+1):]) :
         nouvPlat = copy_plat(plateau) # utilise un autre plateau pour les tests
-        scoreTest = coup_immediat(player, jouer(player, pieces[i], coup, nouvPlat), profondeur)
+        scoreTest = coup_immediat(player, jouer(player, pieceJoué, coupJoué, nouvPlat), profondeur, tab_score(player, plateau))
         if scoreTest > scoreJouer :
             scoreJouer = scoreTest
             aJouer = coup
@@ -73,13 +71,15 @@ def coup_à_jouer(player, plateau: Plateau, profondeur):
 
 
 def copy_plat(plateau):
+    print(type(plateau))
     """fait une copie du plateau"""
     nouvPlat = Plateau(listJoueur)
     nouvPlat = [[[None for y in range(6)] for x in range(6)] for c in range(3)]
     for p in range(3):
         for d in range(6):
             for g in range(6):
-                if plateau[p][d][g] != None:
+                print(plateau[p][d][g])
+                if plateau[p][d][g] is not None:
                     piece = plateau[p][d][g]
 
                     if isinstance(piece, Pieces.Roi):
@@ -97,7 +97,9 @@ def copy_plat(plateau):
                     elif isinstance(piece, Pieces.Chat):
                         nouvPiece = Pieces.Chat(piece.joueur, piece.terrainOrigine)
 
+                    nouvPiece.joueur = piece.joueur
                     nouvPlat[p][d][g] = nouvPiece
+    print('fini')
     return nouvPlat
 
 
@@ -133,13 +135,12 @@ def jouer(player, coordPiece, nouvCase, plateau: Plateau):
     p2, x2, y2 = nouvCase
 
     if isinstance(plateau[p2][x2][y2], Pieces.Piece):
-        pieceKill = plateau[p2][x2][y2]
         modif_score(player, coordPiece, nouvCase, plateau, True)
 
     else :
-        plateau.sur_deplacement_valide(coordPiece, nouvCase)
         modif_score(player, coordPiece, nouvCase, plateau, False)
 
+    plateau[p1][x1][y1], plateau[p2][x2][y2] = None, plateau[p1][x1][y1]
 
 
 def modif_score(player, coordPiece, nouvCase, plateau, bool):
@@ -187,7 +188,7 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
 
     else : # la case est libre
         NouvScore1 = tabScore[0] + scoreSupp1
-        coupleIfEnnemi = (None, None, None)
+        coupleIfEnnemi = (None, None)
     # trouve le nouveau score dans le cas où il n'y a pas d'ennemi
 
     return NouvScore1, coupleIfEnnemi
@@ -204,6 +205,7 @@ def jeu_IA(plateau: Plateau, difficulte, IA):
     # profondeur = nombre de coups d'avance (compte les coups des 3 joueurs)
     # difficulte = nombre de tours de plateau d'avance (ne compte que les fois où l'IA joue)
 
+    tabPosPieces, depPieces = trouve_pieces_et_coups_joueur(IA, plateau)
     numPiece, coupJoue = coup_à_jouer(IA, plateau, profondeur)
     pieceJoue = tabPosPieces[numPiece]
     return pieceJoue, coupJoue
