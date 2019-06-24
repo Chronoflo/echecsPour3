@@ -30,8 +30,10 @@ class ImagePlateau:
 
     def joueur_suivant(self):
         """ Utiliser en multijoueur sur un même ordi. """
-        self.terrainEnBas = (self.terrainEnBas - 1) % 3
-        self.surface = self.listePlateaux[self.terrainEnBas]
+        tourner_en_siege_chaud = False
+        if tourner_en_siege_chaud:
+            self.terrainEnBas = (self.terrainEnBas - 1) % 3
+            self.surface = self.listePlateaux[self.terrainEnBas]
 
 
 ROUGE = SuperColor("rouge", (255, 0, 0))
@@ -88,7 +90,8 @@ def redimensionne(img, boite):
     return pygame.transform.scale(img, (int(sx), int(sy)))
 
 
-def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=None, sur_attente_autres_joueurs=None):
+def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=None, sur_attente_autres_joueurs=None,
+              siege_chaud=True):
     """C'est la fonction principale de l'affichage.
     Elle appelle les fonctions affichage_pieces, redimensionne et detecte_terrain_curseur.
     Elle s'occupe de créer la fenêtre du jeu et du passage du "menu" au plateau, et coordonne l'affichage de chaque pièce, en interaction avec le joueur."""
@@ -189,11 +192,14 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                             elif etape_jeu == VALIDATION_DEPLACEMENT:
                                 if appartient_tableau_de_couples(pos, tb_normal, tb_ennemi):
                                     plateau.sur_déplacement_validé(pos_piece, pos)
-                                    video_update = True
                                     etape_jeu = SELECTION_PIECE
                                     if sur_déplacement_pièce is not None:
                                         sur_déplacement_pièce(pos_piece, pos)
                                     listeJoueurs.joueur_suivant()
+                                    if siege_chaud:
+                                        imagePlateau.joueur_suivant()
+                                        nom_joueur = listeJoueurs.joueur_actuel().nom
+                                    video_update = True
                                 elif not isinstance(case_ciblée, Piece):
                                     video_update = True
                                     etape_jeu = SELECTION_PIECE
@@ -204,11 +210,13 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                                     tb_normal, tb_ennemi = case_ciblée.déplacements_possibles(pos, plateau)
                                     dessine_cases(fenetre, tb_normal, imagePlateau.terrainEnBas, JAUNE_SYMPA)
                                     dessine_cases(fenetre, tb_ennemi, imagePlateau.terrainEnBas, ROUGE_MECHANT)
-                else:
-                    if sur_attente_autres_joueurs is not None:
-                        sur_attente_autres_joueurs(plateau, listeJoueurs)
-                    video_update = True
-                pygame.display.flip()
+
+        # FIN BOUCLE DES ÉVÉNEMENTS
+        if not est_tour_du_joueur():
+            if sur_attente_autres_joueurs is not None:
+                sur_attente_autres_joueurs(plateau, listeJoueurs)
+            video_update = True
+        pygame.display.flip()
         pygame.time.wait(100)
 
     pygame.quit()

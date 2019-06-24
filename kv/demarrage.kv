@@ -150,13 +150,25 @@
                     valign: 'middle'
                     halign: 'center'
                     Button:
-                        opacity: int(app.otherPlayers[0] != 'Vide' and app.otherPlayers[1] != 'Vide' and titre.text == 'Héberger')
-                        size_hint: 0.5,0.1
+                        id: siegeChaud
+                        actif: app.otherPlayers[0] == 'Vide' and app.otherPlayers[1] == 'Vide' and titre.text == 'Héberger'
+                        opacity: int(self.actif)
+                        size_hint: 0.5 * self.actif, 0.1 * self.actif
+                        background_color: Color(1, 0.6, 1, mode='hsv').rgba
+                        pos: (root.width - self.width) / 2, (root.height - self.height) / 2
+                        size: root.width, root.height * 0.0005
+                        text: 'Siège chaud'
+                        on_release: if self.opacity: app.siege_chaud()
+                    Button:
+                        id: commencerPartie
+                        actif: app.otherPlayers[0] != 'Vide' and app.otherPlayers[1] != 'Vide' and titre.text == 'Héberger'
+                        opacity: int(self.actif)
+                        size_hint: 0.5 * self.actif, 0.1 * self.actif
                         background_color: Color(0.4,0.4,1, mode='hsv').rgba
     #                    pos: (root.width - self.width) / 2, (root.height - self.height) / 2
     #                    size: root.width, root.height * 0.0005
                         text: 'Commencer partie'
-                        on_release: app.créer_partie()
+                        on_release: if self.opacity: app.créer_partie()
 
         SBoxLayout:
             background_color: 0.627, 0.7, 0.2, 1

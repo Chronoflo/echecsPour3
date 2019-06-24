@@ -1,23 +1,28 @@
-import Pieces
+from Pieces import Piece, Tour
 
 class Plateau(list):
     def __init__(self, listeJoueurs):
         super().__init__(initialisation_plateau(listeJoueurs))
 
     def sur_sélection_pièce(self, coordonnées):
-        p, d, g = coordonnées
-        depAVerifier, depAVerifierEnnemis = Pieces.traduction_en_couples_déplacements(
-            *self[p][d][g].deplacementsPossibles(), coordonnées)
-        depVerifies = []
-        for dep in depAVerifier:
-            depVerifies.append(dep)
+        pass
 
     def sur_déplacement_validé(self, coordonnéesPion, coordonnéesCible):
         p1,d1,g1, p2,d2,g2 = *coordonnéesPion, *coordonnéesCible
+        piece = self[p1][d1][g1]
+        remplacement = None
+
         if self[p2][d2][g2] is not None:
-            pionEnnemi: Pieces.Piece = self[p2][d2][g2]
-            pionEnnemi.joueur.piecesRestantes.remove(pionEnnemi)
-        self[p1][d1][g1], self[p2][d2][g2] = None, self[p1][d1][g1]
+            cible: Piece = self[p2][d2][g2]
+            if isinstance(cible, Tour) and piece.joueur.nom == cible.joueur.nom:
+                remplacement = cible
+                cible.emplacementInitial = False
+            else:
+                cible.joueur.piecesRestantes.remove(cible)
+
+        piece.emplacementInitial = False
+        piece.terrainActuel = p2
+        self[p1][d1][g1], self[p2][d2][g2] = remplacement, self[p1][d1][g1]
 
 
 def initialisation_plateau(listeJoueurs):

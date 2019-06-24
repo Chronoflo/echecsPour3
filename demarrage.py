@@ -267,12 +267,23 @@ class DemarrageApp(App):
         self.listeJoueurs = None
 
     def créer_partie(self, joueurs=()):
-        if self.jeu is None:
+
+        if self.jeu is None or not self.jeu.is_alive():
             if len(joueurs) == 0:
-                self.jeu = threading.Thread(daemon=True, target=affichage, args=(self.player, self.player, *self.otherPlayers, self.sur_déplacement_pièce, self.sur_attente_autres_joueurs))
+                self.jeu = threading.Thread(daemon=True, target=affichage, args=(self.player, self.player, *self.otherPlayers,
+                                                                                 self.sur_déplacement_pièce, self.sur_attente_autres_joueurs),
+                                            kwargs={'siege_chaud': False})
                 self.send("c: {};{};{}".format(self.player, *self.otherPlayers))
             else:
-                self.jeu = threading.Thread(daemon=True, target=affichage, args=(self.player, *joueurs, self.sur_déplacement_pièce, self.sur_attente_autres_joueurs))
+                self.jeu = threading.Thread(daemon=True, target=affichage, args=(self.player, *joueurs, self.sur_déplacement_pièce, self.sur_attente_autres_joueurs),
+                                            kwargs={'siege_chaud': False})
+            self.jeu.start()
+
+    def siege_chaud(self):
+        if self.jeu is None or not self.jeu.is_alive():
+            self.jeu = threading.Thread(daemon=True, target=affichage,
+                                        args=(self.player, self.player, "Joueur vert", "Joueur bleu"),
+                                        kwargs={'siege_chaud': True})
             self.jeu.start()
 
     def sur_déplacement_pièce(self, pos_piece, pos_cible):

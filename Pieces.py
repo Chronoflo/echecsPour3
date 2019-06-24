@@ -100,7 +100,7 @@ class Roi(Piece):
                                   (1, 1), (1, -1), (-1, 1), (-1, -1)])]
 
         if self.emplacementInitial:
-            tabSansEnnemis.append((ROCK, [(2, 0), (1, 0)]))
+            tabSansEnnemis.append((ROCK, [(2, 0), (0, 1)]))
 
         tabAvecEnnemis = [(FINI, [(0, 1), (1, 0), (-1, 0), (0, -1),
                                   (1, 1), (1, -1), (-1, 1), (-1, -1)])]
@@ -236,10 +236,10 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
                             if not isinstance(vecteur, SP):  # vecteur de type quelconque
                                 depsFini.append((nouveau_terrain(p, signe(x * y)), nv_case(i), nv_case(j)))
                             else:
-                                if (d, g) == (5, 5):  # les vecteurs SP ne s'appliquent qu'au centre du plateau
+                                if min(d, g) >= 4:  # les vecteurs SP ne s'appliquent qu'au centre du plateau
                                     depsFini.append((nouveau_terrain(p, -signe(x * y)), nv_case(j), nv_case(i)))
 
-                if depsFini :  # ajout à depsPossibles seulement si depsFini est non vide
+                if depsFini:  # ajout à depsPossibles seulement si depsFini est non vide
                     depsPossibles.append((FINI, depsFini))
 
             elif typeDep == INFINI:
@@ -328,11 +328,12 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                     i+=1
 
             elif typeDep == ROCK:
-                if piece.emplacementInitial :
+                if piece.emplacementInitial:
                     p, x, y = cases[0]
                     joueur = piece.joueur
-                    if joueur.tour1.emplacementInitial and plateau[p][x-1][y] == None and nom == plateau[p][x][y].joueur:
+                    if joueur.tour1.emplacementInitial and plateau[p][x-1][y] is None and nom == plateau[p][x][y].joueur:
                         # teste si la case est libre et si les bonnes pièces sont aux bons endroits sans avoir bougé
+                        print(p,x,y)
                         depsRock.append((p,x,y))
 
                     p, x, y = cases[1]
@@ -340,9 +341,8 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                         # teste si la case est libre et si les bonnes pièces sont aux bons endroits sans avoir bougé
                         depsRock.append((p,x,y))
 
-            else :
+            else:
                 raise ValueError("Type de déplacement inconnu.")
-
 
         if depsFini:
             depsPossibles.append((FINI, depsFini))
@@ -350,9 +350,8 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
         if depsInfini:
             depsPossibles.append((INFINI, depsInfini))
 
-        if depsRock :
+        if depsRock:
             depsPossibles.append((ROCK, depsRock))
-
 
         return depsPossibles
 
