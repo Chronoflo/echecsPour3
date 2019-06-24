@@ -78,6 +78,7 @@ def copy_plat(plateau):
     for p in range(3):
         for d in range(6):
             for g in range(6):
+                print(plateau[p][d][g])
                 if plateau[p][d][g] is not None:
                     piece = plateau[p][d][g]
 
@@ -98,6 +99,7 @@ def copy_plat(plateau):
 
                     nouvPiece.joueur = piece.joueur
                     nouvPlat[p][d][g] = nouvPiece
+    print('fini')
     return nouvPlat
 
 
@@ -133,17 +135,12 @@ def jouer(player, coordPiece, nouvCase, plateau: Plateau):
     p2, x2, y2 = nouvCase
 
     if isinstance(plateau[p2][x2][y2], Pieces.Piece):
-        p1,d1,g1, p2,d2,g2 = *coordonnéesPion, *coordonnéesCible
-        if self[p2][d2][g2] is not None:
-            pionEnnemi: Pieces.Piece = self[p2][d2][g2]
-            pionEnnemi.joueur.piecesRestantes.remove(pionEnnemi)
-        self[p1][d1][g1], self[p2][d2][g2] = None, self[p1][d1][g1]
         modif_score(player, coordPiece, nouvCase, plateau, True)
 
     else :
-        plateau.sur_deplacement_valide(coordPiece, nouvCase)
         modif_score(player, coordPiece, nouvCase, plateau, False)
 
+    plateau[p1][x1][y1], plateau[p2][x2][y2] = None, plateau[p1][x1][y1]
 
 
 def modif_score(player, coordPiece, nouvCase, plateau, bool):
@@ -191,7 +188,7 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
 
     else : # la case est libre
         NouvScore1 = tabScore[0] + scoreSupp1
-        coupleIfEnnemi = (None, None, None)
+        coupleIfEnnemi = (None, None)
     # trouve le nouveau score dans le cas où il n'y a pas d'ennemi
 
     return NouvScore1, coupleIfEnnemi
