@@ -59,7 +59,7 @@ class Pion(Piece):
         Sépare le cas où il y a une pièce ennemie et où il n'y a rien.
         Avec au début le max des déplacements possibles si le déplacement est infini"""
 
-        differenceTerrain = abs(self.terrainOrigine - self.terrainActuel) % 3
+        differenceTerrain = (self.terrainOrigine - self.terrainActuel) % 3
 
         if differenceTerrain == 0:
             if self.emplacementInitial:
@@ -70,7 +70,7 @@ class Pion(Piece):
 
             tabAvecEnnemis = [(FINI, [(1, 1), (-1, 1), (1, -1)])]
 
-        elif differenceTerrain == 1:
+        elif differenceTerrain == 2:
             tabSansEnnemis = [(FINI, [(-1, 0)])]
 
             tabAvecEnnemis = [(FINI, [(-1, -1), (-1, 1)])]
