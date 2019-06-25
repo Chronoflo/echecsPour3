@@ -4,7 +4,7 @@ from pygame.locals import *
 
 import numpy as np
 
-from IA import copy_plat, coup_IA
+from IA import coup_IA
 from constantes import SELECTION_PIECE, VALIDATION_DEPLACEMENT
 from fonctions import appartient_tableau_de_couples
 from plateau import Plateau
@@ -196,6 +196,8 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                     ia = listeJoueurs.joueur_actuel()
                     plateau.sur_déplacement_validé(*coup_IA(plateau, ia.difficulté))
                     listeJoueurs.joueur_suivant()
+                    if siege_chaud:
+                        nom_joueur = listeJoueurs.joueur_actuel().nom
                     video_update = True
                 elif est_tour_du_joueur():
                     if event.type == MOUSEBUTTONDOWN and event.button == 1:

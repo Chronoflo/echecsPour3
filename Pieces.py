@@ -19,7 +19,7 @@ class Piece:
     """
     piècesCréées = []
 
-    def __init__(self, nom, joueur, terrainOrigine, scorePiece, image=None):
+    def __init__(self, nom, joueur, terrainOrigine, scorePiece):
         self.nom = nom
         self.joueur = joueur
 
@@ -28,7 +28,7 @@ class Piece:
         self.terrainActuel = terrainOrigine
 
         self.scorePiece = scorePiece
-        self.image = image
+        self.image = None
 
         Piece.piècesCréées.append(self)
 
@@ -168,8 +168,8 @@ class Fou(Piece):
 class Reine(Piece):
     """ Définit la Reine, déplacements autorisés etc... """
 
-    def __init__(self, joueur, terrainOrigine, image=None):
-        super(Reine, self).__init__("Reine", joueur, terrainOrigine, 10, image)
+    def __init__(self, joueur, terrainOrigine):
+        super(Reine, self).__init__("Reine", joueur, terrainOrigine, 10)
 
     def vecteurs_deplacements_possibles(self):
         """ Envoie le tableau des déplacements possibles de la Reine"""
@@ -333,6 +333,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
                     joueur = piece.joueur
                     if joueur.tour1.emplacementInitial and plateau[p][x-1][y] is None and nom == plateau[p][x][y].joueur:
                         # teste si la case est libre et si les bonnes pièces sont aux bons endroits sans avoir bougé
+                        print(p,x,y)
                         depsRock.append((p,x,y))
 
                     p, x, y = cases[1]
@@ -396,14 +397,12 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
     return traite_sans_ennemis(déplacementsSansEnnemi), traite_avec_ennemis(déplacementsAvecEnnemi)
 
 
-def promotion_reine(piece):
+def promotionReine(piece, pos, plateau):
     """procédure plaçant une reine à l'endroit du pion
     le pion doit être au bon endroit pour la promotion"""
-    joueur = piece.joueur
-    joueur.piecesRestantes.remove(piece)
-    piece = Reine(piece.joueur, piece.terrainOrigine, joueur.reine.image)
-    joueur.piecesRestantes.append(piece)
-    return piece
+    p, d, g = pos
+    plateau[p][d][g] = Pieces.Reine(piece.terrainOrigine)
+    plateau[p][d][g].joueur = piece.joueur
 
 
 

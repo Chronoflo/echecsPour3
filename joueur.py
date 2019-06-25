@@ -54,6 +54,9 @@ class ListeDeJoueurs(list):
             super(ListeDeJoueurs, self).__init__([Joueur(joueur.nom, joueur.terrainDOrigine, joueur.couleur) for joueur in copie_de])
             self.iJoueurActuel = copie_de.iJoueurActuel
 
+    def __str__(self):
+        return str([joueur.nom for joueur in self])
+
     def joueur_suivant(self):
         if self.iJoueurActuel + 1 < len(self):
             self.iJoueurActuel += 1
@@ -74,6 +77,7 @@ class ListeDeJoueurs(list):
         else:
             if iJoueurAEnlever <= self.iJoueurActuel:
                 self.iJoueurActuel -= 1
+            del self[iJoueurAEnlever]
 
 
 if __name__ == '__main__':

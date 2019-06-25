@@ -153,7 +153,10 @@ def copy_plat(plateau):
             for g in range(6):
                 if isinstance(plateau[p][d][g], Piece):
                     piece = plateau[p][d][g]
-                    nouvJoueur = nouvJoueurs[piece.joueur.nom]
+                    if piece.joueur.nom in nouvJoueurs:
+                        nouvJoueur = nouvJoueurs[piece.joueur.nom]
+                    else:
+                        nouvJoueur = piece.joueur
 
                     if isinstance(piece, Roi):
                         nouvPiece = Roi(nouvJoueur, piece.terrainOrigine)

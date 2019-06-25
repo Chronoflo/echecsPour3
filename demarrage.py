@@ -1,20 +1,17 @@
 import os
 import random
 import threading
-from math import pi, cos, sin
+from math import cos, sin
 
 from kivy.clock import Clock
 from kivy.config import Config
-from kivy.metrics import dp, cm
+from kivy.metrics import dp
 from kivy.uix.behaviors import CoverBehavior
 from kivy.uix.button import Button
-from kivy.uix.image import Image
-from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.togglebutton import ToggleButton
-from kivy.uix.video import Video
 
 from Interface import affichage
-from reseau.reseau import Serveur, Client
+from reseau import Serveur, Client
 from fonctions import rand_sign
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
@@ -27,9 +24,8 @@ from kivy.properties import NumericProperty, ObjectProperty, ListProperty, \
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
-from kivy.uix.settings import Settings, SettingsWithSidebar, SettingItem, SettingSpacer, SettingOptions
-import kivy.uix.settings
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.settings import Settings, SettingsWithSidebar, SettingSpacer, SettingOptions
 from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
 import kivy
@@ -276,8 +272,17 @@ class DemarrageApp(App):
 
     def siege_chaud(self):
         if self.jeu is None or not self.jeu.is_alive():
+            if self.otherPlayers[0] == 'Vide':
+                J2 = 'Joueur vert'
+            else:
+                J2 = self.otherPlayers[0]
+            if self.otherPlayers[1] == 'Vide':
+                J3 = 'Joueur bleu'
+            else:
+                J3 = self.otherPlayers[1]
+
             self.jeu = threading.Thread(daemon=True, target=affichage,
-                                        args=(self.player, self.player, "Joueur vert", "Joueur bleu"),
+                                        args=(self.player, self.player, J2, J3),
                                         kwargs={'siege_chaud': True})
             self.jeu.start()
 
