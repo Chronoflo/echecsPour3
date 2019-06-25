@@ -8,6 +8,7 @@ class Joueur:
         self.nom = nomJoueur
         self.couleur = couleur
         self.score = 110
+        self.terrainDOrigine = terrainDOrigine
 
         self.roi = Pieces.Roi(self, terrainDOrigine)
         self.reine = Pieces.Reine(self, terrainDOrigine)
@@ -30,6 +31,9 @@ class Joueur:
                                 self.cavalier1, self.cavalier2, self.pion1, self.pion2, self.pion3,
                                 self.pion4, self.pion5, self.pion6, self.pion7, self.chat]
 
+    def __str__(self):
+        return self.nom
+
 
 class IA(Joueur):
     """C'est l'IA, donc n'est pas contrôlée par les joueurs"""
@@ -37,33 +41,46 @@ class IA(Joueur):
     numIA = 0
     def __init__(self, terrainDOrigine, couleur, difficulté):
         super(IA, self).__init__(IA.nomIA[IA.numIA], terrainDOrigine, couleur)
-        IA.numIA +=1
+        IA.numIA += 1
         self.difficulté = difficulté
 
-class ListeDeJoueurs:
 
-    def __init__(self, *joueurs):
-        self.joueurs = list(joueurs)
-        self.iJoueurActuel = 0
+class ListeDeJoueurs(list):
+    def __init__(self, *joueurs, copie_de=None):
+        if copie_de is None:
+            super(ListeDeJoueurs, self).__init__(joueurs)
+            self.iJoueurActuel = 0
+        else:
+            super(ListeDeJoueurs, self).__init__([Joueur(joueur.nom, joueur.terrainDOrigine, joueur.couleur) for joueur in copie_de])
+            self.iJoueurActuel = copie_de.iJoueurActuel
 
     def joueur_suivant(self):
-        if self.iJoueurActuel + 1 < len(self.joueurs):
+        if self.iJoueurActuel + 1 < len(self):
             self.iJoueurActuel += 1
         else:
             self.iJoueurActuel = 0
 
-        return self.joueurs[self.iJoueurActuel]
+        return self[self.iJoueurActuel]
 
     def joueur_actuel(self):
-        return self.joueurs[self.iJoueurActuel]
+        return self[self.iJoueurActuel]
 
     def enleve_joueur(self, joueur):
         try:
-            iJoueurAEnlever = self.joueurs.index(joueur)
+            iJoueurAEnlever = self.index(joueur)
         except ValueError:
             print("Ce joueur ne joue pas.")
             return None
         else:
             if iJoueurAEnlever <= self.iJoueurActuel:
                 self.iJoueurActuel -= 1
-            del self.joueurs[iJoueurAEnlever]
+
+
+if __name__ == '__main__':
+    listeJoueurs = ListeDeJoueurs("Arthur", "Florian", "Sarah")
+    listeJoueurs.joueur_suivant()
+    listeJoueurs.enleve_joueur("Florian")
+    listeJoueurs.joueur_suivant()
+    listeJoueurs.joueur_suivant()
+    print(listeJoueurs.joueur_actuel())
+    listeJoueurs.joueur_suivant()

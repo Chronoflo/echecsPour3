@@ -125,6 +125,7 @@
                 size_hint_x: 0.5
                 Button:
                     text: 'Ajouter IA'
+                    on_release: app.ajouter_IA()
                 Button:
                     text: 'Rejoindre'
                     on_release: Factory.InformationsDeConnexionPopup().open(); chat.messages.text = ""; titre.text = "Rejoindre"
@@ -231,7 +232,7 @@
             text: "UN JOUEUR"
 #            background_normal: ""
             background_color: papa.btn_color
-            on_release: app.lance_partie(1)
+            on_release: app.partie_solo()
         DanceAvecLesBouttons:
             rayon: fiston.rayon + self.height
 #            theta_i: rand.random() * 2.5 + 0.4

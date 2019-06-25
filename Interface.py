@@ -4,11 +4,12 @@ from pygame.locals import *
 
 import numpy as np
 
+from IA import copy_plat, coup_IA
 from constantes import SELECTION_PIECE, VALIDATION_DEPLACEMENT
 from fonctions import appartient_tableau_de_couples
 from plateau import Plateau
 from Pieces import Piece
-from joueur import Joueur, ListeDeJoueurs
+from joueur import Joueur, ListeDeJoueurs, IA
 
 
 class SuperColor(pygame.Color):
@@ -91,12 +92,20 @@ def redimensionne(img, boite):
 
 
 def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=None, sur_attente_autres_joueurs=None,
-              siege_chaud=True):
+              siege_chaud=False):
     """C'est la fonction principale de l'affichage.
     Elle appelle les fonctions affichage_pieces, redimensionne et detecte_terrain_curseur.
     Elle s'occupe de créer la fenêtre du jeu et du passage du "menu" au plateau, et coordonne l'affichage de chaque pièce, en interaction avec le joueur."""
     pygame.init()
-    listeJoueurs = ListeDeJoueurs(Joueur(joueur_0, 0, ROUGE), Joueur(joueur_1, 1, VERT), Joueur(joueur_2, 2, BLEU))
+
+    joueurs = []
+    for nom, terrainDOrigine, couleur in zip((joueur_0, joueur_1, joueur_2), (0,1,2), (ROUGE, VERT, BLEU)):
+        if nom[:2] == 'IA':
+            joueurs.append(IA(terrainDOrigine, couleur, 2))
+        else:
+            joueurs.append(Joueur(nom, terrainDOrigine, couleur))
+
+    listeJoueurs = ListeDeJoueurs(*joueurs)
     plateau = Plateau(listeJoueurs)
 
     def est_tour_du_joueur():
@@ -132,6 +141,19 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
     pygame.key.set_repeat(400, 30)
 
     while continuer:
+        if jeu:
+            if video_update:
+                fenetre.fill(BLANC)
+                hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
+                centre = complex(largeurFenetre / 2, hauteurFenetre / 2)
+                imageRedim = redimensionne(imagePlateau.surface, (largeurFenetre, hauteurFenetre))
+                hauteur = imageRedim.get_rect()[3]
+                largeur = imageRedim.get_rect()[2]
+                xPlateau, yPlateau = (largeurFenetre - largeur) / 2, (hauteurFenetre - hauteur) / 2
+                fenetre.blit(imageRedim, (xPlateau, yPlateau))
+                affichage_pièces(plateau, imageRedim, fenetre, imagePlateau.terrainEnBas)
+                video_update = False
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 continuer = 0
@@ -156,23 +178,26 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                         # Réaction au clic sur le bouton : sortie de la boucle du menu, entrée dans celle du jeu
                         accueil = 0
                         jeu = 1
-                        video_update = True
+                        fenetre.fill(BLANC)
+                        hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
+                        centre = complex(largeurFenetre / 2, hauteurFenetre / 2)
+                        imageRedim = redimensionne(imagePlateau.surface, (largeurFenetre, hauteurFenetre))
+                        hauteur = imageRedim.get_rect()[3]
+                        largeur = imageRedim.get_rect()[2]
+                        xPlateau, yPlateau = (largeurFenetre - largeur) / 2, (hauteurFenetre - hauteur) / 2
+                        fenetre.blit(imageRedim, (xPlateau, yPlateau))
+                        affichage_pièces(plateau, imageRedim, fenetre, imagePlateau.terrainEnBas)
+
 
             # BOUCLE JEU:
             if jeu:
-                if video_update:
-                    fenetre.fill(BLANC)
-                    hauteurFenetre, largeurFenetre = fenetre.get_rect()[3], fenetre.get_rect()[2]
-                    centre = complex(largeurFenetre / 2, hauteurFenetre / 2)
-                    imageRedim = redimensionne(imagePlateau.surface, (largeurFenetre, hauteurFenetre))
-                    hauteur = imageRedim.get_rect()[3]
-                    largeur = imageRedim.get_rect()[2]
-                    xPlateau, yPlateau = (largeurFenetre - largeur) / 2, (hauteurFenetre - hauteur) / 2
-                    fenetre.blit(imageRedim, (xPlateau, yPlateau))
-                    affichage_pièces(plateau, imageRedim, fenetre, imagePlateau.terrainEnBas)
-                    video_update = False
-
-                if est_tour_du_joueur():
+                if isinstance(listeJoueurs.joueur_actuel(), IA):
+                    print("Tour de l'IA {}.".format(listeJoueurs.joueur_actuel().nom))
+                    ia = listeJoueurs.joueur_actuel()
+                    plateau.sur_déplacement_validé(*coup_IA(plateau, ia.difficulté))
+                    listeJoueurs.joueur_suivant()
+                    video_update = True
+                elif est_tour_du_joueur():
                     if event.type == MOUSEBUTTONDOWN and event.button == 1:
                         pos = detecte_terrain_curseur(centre, event, largeur, hauteur, xPlateau, yPlateau,
                                                       imagePlateau.terrainEnBas)
@@ -217,7 +242,7 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                 sur_attente_autres_joueurs(plateau, listeJoueurs)
             video_update = True
         pygame.display.flip()
-        pygame.time.wait(100)
+        pygame.time.wait(10)
 
     pygame.quit()
 
@@ -319,4 +344,4 @@ def detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlat
 
 
 if __name__ == '__main__':
-    affichage("Florian", "Florian", "Sarah", "Arthur")
+    affichage("Florian", "Florian", "Sarah", "Arthur", siege_chaud=True)

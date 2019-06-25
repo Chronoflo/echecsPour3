@@ -46,10 +46,6 @@ with open('kv/demarrage.kv', encoding='utf-8') as f:
     Builder.load_string(f.read())
 
 
-def lance_partie(n_joueurs):
-    print("Partie lancée pour {} joueurs.".format(n_joueurs))
-
-
 class MyScreenManager(ScreenManager):
     def __init__(self, **kwargs):
         super(MyScreenManager, self).__init__(**kwargs)
@@ -253,7 +249,7 @@ class DemarrageApp(App):
     otherPlayers = ListProperty(['Vide', 'Vide'])
     applicationJeu = ObjectProperty(affichage)
 
-    def __init__(self, lance_partie=lance_partie):
+    def __init__(self):
         super(DemarrageApp, self).__init__()
         self.use_kivy_settings = False
         self.settings_cls = SettingsWithSidebar
@@ -261,7 +257,6 @@ class DemarrageApp(App):
         self.serveur = Serveur(self.on_received, self.on_external_connection)
         self.client = Client(self.on_received)
 
-        self.lance_partie = lance_partie
         self.jeu = None
         self.plateau = None
         self.listeJoueurs = None
@@ -285,6 +280,19 @@ class DemarrageApp(App):
                                         args=(self.player, self.player, "Joueur vert", "Joueur bleu"),
                                         kwargs={'siege_chaud': True})
             self.jeu.start()
+
+    def partie_solo(self):
+        if self.jeu is None or not self.jeu.is_alive():
+            self.jeu = threading.Thread(daemon=True, target=affichage,
+                                        args=(self.player, self.player, "IA", "IA 2"),
+                                        kwargs={'siege_chaud': False})
+            self.jeu.start()
+
+    def ajouter_IA(self):
+        if self.otherPlayers[0] == 'Vide':
+            self.otherPlayers[0] = 'IA'
+        elif self.otherPlayers[1] == 'Vide':
+            self.otherPlayers[1] = 'IA 2'
 
     def sur_déplacement_pièce(self, pos_piece, pos_cible):
         self.send("g: {};{}".format(pos_piece, pos_cible))

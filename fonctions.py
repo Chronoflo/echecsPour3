@@ -28,6 +28,14 @@ def signe(x):
         return 0
 
 
+
+def concat(tab):
+    res = []
+    for t in tab:
+        res += t
+    return res
+
+
 tab_width = 4
 
 
