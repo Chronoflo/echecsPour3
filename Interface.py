@@ -194,7 +194,10 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                 if isinstance(listeJoueurs.joueur_actuel(), IA):
                     print("Tour de l'IA {}.".format(listeJoueurs.joueur_actuel().nom))
                     ia = listeJoueurs.joueur_actuel()
-                    plateau.sur_déplacement_validé(*coup_IA(plateau, ia.difficulté))
+                    try:
+                        plateau.sur_déplacement_validé(*coup_IA(plateau, ia.difficulté))
+                    except:
+                        pass
                     listeJoueurs.joueur_suivant()
                     if siege_chaud:
                         nom_joueur = listeJoueurs.joueur_actuel().nom

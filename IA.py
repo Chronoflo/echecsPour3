@@ -176,7 +176,6 @@ def copy_plat(plateau):
                     nouvPiece.emplacementInitial = piece.emplacementInitial
                 else:
                     nouvPiece = None
-
                 nouvPlat[p][d][g] = nouvPiece
     return nouvPlat
 
