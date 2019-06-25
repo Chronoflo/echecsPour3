@@ -97,7 +97,7 @@ def coup_à_jouer(joueur, plateau: Plateau, profondeur):
 
     for pos, déps in pieces_et_coups(joueur, plateau):
         for dép in déps:
-            score_dép = score(copy_plat(plateau), profondeur - 1, pos, dép)
+            score_dép = score_coup(copy_plat(plateau), profondeur - 1, pos, dép)
             if score_dép > score_max:
                 score_max = score_dép
                 meilleur_coup = (pos, dép)
@@ -119,7 +119,7 @@ def pieces_et_coups(player, plateau: Plateau):
     return res
 
 
-def score(plateau: Plateau, profondeur, posPiece, posCible):
+def score_coup(plateau: Plateau, profondeur, posPiece, posCible):
     joueur = plateau.listeJoueurs.joueur_actuel()
     if profondeur > 2:
         print(profondeur)
@@ -127,7 +127,7 @@ def score(plateau: Plateau, profondeur, posPiece, posCible):
         score_max = float('-inf')
         for pos, déps in pieces_et_coups(joueur, plateau):
             for dép in déps:
-                score_dép = score(copy_plat(plateau), profondeur - 1, pos, dép)
+                score_dép = score_coup(copy_plat(plateau), profondeur - 1, pos, dép)
 
                 if score_dép > score_max:
                     score_max = score_dép
@@ -137,7 +137,7 @@ def score(plateau: Plateau, profondeur, posPiece, posCible):
     if profondeur <= 0 or joueur.score == 0:
         return joueur.score
     else:
-        nouvScore, scoresEnnemis = modif_score(joueur, posPiece, posCible, plateau, isinstance(plateau.case(posCible), Piece) and joueur.nom == plateau.case(posCible).nom)
+        nouvScore, scoresEnnemis = score(joueur, posPiece, posCible, plateau, isinstance(plateau.case(posCible), Piece) and joueur.nom == plateau.case(posCible).nom)
         plateau.sur_déplacement_validé(posPiece, posCible)
         joueur.score = nouvScore
         plateau.listeJoueurs.joueur_suivant()
@@ -187,7 +187,7 @@ def coup_immediat(player, plateau: Plateau, profondeur, tabScores):
     else:
         pieceJoué, coupJoué = coup_à_jouer(ListeDeJoueurs.joueur_suivant(plateau.listeJoueurs), plateau, profondeur - 1)
         jouer(player, pieceJoué, coupJoué, plateau)
-        scorePlayer, scoreEnnemi = modif_score(ListeDeJoueurs.joueur_suivant(plateau.listeJoueurs), plateau, profondeur - 1)
+        scorePlayer, scoreEnnemi = score(ListeDeJoueurs.joueur_suivant(plateau.listeJoueurs), plateau, profondeur - 1)
 
         tabScores[0] = scorePlayer
         if scoreEnnemi != None:
@@ -206,25 +206,25 @@ def tab_score(player, plateau: Plateau):
 
 
 def jouer(player, coordPiece, nouvCase, plateau: Plateau):
-    """Joue un coup sur une copie du plateau et enregistre le score actuel
+    """Joue un coup sur une copie du plateau et enregistre le score_coup actuel
     Entrée : le coup à jouer, c'est à dire la pièce et la case sur laquelle elle va
-    Sortie : le nouveau plateau (la copie qui a changé) , et le score des joueurs """
+    Sortie : le nouveau plateau (la copie qui a changé) , et le score_coup des joueurs """
     p1, x1, y1 = coordPiece
     p2, x2, y2 = nouvCase
 
     if isinstance(plateau[p2][x2][y2], Piece):
-        modif_score(player, coordPiece, nouvCase, plateau, True)
+        score(player, coordPiece, nouvCase, plateau, True)
 
     else :
-        modif_score(player, coordPiece, nouvCase, plateau, False)
+        score(player, coordPiece, nouvCase, plateau, False)
 
     plateau[p1][x1][y1], plateau[p2][x2][y2] = None, plateau[p1][x1][y1]
 
 
-def modif_score(player, coordPiece, nouvCase, plateau, bool):
+def score(player, coordPiece, nouvCase, plateau, bool):
     """Entrée : player est celui qui joue, piece est la pièce à bouger sur nouvCase,
         bool contient 'il y a un ennemi sur la case'
-    Sortie : modifie le score en fonction d'un mouvement puis fait le mouvement"""
+    Sortie : modifie le score_coup en fonction d'un mouvement puis fait le mouvement"""
     tabScore = tab_score(player, plateau)
 
     p1, x1, y1 = coordPiece
@@ -234,7 +234,7 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
     platOriPiece = piece.terrainOrigine
     platActPiece = piece.terrainActuel
 
-    differenceTerrain = abs(p1 - p2) % 3
+    differenceTerrain = (p1 - p2) % 3
 
     if differenceTerrain == 0 or platActPiece == platOriPiece:
         scoreSupp1 = piece.scorePiece*(x2-x1)*(y2-y1)
@@ -242,7 +242,7 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
         scoreSupp1 = piece.scorePiece*(x2*y2-(5-x1)*(5-y1)) -25
     else :
         scoreSupp1 = piece.scorePiece*((5-x2)*(5-y2)-x1*y1) +25
-    # trouve le changement de score de player
+    # trouve le changement de score_coup de player
 
     if bool: # verifie si il y a un ennemi
         if case.scorePiece == 0:
@@ -261,13 +261,13 @@ def modif_score(player, coordPiece, nouvCase, plateau, bool):
         NouvScore2 = tabScore[numScore] - nouvScore2
         NouvScore1 =  tabScore[0] + scoreSupp1
         coupleIfEnnemi = (numScore, NouvScore2)
-    # trouve le nouveau score dans le cas où il y a un ennemi
+    # trouve le nouveau score_coup dans le cas où il y a un ennemi
 
 
     else : # la case est libre
         NouvScore1 = tabScore[0] + scoreSupp1
         coupleIfEnnemi = (None, None)
-    # trouve le nouveau score dans le cas où il n'y a pas d'ennemi
+    # trouve le nouveau score_coup dans le cas où il n'y a pas d'ennemi
 
     return NouvScore1, coupleIfEnnemi
 

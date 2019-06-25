@@ -316,7 +316,7 @@ def detecte_terrain_curseur(centre, event, largeurPlateau, hauteurPlateau, xPlat
         return detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 2, terrainEnBas)
 
 
-def detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, p,
+def detecte_case_curseur(xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, p,
                          terrainEnBas):
     """ Connaissant le terrain où se trouve la case à identifier et les coordonnées du curseur et du centre, avec les mesures et position du plateau, cette fonction renvoie les coordonnées de la case cliquée"""
     if p == 0:
