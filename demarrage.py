@@ -30,33 +30,31 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
 import kivy
 from kivy.core.audio import SoundLoader
-sound = SoundLoader.load("video/poney.mp3")
-if sound:
-    print(sound)
-    print("Sound found at %s" % sound.source)
-    print("Sound is %.3f seconds" % sound.length)
-    sound.play()
-kivy.uix.settings.__all__ += tuple("SettingSuperOptions")
 
+kivy.uix.settings.__all__ += tuple("SettingSuperOptions")
+# Chargement du fichier kv
 with open('kv/demarrage.kv', encoding='utf-8') as f:
     Builder.load_string(f.read())
 
 
-class MyScreenManager(ScreenManager):
+class GestionnaireÉcrans(ScreenManager):
+    """ Englobe tous les écrans et permet de passer de l’un à l’autre. Gère aussi les raccourcis claviers. """
+
     def __init__(self, **kwargs):
-        super(MyScreenManager, self).__init__(**kwargs)
+        super(GestionnaireÉcrans, self).__init__(**kwargs)
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.last = self.current
 
     def to_last(self):
+        """ Revient à l'écran précédent. """
         self.current = self.last
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        """ Applique les raccourcis claviers. """
         app: DemarrageApp = App.get_running_app()
         keyname = keycode[1]
 
-        # print(keyname)
         if keyname == 'escape' or keyname == 'backspace':
             if not app.settings_open:
                 if self.current != 'main':
@@ -80,21 +78,29 @@ class MyScreenManager(ScreenManager):
 
 
 class MainScreen(Screen):
+    """ Menu principal. """
     settings_popup = ObjectProperty(None, allownone=True)
 
 
 class MouseEvents(Widget):
+    """ Classe abstraite rajoutant des fonctionnalités sur les évènements engendré par la souris. """
     def __init__(self, **kwargs):
+        """ Ne pas utiliser directement -> classe abstraite. """
         super(MouseEvents, self).__init__(**kwargs)
         self.right_click = None
+        self.left_click = None
 
     def on_touch_down(self, touch):
+        """ Applique les raccourcis souris."""
         super(MouseEvents, self).on_touch_down(touch)
         if touch.button == 'right' and self.right_click is not None:
             self.right_click()
+        elif touch.button == 'left' and self.left_click is not None:
+            self.left_click()
 
 
 class NumericalInput(TextInput):
+    """ Saisie de texte dans laquelle on ne peut écrire que des points et des chiffres. """
     maxLength = NumericProperty(15)
 
     def insert_text(self, substring, from_undo=False):
@@ -364,7 +370,14 @@ class DemarrageApp(App):
             print("Échec")
 
     def build(self):
-        return MyScreenManager()
+        # Lance la musique
+        sound = SoundLoader.load("video/poney.mp3")
+        if sound:
+            print(sound)
+            print("Sound found at %s" % sound.source)
+            print("Sound is %.3f seconds" % sound.length)
+            sound.play()
+        return GestionnaireÉcrans()
 
     def build_config(self, config: ConfigParser):
         if os.path.isfile('demarrage.ini'):

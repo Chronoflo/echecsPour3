@@ -39,6 +39,7 @@ class IA(Joueur):
     """C'est l'IA, donc n'est pas contrôlée par les joueurs"""
     nomIA = ["AlphaPasGo", "DownTech", "DeepOrange"]
     numIA = 0
+
     def __init__(self, terrainDOrigine, couleur, difficulté):
         super(IA, self).__init__(IA.nomIA[IA.numIA], terrainDOrigine, couleur)
         IA.numIA += 1
@@ -46,11 +47,13 @@ class IA(Joueur):
 
 
 class ListeDeJoueurs(list):
+    """ Une liste de joueurs. """
     def __init__(self, *joueurs, copie_de=None):
         if copie_de is None:
             super(ListeDeJoueurs, self).__init__(joueurs)
             self.iJoueurActuel = 0
         else:
+            # Crée une copie de copie_de
             super(ListeDeJoueurs, self).__init__([Joueur(joueur.nom, joueur.terrainDOrigine, joueur.couleur) for joueur in copie_de])
             self.iJoueurActuel = copie_de.iJoueurActuel
 

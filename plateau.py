@@ -31,7 +31,7 @@ class Plateau(list):
                 cible.emplacementInitial = False
             else:
                 # mange pièce
-                # cible.joueur.piecesRestantes.remove(cible)
+                cible.joueur.piecesRestantes.remove(cible)
                 # échec et mat
                 if isinstance(cible, Roi):
                     cible.joueur.enVie = False
@@ -42,7 +42,6 @@ class Plateau(list):
             diff_terrain = (p2 - piece.terrainOrigine) % 3
             if diff_terrain == 1 and d2 == 0 or diff_terrain == 2 and g2 == 0:
                 piece = promotion_reine(piece)
-
 
         piece.emplacementInitial = False
         piece.terrainActuel = p2
