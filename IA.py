@@ -2,7 +2,7 @@ from time import sleep
 
 from fonctions import concat
 from joueur import ListeDeJoueurs, Joueur
-from Pieces import Cavalier, traduction_en_couples_déplacements, Piece, Chat, Roi, Fou, Pion, Reine, dep_effectifs, Tour
+from Pieces import Cavalier, traduction_en_couples_déplacements, Piece, Chat, Roi, Fou, Pion, Reine, dep_possibles, Tour
 from plateau import Plateau
 
 
@@ -80,7 +80,7 @@ def trouve_pieces_et_coups_joueur_ancien(player, plateau: Plateau):
                     piece = plateau[p][x][y]
                     position = (p,x,y)
                     depsSans, depsAvec = traduction_en_couples_déplacements(*piece.vecteurs_deplacements_possibles(), position)
-                    déplacements = dep_effectifs(depsSans, depsAvec, piece, plateau)
+                    déplacements = dep_possibles(depsSans, depsAvec, piece, plateau)
                     positionsPieces.append(position)
                     piecesCoupPossibles.append(déplacements)
 

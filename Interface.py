@@ -46,7 +46,7 @@ JAUNE_SYMPA = SuperColor("jaune sympa", (200, 200, 0))
 ROUGE_MECHANT = SuperColor("rouge méchant", (170, 0, 0))
 
 
-def dessine_cases(surface_plateau: pygame.Surface, déplacements: list, terrainEnBas, color_=JAUNE_SYMPA):
+def affiche_déps(surface_plateau: pygame.Surface, déplacements: list, terrainEnBas, color_=JAUNE_SYMPA):
     def cercle(col, pos, radius=2):
         pygame.draw.circle(surface_plateau, col, pos, radius)
 
@@ -216,8 +216,8 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                                     piece = case_ciblée
                                     if piece.joueur.nom == nom_joueur:
                                         tb_normal, tb_ennemi = piece.déplacements_possibles(pos, plateau)
-                                        dessine_cases(fenetre, tb_normal, imagePlateau.terrainEnBas, JAUNE_SYMPA)
-                                        dessine_cases(fenetre, tb_ennemi, imagePlateau.terrainEnBas, ROUGE_MECHANT)
+                                        affiche_déps(fenetre, tb_normal, imagePlateau.terrainEnBas, JAUNE_SYMPA)
+                                        affiche_déps(fenetre, tb_ennemi, imagePlateau.terrainEnBas, ROUGE_MECHANT)
                                         etape_jeu = VALIDATION_DEPLACEMENT
                             elif etape_jeu == VALIDATION_DEPLACEMENT:
                                 if appartient_tableau_de_couples(pos, tb_normal, tb_ennemi):
@@ -238,8 +238,8 @@ def affichage(nom_joueur, joueur_0, joueur_1, joueur_2, sur_déplacement_pièce=
                                     fenetre.blit(imageRedim, (xPlateau, yPlateau))
                                     affichage_pièces(plateau, imageRedim, fenetre, imagePlateau.terrainEnBas)
                                     tb_normal, tb_ennemi = case_ciblée.déplacements_possibles(pos, plateau)
-                                    dessine_cases(fenetre, tb_normal, imagePlateau.terrainEnBas, JAUNE_SYMPA)
-                                    dessine_cases(fenetre, tb_ennemi, imagePlateau.terrainEnBas, ROUGE_MECHANT)
+                                    affiche_déps(fenetre, tb_normal, imagePlateau.terrainEnBas, JAUNE_SYMPA)
+                                    affiche_déps(fenetre, tb_ennemi, imagePlateau.terrainEnBas, ROUGE_MECHANT)
 
         # FIN BOUCLE DES ÉVÉNEMENTS
         if not est_tour_du_joueur():
@@ -307,13 +307,13 @@ def detecte_terrain_curseur(centre, event, largeurPlateau, hauteurPlateau, xPlat
         None  # Le curseur est hors du plateau
     elif yCurseur < frontiere01(xCurseur) and xCurseur < (largeurPlateau / 2 + xPlateau):
         # Le curseur est sur une case du terrain 1
-        return detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 1, terrainEnBas)
+        return detecte_case_curseur(xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 1, terrainEnBas)
     elif yCurseur > frontiere02(xCurseur):
         # Le curseur est sur une case du terrain 0
-        return detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 0, terrainEnBas)
+        return detecte_case_curseur(xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 0, terrainEnBas)
     else:
         # Il est dans le terrain 2
-        return detecte_case_curseur(centre, xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 2, terrainEnBas)
+        return detecte_case_curseur(xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, 2, terrainEnBas)
 
 
 def detecte_case_curseur(xCurseur, yCurseur, largeurPlateau, hauteurPlateau, xPlateau, yPlateau, p,

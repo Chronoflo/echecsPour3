@@ -33,7 +33,7 @@ class Piece:
         Piece.piècesCréées.append(self)
 
     def déplacements_possibles(self, pos, plateau):
-        return dep_effectifs(*traduction_en_couples_déplacements(*self.vecteurs_deplacements_possibles(), pos), self, plateau)
+        return dep_possibles(*traduction_en_couples_déplacements(*self.vecteurs_deplacements_possibles(), pos), self, plateau)
 
     def vecteurs_deplacements_possibles(self):
         return [], []
@@ -180,11 +180,11 @@ class Reine(Piece):
         return (tab, tab)
 
 
-def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAvecEnnemi, pos, n=6):
+def traduction_en_couples_déplacements(vecteursSansEnnemi, vecteursAvecEnnemi, pos, n=6):
     """
     Sert à passer des couples vecteurs d'une pièce à ses déplacements effectifs par rapport à sa position.
-    :param déplacementsSansEnnemi: tableaux contenant les couples vecteurs en cas normal
-    :param déplacementsAvecEnnemi: tableaux contenant les couples vecteurs en cas d'ennemis
+    :param vecteursSansEnnemi: tableaux contenant les couples vecteurs en cas normal
+    :param vecteursAvecEnnemi: tableaux contenant les couples vecteurs en cas d'ennemis
     :param pos: position de la pièce
     :param n: nombre de cases d'un côté
     :return: deux tableaux, celui des couples déplacements en cas normal et celui des couples déplacements en cas d'ennemi
@@ -291,13 +291,16 @@ def traduction_en_couples_déplacements(déplacementsSansEnnemi, déplacementsAv
                 raise ValueError("Type de déplacement inconnu.")
         return depsPossibles
 
-    return traite(déplacementsSansEnnemi), traite(déplacementsAvecEnnemi)
+    return traite(vecteursSansEnnemi), traite(vecteursAvecEnnemi)
 
 
-def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plateau):
+def dep_possibles(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plateau):
+    """
+    Renvoie les tableaux sans et avec ennemi des déplacements possibles parmi déplacementsSansEnnemi et
+    déplacementsAvecEnnemi.
+    """
     nom = piece.joueur
-    """Effectue les tests pour vérifier s'il y a ou non des ennemis, pour le
-    bon déplacement"""
+
     def traite_sans_ennemis(couplesVecteurs):
         # traite le cas sans ennemi
         depsPossibles = []  # contiendra le résultat final de traite
@@ -397,8 +400,7 @@ def dep_effectifs(déplacementsSansEnnemi, déplacementsAvecEnnemi, piece, plate
 
 
 def promotion_reine(piece):
-    """procédure plaçant une reine à l'endroit du pion
-    le pion doit être au bon endroit pour la promotion"""
+    """ Renvoie un pion promu en reine. """
     joueur = piece.joueur
     joueur.piecesRestantes.remove(piece)
     piece = Reine(piece.joueur, piece.terrainOrigine, joueur.reine.image)
@@ -406,50 +408,8 @@ def promotion_reine(piece):
     return piece
 
 
-
-def test_infini(p, d, g, x, y, n=6, nCasesMax=11):
-    """ Fonction de test. """
-
-    def nouveau_terrain(terrainActuel, modification):
-        return (terrainActuel + modification) % 3
-
-    def nv_case(u):
-        return 2 * n - (u + 1)
-
-    depsInfini = []
-    i, j = d + x, g + y
-    k = 1
-    while 0 <= i < n and 0 <= j < n and k < nCasesMax:
-        depsInfini.append((p, i, j))
-        i += x
-        j += y
-
-        if i < n <= j:
-            p, i, j = nouveau_terrain(p, 1), nv_case(j), i
-            x, y = -y, x
-        elif j < n <= i:
-            p, i, j = nouveau_terrain(p, -1), j, nv_case(i)
-            x, y = y, -x
-
-        k += 1
-    return depsInfini
-
-##if __name__ == '__main__':
-##    import Pieces
-##    from plateau import Plateau
-##    from joueur import Joueur, ListeDeJoueurs
-##    from Interface import ROUGE, VERT, BLEU
-##
-##    depssE, depacE = traduction_en_couples_déplacements(*Tour.deplacements_possibles(None), (0, 0, 5), 6)
-##    listJoueur = ListeDeJoueurs(Joueur("Arthur", 0, BLEU), Joueur("Sarah", 1, VERT),
-##                                  Joueur("Florian", 2, ROUGE))
-##    Tour.joueur = Joueur("Arthur", 0, BLEU)
-##    plateau = Plateau(listJoueur)
-##    print(isinstance(plateau[0][0][0], Pieces.Piece))
-##    print(dep_effectifs(depssE, depacE, Tour, plateau))
-
 if __name__ == '__main__':
-    import Pieces
+    # import Pieces
     from plateau import Plateau
     from joueur import Joueur, ListeDeJoueurs
     from Interface import ROUGE, VERT, BLEU, BLANC
@@ -460,4 +420,4 @@ if __name__ == '__main__':
     Tour.joueur = J1
 
     plateau = Plateau(listJoueur)
-    print(dep_effectifs(depssE, depacE, Tour, plateau))
+    print(dep_possibles(depssE, depacE, Tour, plateau))
